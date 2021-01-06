@@ -1,15 +1,3 @@
-// const routerBase = process.env.DEPLOY_ENV === "RegistrationPage"
-// ? {
-//   router: {
-//     base: "/my-project/",
-//   },
-// }
-// : {
-//   router: {
-//     base: "/",
-//   },
-// }
-
 module.exports = {
   /*
   ** Headers of the page
@@ -46,6 +34,46 @@ module.exports = {
         })
       }
     }
-  }
+  },
+
+  /*
+  ** Modules configuration
+  */
+  modules: [
+    '@nuxtjs/style-resources',
+  ],
+
+  /*
+  ** Style resources configuration
+  */
+  styleResources: {
+    sass: [],
+    scss: [],
+    less: [],
+    stylus: []
+  },
+
+  /*
+  ** Plugins configuration
+  */
+  plugins: [
+    {src: '~/plugins/Vuelidate'}
+  ],
+
+  /*
+  ** Router configuration
+  */
+  // router: {
+  //   extendRoutes(routes, resolve) {
+  //     /*
+  //     ** Open login page as "/"
+  //     */
+  //     routes.push({
+  //       name: 'custom',
+  //       path: '/',
+  //       component: resolve(__dirname, 'pages/Login.vue')
+  //     })
+  //   }
+  // },
 }
 
