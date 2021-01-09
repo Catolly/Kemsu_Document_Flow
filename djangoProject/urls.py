@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.contrib.auth.views import LoginView, LogoutView
-from djangoProject.views import LoginView,ProfilePage,RegisterView
+from djangoProject.views import RegisterView, LoginView, ProfilePage
 #from djangoProject.views import HomeView, ContactsView, LoginView
 urlpatterns = [
     path('accounts/login/', LoginView.as_view(), name="login"),

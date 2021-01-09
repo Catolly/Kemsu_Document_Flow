@@ -1,4 +1,7 @@
 from django.db import models
+from django.contrib.auth.hashers import (
+    check_password, is_password_usable, make_password,
+)
 
 
 class Student(models.Model):
@@ -33,13 +36,29 @@ class Point(models.Model):
     file = models.FileField()
     link_on_module = models.ForeignKey(Document, on_delete=models.CASCADE)
 
+
 class Users(models.Model):
     id = models.AutoField(primary_key=True)
-    First_name = models.CharField(max_length=75)
-    Last_name = models.CharField(max_length=75)
-    Midle_name = models.CharField(max_length=75)
-    role_in_the_system = models.CharField(max_length=30)
+    first_name = models.CharField(max_length=75)
+    last_name = models.CharField(max_length=75)
+    middle_name = models.CharField(max_length=75)
+    #role_in_the_system = models.CharField(max_length=30)
+    password = models.CharField(max_length=128)
     e_mail = models.EmailField()
-    link_on_Student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    link_on_Employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
-    link_on_Administrator = models.ForeignKey(Administrator, on_delete=models.CASCADE)
+    #link_on_Student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    #link_on_Employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    #link_on_Administrator = models.ForeignKey(Administrator, on_delete=models.CASCADE)
+
+@staticmethod
+def create_user(first_name, last_name, middle_name, e_mail, password, **any_arguments):
+    user = Users()
+    user.first_name = first_name
+    user.last_name = last_name
+    user.middle_name = middle_name
+    user.e_mail = e_mail
+    user.set_password(user, password)
+    user.save()
+
+@staticmethod
+def set_password(user, raw_password):
+    user.password = make_password(raw_password)

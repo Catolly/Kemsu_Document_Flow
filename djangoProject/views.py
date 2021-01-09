@@ -2,8 +2,8 @@ from django.contrib.auth import authenticate, login
 from django.views.generic import TemplateView
 from django.shortcuts import redirect, render
 from django.urls import reverse
-from django.contrib.auth.models import User
-
+'''from django.contrib.auth.models import User'''
+from Kemsu_Document.models import create_user
 
 class LoginView(TemplateView):
     template_name = "registration/login.html"
@@ -35,7 +35,7 @@ class RegisterView(TemplateView):
             password2 = request.POST.get('password2')
 
             if password == password2:
-                User.objects.create_user(username, email, password)
+                create_user(username, "b", "c", email, password)
                 return redirect(reverse("login"))
 
         return render(request, self.template_name)
