@@ -7,7 +7,7 @@
 <body>
     <a href="{% url 'login' %}">Войти</a>
     <h1>Вход на сайт</h1>
-    <a href="{% url 'register' %}">Регистрация</a>
+    <a href="{% url 'register_student' %}">Регистрация</a>
     {% if error %}
         <div style="color:red;">{{ error }}</div>
     {% endif %}
