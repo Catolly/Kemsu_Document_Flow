@@ -10,7 +10,7 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 @import '~/styles/index.less';
 
 #container {
@@ -59,10 +59,5 @@ button {
 p {
   margin-top: 18px;
 }
-
-// input {
-//   height: 70px;
-// }
-
 </style>
 
