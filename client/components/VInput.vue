@@ -15,7 +15,7 @@
 
 <script>
 export default {
-	name: 'VInput',
+	name: 'vInput',
 	props: {
 		value: String,
 		id: {
