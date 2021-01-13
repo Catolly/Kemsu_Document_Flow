@@ -1,18 +1,21 @@
 <template>
   <div class="container">
     <div id="signup-wrapper">
-      <the-form-signup-student>
+      <the-form-signup-worker v-if="$route.query.worker"/>
+      <the-form-signup-student v-else/>
     </div>
   </div>
 </template>
 
 <script>
 import TheFormSignupStudent from '~/components/TheFormSignupStudent'
+import TheFormSignupWorker from '~/components/TheFormSignupWorker'
 
 export default {
   name: 'SignupLayout.vue',
   components: {
     TheFormSignupStudent,
+    TheFormSignupWorker,
   },
 }
 </script>
