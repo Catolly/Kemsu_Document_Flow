@@ -6,8 +6,11 @@
 		@input="updateValue($event.target.value)"
 		:type="type"
 		:required="required"
+		class="input"
 		placeholder=" ">
-		<label :for="id">
+		<label 
+		:for="id"
+		class="label">
 			{{placeholder}}
 		</label>
 	</div>
@@ -15,7 +18,7 @@
 
 <script>
 export default {
-	name: 'vInput',
+	name: 'VInput',
 	props: {
 		value: String,
 		id: {
@@ -48,12 +51,12 @@ export default {
 	margin-top: 18px;
 }
 
-label,
-input {
+.label,
+.input {
 	transition: .2s ease all;
 }
 
-input {
+.input {
   background: @input-background;
   border: 1px solid @input-border;
   border-radius: 10px;
@@ -64,11 +67,11 @@ input {
   &:focus {
   	border-color: @blue;
   }
-  &:focus + label {
+  &:focus + .label {
   	color: @blue;
   }
-  &:focus + label,
-  &:not(:placeholder-shown) + label {
+  &:focus + .label,
+  &:not(:placeholder-shown) + .label {
 	  font-size: @fz-small; 
 	  top: -0.875em;
 	  left: 1.5em;
@@ -76,7 +79,7 @@ input {
   }
 }
 
-label {
+.label {
 	position: absolute;
   top: 1.2em;
   left: 1.2em;
@@ -86,10 +89,10 @@ label {
 }
 
 .is-invalid {
-	input {
+	.input {
 		border-color: @red;
 	}
-	label {
+	.label {
 		color: @red;
 	}
 }

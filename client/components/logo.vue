@@ -1,18 +1,18 @@
 <template> 
-	<div id="logo">
+	<div class="logo">
 		<img src="~/assets/logo.svg" alt="КемГУ">
 	</div>
 </template>
 
 <script>
 export default {
-  name: 'logo'
+  name: 'Logo'
 }
 </script>
 
 <style lang="less" scoped>
 
-#logo {
+.logo {
 	height: 66px;
   width: 42px;
 

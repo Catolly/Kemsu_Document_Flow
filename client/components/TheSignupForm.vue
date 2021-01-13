@@ -41,15 +41,15 @@
 </template>
 
 <script>
-import vInput from '~/components/vInput'
-import vButton from '~/components/vButton'
+import VInput from '~/components/VInput'
+import VButton from '~/components/VButton'
 import { required, minLength, email } from 'vuelidate/lib/validators'
 
 export default {
-  name: 'LoginForm.vue',
+  name: 'TheSignupForm.vue',
   components: {
-    vInput,
-    vButton,
+    VInput,
+    VButton,
   },
   data() {
     return {

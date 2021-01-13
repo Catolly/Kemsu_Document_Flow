@@ -1,18 +1,18 @@
 <template>
   <section id="container">
-    <signup-layout></signup-layout>
-  	<logo class="big"></logo>
+    <signup-layout />
+  	<logo class="big" />
   </section>
 </template>
 
 <script>
-import logo from '~/components/logo'
+import Logo from '~/components/Logo'
 import SignupLayout from '~/layouts/SignupLayout'
 
 export default {
 	name: 'Signup',
   components: {
-  	logo,
+  	Logo,
     SignupLayout
   }
 }

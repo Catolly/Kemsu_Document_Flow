@@ -1,18 +1,18 @@
 <template>
   <div id="container">
     <div id="login-wrapper">
-      <login-form />
+      <the-login-form />
     </div>
   </div>
 </template>
 
 <script>
-import LoginForm from '~/components/LoginForm'
+import TheLoginForm from '~/components/TheLoginForm'
 
 export default {
   name: 'LoginLayout.vue',
   components: {
-    LoginForm,
+    TheLoginForm,
   },
 }
 </script>

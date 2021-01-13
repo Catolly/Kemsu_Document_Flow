@@ -1,19 +1,19 @@
 <template>
-	<button>
+	<button class="btn">
 		<slot></slot>
 	</button>
 </template>
 
 <script>
 export default {
-	name: 'vButton',
+	name: 'VButton',
 }
 </script>
 
 <style lang="less" scoped>
 @import '~/styles/index.less';
 
-button {
+.btn {
   height: 50px;
   width: 100%;
 }

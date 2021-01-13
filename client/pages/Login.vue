@@ -1,18 +1,18 @@
 <template>
   <section id="container">
-    <login-layout></login-layout>
-  	<logo class="big"></logo>
+    <login-layout />
+  	<logo class="big" />
   </section>
 </template>
 
 <script>
-import logo from '~/components/logo'
+import Logo from '~/components/Logo'
 import LoginLayout from '~/layouts/LoginLayout'
 
 export default {
 	name: 'Login',
   components: {
-  	logo,
+  	Logo,
     LoginLayout
   }
 }
