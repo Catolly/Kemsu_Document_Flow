@@ -16,6 +16,14 @@ export default {
 .btn {
   height: 50px;
   width: 100%;
+  
+  font-size: @fz-large;
+  font-weight: @fw-medium;
+
+  background-color: transparent;
+  
+  border-radius: 10px;
+  border: none;
 }
 
 .big {

@@ -16,7 +16,7 @@ body {
   overflow-x: hidden;
   min-width: 320px;
   font-size: @fz-normal;
-  color: @font-color;
+  color: #000;
   background: @background;
 }
 
@@ -39,15 +39,8 @@ h1 {
   line-height: 1em;
 }
 
-button, label, input {
+label, input {
   font-size: @fz-large;
-}
-
-button {
-  font-weight: @fw-medium;
-  background-color: @background;
-  border-radius: 10px;
-  border: none;
 }
 
 p {
@@ -65,6 +58,7 @@ a::after {
   .absolute();
   bottom: 0;
   left: 0;
+  
   width: 100%;
   border-bottom: 1px solid @blue;
 }

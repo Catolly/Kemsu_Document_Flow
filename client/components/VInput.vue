@@ -46,6 +46,8 @@ export default {
 <style lang="less" scoped>
 @import '~/styles/index.less';
 
+@input_background: #FDFDFD;
+
 .container {
 	position: relative;
 	margin-top: 18px;
@@ -57,8 +59,8 @@ export default {
 }
 
 .input {
-  background: @input-background;
-  border: 1px solid @input-border;
+  background: @input_background;
+  border: 1px solid #F3F3F3;
   border-radius: 10px;
 
   padding-left: 24px;
@@ -84,8 +86,8 @@ export default {
   top: 1.2em;
   left: 1.2em;
 	
-	color: @label-color;
-	background: linear-gradient(to top, @input-background 50%, transparent 0);
+	color: #AFAFAF;
+	background: linear-gradient(to top, @input_background 50%, transparent 0);
 }
 
 .is-invalid {
