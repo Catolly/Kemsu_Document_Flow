@@ -1,5 +1,5 @@
 <template>
-  <section id="container">
+  <section class="container">
     <signup-layout />
   	<logo class="big" />
   </section>

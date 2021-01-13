@@ -1,5 +1,5 @@
 <template>
-  <section id="container">
+  <section class="container">
     <login-layout />
   	<logo class="big" />
   </section>

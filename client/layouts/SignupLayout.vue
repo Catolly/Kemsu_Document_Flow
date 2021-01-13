@@ -1,5 +1,5 @@
 <template>
-  <div id="container">
+  <div class="container">
     <div id="signup-wrapper">
       <the-signup-form />
     </div>
@@ -20,10 +20,6 @@ export default {
 
 <style lang="less">
 @import '~/styles/index.less';
-
-#container {
-  position: relative;
-}
 
 #signup-wrapper {
   height: 100vh;

@@ -49,7 +49,6 @@ export default {
 @input_background: #FDFDFD;
 
 .container {
-	position: relative;
 	margin-top: 18px;
 }
 
