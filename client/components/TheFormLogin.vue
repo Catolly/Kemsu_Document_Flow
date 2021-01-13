@@ -1,6 +1,6 @@
 <template>
-	<form @submit="checkForm()" id="login-form"> 
-		<h1>Вход</h1>
+	<form @submit.prevent="checkForm()" id="form"> 
+		<h1 id="form-header">Вход</h1>
 		<div id="form-inner">
 			<v-input
 			v-model.trim="form.username"
@@ -8,26 +8,26 @@
 			id="username"
 			type="text"
 			placeholder="Ф.И.О."
-			required></v-input>
+			required />
 			<v-input
 			v-model.trim="form.password"
 			:class="$v.form.password.$error ? 'is-invalid' : ''"
 			id="password"
 			type="password"
 			placeholder="Пароль"
-			required></v-input>
+			required />
 			<p>
 				<NuxtLink to="#">Не помню пароль</NuxtLink>
 			</p>
 			<div class="buttons">
 				<v-button
 				id="login"
-				class="blue big filled">
+				class="btn blue big filled">
 					Войти
 				</v-button>
 				<v-button
 				id="signup"
-				class="blue big">
+				class="btn blue big">
 					Зарегистрироваться
 				</v-button>
 			</div>
@@ -41,7 +41,7 @@ import VButton from '~/components/VButton'
 import { required, minLength, email } from 'vuelidate/lib/validators'
 
 export default {
-  name: 'TheLoginForm.vue',
+  name: 'TheFormLogin.vue',
   components: {
     VInput,
     VButton,
@@ -77,15 +77,11 @@ export default {
 <style lang="less" scoped>
 @import '~/styles/index.less';
 
-#container {
-  position: relative;
-}
-
-form {
+#form {
 	width: 516px;
 }
 
-h1 {
+#form-header {
   text-align: center;
 }
 
@@ -102,7 +98,7 @@ input {
   line-height: 160%;
 }
 
-button {
+.btn {
   margin-top: 10px;
 
   &:first-child {

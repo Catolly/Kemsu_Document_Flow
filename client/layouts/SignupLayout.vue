@@ -1,19 +1,18 @@
 <template>
   <div class="container">
     <div id="signup-wrapper">
-      <the-signup-form />
+      <the-form-signup-student>
     </div>
   </div>
 </template>
 
 <script>
-import TheSignupForm from '~/components/TheSignupForm'
-import { required, minLength, email } from 'vuelidate/lib/validators'
+import TheFormSignupStudent from '~/components/TheFormSignupStudent'
 
 export default {
   name: 'SignupLayout.vue',
   components: {
-    TheSignupForm,
+    TheFormSignupStudent,
   },
 }
 </script>
