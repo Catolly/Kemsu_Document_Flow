@@ -59,12 +59,13 @@ export default {
 }
 
 .input {
+	height: 70px;
+  width: 100%;
+  padding-left: 24px;
+
   background: @input_background;
   border: 1px solid #F3F3F3;
   border-radius: 10px;
-
-  padding-left: 24px;
-  width: 100%;
 
   &:focus {
   	border-color: @blue;

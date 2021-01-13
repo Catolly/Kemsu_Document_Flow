@@ -29,9 +29,5 @@ export default {
   .flex(center, center);
 }
 
-input {
-  height: 70px;
-}
-
 </style>
 
