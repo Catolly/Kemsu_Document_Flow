@@ -1,8 +1,8 @@
-from django.contrib.auth import login
+'''from django.contrib.auth import login
 from django.views.generic import TemplateView
 from django.shortcuts import redirect, render
 from django.urls import reverse
-'''from django.contrib.auth.models import User'''
+from django.contrib.auth.models import User
 from Kemsu_Document.models import create_employee, create_student
 from Kemsu_Document.models import authenticate
 
@@ -65,4 +65,39 @@ class RegisterStudent(TemplateView):
                 create_student(first_name, last_name, middle_name, email, password, int(course), direction_of_study, institute, group)
                 return redirect(reverse("login"))
 
-        return render(request, self.template_name)
+        return render(request, self.template_name)'''
+
+from rest_framework import status
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from Kemsu_Document.models import User
+from Kemsu_Document.serializers import LoginSerializer
+from Kemsu_Document.serializers import RegistrationSerializer
+
+class RegistrationAPIView(APIView):
+    permission_classes = [AllowAny]
+    serializer_class = RegistrationSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(
+            {
+                'token': serializer.data.get('token', None),
+            },
+            status=status.HTTP_201_CREATED,
+        )
+
+class LoginAPIView(APIView):
+    permission_classes = [AllowAny]
+    serializer_class = LoginSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)

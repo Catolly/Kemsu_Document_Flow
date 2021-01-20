@@ -1,0 +1,23 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h1>Регистрация студента</h1>
+    <form method="post">
+        {% csrf_token %}
+        Имя: <input type="text" name="first_name"><br>
+        Фамилия: <input type="text" name="last_name"><br>
+        Отчество: <input type="text" name="middle_name"><br>
+        Email: <input type="email" name="email"><br>
+        Пароль: <input type="password" name="password"><br>
+        Пароль еще раз: <input type="password" name="password2"><br>
+        Курс: <input type="text" name="course"><br>
+        Направление обучения: <input type="text" name="direction_of_study"><br>
+        Институт: <input type="text" name="institute"><br>
+        Группа: <input type="text" name="group"><br>
+        <input type="submit" value="Регистрация">
+    </form>
+</body>
+</html>
