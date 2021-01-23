@@ -52,7 +52,7 @@ import VButton from '~/components/VButton'
 import { required, minLength, email } from 'vuelidate/lib/validators'
 
 export default {
-  name: 'TheFormSingupWorker.vue',
+  name: 'TheFormSingupWorker',
   components: {
     VInput,
     VButton,

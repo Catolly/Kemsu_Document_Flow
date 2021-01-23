@@ -12,7 +12,7 @@ import TheFormSignupStudent from '~/components/TheFormSignupStudent'
 import TheFormSignupWorker from '~/components/TheFormSignupWorker'
 
 export default {
-  name: 'SignupLayout.vue',
+  name: 'SignupLayout',
   components: {
     TheFormSignupStudent,
     TheFormSignupWorker,

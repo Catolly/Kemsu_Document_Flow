@@ -10,7 +10,7 @@
 import TheFormLogin from '~/components/TheFormLogin'
 
 export default {
-  name: 'LoginLayout.vue',
+  name: 'LoginLayout',
   components: {
     TheFormLogin,
   },

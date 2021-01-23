@@ -46,7 +46,7 @@ import VButton from '~/components/VButton'
 import { required, minLength, email } from 'vuelidate/lib/validators'
 
 export default {
-  name: 'TheFormSingupStudent.vue',
+  name: 'TheFormSingupStudent',
   components: {
     VInput,
     VButton,
