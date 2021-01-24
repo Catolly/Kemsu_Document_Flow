@@ -18,7 +18,7 @@ from django.urls import path
 from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import re_path, include
 
-from .views import RegistrationAPIView
+from .views import RegistrationAPIView, RegistrationStaffAPIView
 from .views import LoginAPIView
 '''from djangoProject.views import RegisterEmployee, LoginView, ProfilePage, RegisterStudent
 from djangoProject.views import HomeView, ContactsView, LoginView'''
@@ -30,6 +30,7 @@ from djangoProject.views import HomeView, ContactsView, LoginView'''
     path('accounts/register/student', RegisterStudent.as_view(), name="register_student")'''
 
 urlpatterns = [
-    re_path('registration/', RegistrationAPIView.as_view(), name='user_registration'),
+    re_path('registration/user', RegistrationAPIView.as_view(), name='user_registration'),
+    re_path('registration/staff', RegistrationStaffAPIView.as_view(), name='staff_registration'),
     re_path('login/', LoginAPIView.as_view(), name='user_login'),
 ]

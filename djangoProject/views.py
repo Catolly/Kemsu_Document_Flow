@@ -75,10 +75,27 @@ from rest_framework.views import APIView
 from Kemsu_Document.models import User
 from Kemsu_Document.serializers import LoginSerializer
 from Kemsu_Document.serializers import RegistrationSerializer
+from Kemsu_Document.serializers import RegistrationStaffSerializer
 
 class RegistrationAPIView(APIView):
     permission_classes = [AllowAny]
     serializer_class = RegistrationSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(
+            {
+                'token': serializer.data.get('token', None),
+            },
+            status=status.HTTP_201_CREATED,
+        )
+
+class RegistrationStaffAPIView(APIView):
+    permission_classes = [AllowAny]
+    serializer_class = RegistrationStaffSerializer
 
     def post(self, request):
         serializer = self.serializer_class(data=request.data)

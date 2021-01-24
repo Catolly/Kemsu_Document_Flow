@@ -67,6 +67,12 @@ class UserManager(BaseUserManager):
 
         return self._create_user(username, email, password, **extra_fields)
 
+    def create_staff(self, username, email, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', False)
+
+        return self._create_user(username, email, password, **extra_fields)
+
     def create_superuser(self, username, email, password, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
@@ -101,7 +107,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ('first_name',)
+    REQUIRED_FIELDS = ('username',)
 
     objects = UserManager()
 
@@ -119,13 +125,16 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.username
 
     def _generate_jwt_token(self):
-        dt = datetime.now() + timedelta(days=60)
+        dt = datetime.now() + timedelta(minutes=10)
         token = jwt.encode({
             'id': self.pk,
-            'exp': int(dt.strftime('%s'))
+            'exp': int(dt.strftime('%S')),
+            'is_staff': self.is_staff,
+            'is_superuser' : self.is_superuser
         }, settings.SECRET_KEY, algorithm='HS256')
 
-        return token.decode('utf-8')
+        #return token.encode().decode('utf-8')
+        return token
 
 '''class Document(models.Model):
     id = models.AutoField(primary_key=True)
