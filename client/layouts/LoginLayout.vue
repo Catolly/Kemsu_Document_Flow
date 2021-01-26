@@ -1,5 +1,6 @@
 <template>
   <div class="container">
+    <Nuxt />
     <div id="login-wrapper">
       <the-form-login />
     </div>

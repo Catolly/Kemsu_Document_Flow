@@ -1,5 +1,6 @@
 <template>
   <div class="container">
+    <Nuxt />
     <div id="signup-wrapper">
       <the-form-signup-worker v-if="$route.query.worker"/>
       <the-form-signup-student v-else/>
