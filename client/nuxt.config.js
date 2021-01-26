@@ -64,16 +64,7 @@ module.exports = {
   ** Router configuration
   */
   router: {
-    extendRoutes(routes, resolve) {
-      /*
-      ** Open login page as "/"
-      */
-      routes.push({
-        name: 'custom',
-        path: '/',
-        component: resolve(__dirname, 'pages/Login.vue')
-      })
-    }
+
   },
 }
 
