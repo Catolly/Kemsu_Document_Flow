@@ -1,14 +1,23 @@
 <template>
 	<div class="container">
+		<logo />
 		<sidebar-layout />
-		<nuxt />
+		<Nuxt />
 	</div>
 </template>
 
 <script>
-	
+import SidebarLayout from '~/layouts/SidebarLayout'
+import Logo from '~/components/Logo'
+
+export default {
+	components: {
+		SidebarLayout,
+		Logo,
+	},
+}
 </script>
 
 <style scoped>
-	
+
 </style>

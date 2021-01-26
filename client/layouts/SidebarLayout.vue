@@ -1,7 +1,5 @@
 <template>
   <div class="container">
-    <logo />
-
     <!-- Определяем, какие права у юзера -->
     <div class="nav-wrapper">
       <the-sidebar-student />
