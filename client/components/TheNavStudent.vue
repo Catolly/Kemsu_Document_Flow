@@ -3,10 +3,7 @@
     <NuxtLink 
     to="/"
     exact
-    class="nav-link">Подписи</NuxtLink>
-    <NuxtLink 
-    to="/history"
-    class="nav-link">История</NuxtLink>
+    class="nav-link">Обходной лист</NuxtLink>
     <NuxtLink 
     to="/settings"
     class="nav-link">Настройки</NuxtLink>
@@ -18,7 +15,7 @@
 
 <script>
 export default {
-  name: 'TheSidebarWorker'
+  name: 'TheNavStudent'
 }
 </script>
 

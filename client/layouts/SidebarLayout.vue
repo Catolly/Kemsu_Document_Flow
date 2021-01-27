@@ -2,26 +2,26 @@
   <div class="container">
     <!-- Определяем, какие права у юзера -->
     <div class="nav-wrapper">
-      <the-sidebar-student />
-      <!-- <the-sidebar-worker /> -->
-      <!-- <the-sidebar-admin /> -->
+      <the-nav-student />
+      <!-- <the-nav-worker /> -->
+      <!-- <the-nav-admin /> -->
     </div>
   </div>
 </template>
 
 <script>
 import Logo from '~/components/Logo'
-import TheSidebarStudent from '~/components/TheSidebarStudent'
-import TheSidebarWorker from '~/components/TheSidebarWorker'
-import TheSidebarAdmin from '~/components/TheSidebarAdmin'
+import TheNavStudent from '~/components/TheNavStudent'
+import TheNavWorker from '~/components/TheNavWorker'
+import TheNavAdmin from '~/components/TheNavAdmin'
 
 export default {
   name: 'SidebarLayout',
   components: {
     Logo,
-    TheSidebarStudent,
-    TheSidebarWorker,
-    TheSidebarAdmin,
+    TheNavStudent,
+    TheNavWorker,
+    TheNavAdmin,
   },
 }
 </script>
