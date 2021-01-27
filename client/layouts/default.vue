@@ -2,7 +2,9 @@
 	<div class="container">
 		<logo />
 		<sidebar-layout />
-		<Nuxt />
+		<div class="content-wrapper">
+			<Nuxt />
+		</div>
 	</div>
 </template>
 
@@ -18,6 +20,10 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="less" scoped>
+@import '~/styles/index.less';
 
+.content-wrapper {
+	margin-left: @sidebar-width;
+}
 </style>

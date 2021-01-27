@@ -1,16 +1,21 @@
 <template>
 	<div class="container">
-    
+		<!-- student -->
+    <the-bypass-sheet />
+    <!-- worker -->
+
+    <!-- admin -->
+    <!-- <the-bypass-sheet /> -->
   </div>
 </template>
 
 <script>
-import SidebarLayout from '~/layouts/SidebarLayout'
+import TheBypassSheet from '~/components/TheBypassSheet'
 
 export default {
   name: 'index',
   components: {
-    SidebarLayout,
+    TheBypassSheet,
   },
 }
 </script>
