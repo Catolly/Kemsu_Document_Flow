@@ -1,6 +1,7 @@
 <template>
   <div class="container">
-    <div id="login-wrapper">
+    <Nuxt />
+    <div id="form-login-wrapper">
       <the-form-login />
     </div>
   </div>
@@ -20,7 +21,7 @@ export default {
 <style lang="less">
 @import '~/styles/index.less';
 
-#login-wrapper {
+#form-login-wrapper {
   height: 100vh;
   .flex(center, center);
 }

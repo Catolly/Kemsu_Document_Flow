@@ -1,6 +1,7 @@
 <template>
   <div class="container">
-    <div id="signup-wrapper">
+    <Nuxt />
+    <div id="form-signup-wrapper">
       <the-form-signup-worker v-if="$route.query.worker"/>
       <the-form-signup-student v-else/>
     </div>
@@ -23,7 +24,7 @@ export default {
 <style lang="less">
 @import '~/styles/index.less';
 
-#signup-wrapper {
+#form-signup-wrapper {
   height: 100vh;
   .flex(center, center);
 }
