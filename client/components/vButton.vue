@@ -14,8 +14,7 @@ export default {
 @import '~/styles/index.less';
 
 .btn {
-  height: 50px;
-  width: 100%;
+  padding: 16px 48px;
   
   font-size: @fz-large;
   font-weight: @fw-medium;
@@ -27,7 +26,12 @@ export default {
 }
 
 .big {
-	height: 70px;
+	padding-top: 19px;
+	padding-bottom: 19px;
+}
+
+.fluid {
+	width: 100%;
 }
 
 .red,

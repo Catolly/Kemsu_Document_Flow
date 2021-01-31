@@ -32,12 +32,12 @@
       <div class="buttons">
         <v-button
         id="signup"
-        class="btn blue big filled">
+        class="btn blue big filled fluid">
           Зарегистрироваться
         </v-button>
         <v-button
         id="login"
-        class="btn blue big">
+        class="btn blue big fluid">
           Войти
         </v-button>
       </div>
