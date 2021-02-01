@@ -25,5 +25,10 @@ export default {
 	border-radius: 12px;
 
 	.flex(space-between, center);
+
+	&:hover {
+		background: #FAFAFA;
+		border-color: @blue;
+	}
 }
 </style>
