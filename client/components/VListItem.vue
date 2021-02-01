@@ -26,6 +26,8 @@ export default {
 
 	.flex(space-between, center);
 
+	transition: .2s ease all;
+
 	&:hover {
 		background: #FAFAFA;
 		border-color: @blue;
