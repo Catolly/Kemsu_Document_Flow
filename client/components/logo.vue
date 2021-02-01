@@ -16,7 +16,7 @@ export default {
 	height: 66px;
   width: 42px;
 
-  position: absolute;
+  position: fixed;
   top: 25px;
   left: 60px;
 
