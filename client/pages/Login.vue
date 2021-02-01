@@ -1,25 +1,32 @@
 <template>
   <section class="container">
-    <!-- <login-layout /> -->
   	<logo class="big" />
+    <div id="form-login-wrapper">
+      <the-form-login />
+    </div>
   </section>
 </template>
 
 <script>
 import Logo from '~/components/Logo'
-// import LoginLayout from '~/layouts/LoginLayout'
+import TheFormLogin from '~/components/TheFormLogin'
 
 export default {
-	layout: 'LoginLayout',
+	layout: 'empty',
 	name: 'Login',
   components: {
   	Logo,
-    // LoginLayout
+    TheFormLogin,
   }
 }
 </script>
 
-<style>
+<style lang="less" scoped>
+@import '~/styles/index.less';
 
+#form-login-wrapper {
+  height: 100vh;
+  .flex(center, center);
+}
 </style>
 

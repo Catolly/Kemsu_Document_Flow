@@ -1,25 +1,35 @@
 <template>
   <section class="container">
-    <!-- <signup-layout /> -->
-  	<logo class="big" />
+    <logo class="big" />
+    <div id="form-signup-wrapper">
+      <the-form-signup-worker v-if="$route.query.worker"/>
+      <the-form-signup-student v-else/>
+    </div>
   </section>
 </template>
 
 <script>
 import Logo from '~/components/Logo'
-// import SignupLayout from '~/layouts/SignupLayout'
+import TheFormSignupWorker from '~/components/TheFormSignupWorker'
+import TheFormSignupStudent from '~/components/TheFormSignupStudent'
 
 export default {
-	layout: 'SignupLayout',
+	layout: 'empty',
 	name: 'Signup',
   components: {
   	Logo,
-    // SignupLayout
+    TheFormSignupWorker,
+    TheFormSignupStudent,
   }
 }
 </script>
 
-<style>
+<style lang="less" scoped>
+@import '~/styles/index.less';
 
+#form-signup-wrapper {
+  height: 100vh;
+  .flex(center, center);
+}
 </style>
 

@@ -1,6 +1,6 @@
 <template> 
 	<div class="logo">
-		<img src="~/assets/logo.svg" alt="КемГУ">
+		<img class="logo-img" src="~/assets/logo.svg" alt="КемГУ">
 	</div>
 </template>
 
@@ -24,6 +24,11 @@ export default {
   	height: 86px;
   	width: 54px;
   }
+}
+
+.logo-img {
+  height: 100%;
+  width: 100%;
 }
 
 </style>
