@@ -1,6 +1,6 @@
 <template>
-	<button class="btn">
-		<slot></slot>
+	<button class="v-button">
+		<slot />
 	</button>
 </template>
 
@@ -13,10 +13,10 @@ export default {
 <style lang="less" scoped>
 @import '~/styles/index.less';
 
-.btn {
+.v-button {
   padding: 16px 48px;
   
-  font-size: @fz-large;
+  font-size: @fz-normal;
   font-weight: @fw-medium;
 
   background-color: transparent;
@@ -28,6 +28,8 @@ export default {
 .big {
 	padding-top: 19px;
 	padding-bottom: 19px;
+
+	font-size: @fz-large;
 }
 
 .fluid {
