@@ -25,7 +25,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import '~/styles/index.less';
 
 #form-signup-wrapper {
   height: 100vh;

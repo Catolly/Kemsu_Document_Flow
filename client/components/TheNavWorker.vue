@@ -23,7 +23,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import '~/styles/index.less';
 
 .nav {
   margin-top: 250px;

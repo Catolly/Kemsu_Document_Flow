@@ -11,7 +11,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import '~/styles/index.less';
 
 .v-list-item {
 	height: 105px;

@@ -21,9 +21,10 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import '~/styles/index.less';
 
 .content-wrapper {
 	margin-left: @sidebar-width;
+	background: @background;
 }
+
 </style>

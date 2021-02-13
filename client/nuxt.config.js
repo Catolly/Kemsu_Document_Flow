@@ -11,12 +11,12 @@ module.exports = {
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
-    ]
+    ],
   },
   /*
   ** Customize the progress bar color
   */
-  loading: { color: '#3B8070' },
+  loading: { color: '#4A5CFF' },
   /*
   ** Build configuration
   */
@@ -47,17 +47,14 @@ module.exports = {
   ** Style resources configuration
   */
   styleResources: {
-    sass: [],
-    scss: [],
-    less: [],
-    stylus: []
+    less: ['./styles/index.less'],
   },
 
   /*
   ** Plugins configuration
   */
   plugins: [
-    {src: '~/plugins/Vuelidate'}
+    {src: '~/plugins/Vuelidate', lang: 'less'}
   ],
 
   /*
