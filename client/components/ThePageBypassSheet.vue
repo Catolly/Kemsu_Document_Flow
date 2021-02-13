@@ -7,12 +7,15 @@
 		</v-button>
 		<div class="bypass-sheet-list-wrapper">
 			<v-list class="bypass-sheet-list">
-				<v-list-item 
-				v-for="bypassSheet in bypassSheets"
-				:key="bypassSheet.id"
-				class="bypass-sheet">
-					<div class="bypass-sheet-title">{{ bypassSheet.title }}</div>
-				</v-list-item>
+					<v-list-item
+					v-for="bypassSheet in bypassSheets"
+					:key="bypassSheet.id"
+					@click.native="openBypassSheet(bypassSheet.id)"
+					class="bypass-sheet">
+						<div class="bypass-sheet-title">
+							{{ bypassSheet.title }}
+						</div>
+					</v-list-item>
 			</v-list>
 		</div>
 
@@ -30,6 +33,11 @@ export default {
 		VButton,
 		VList,
 		VListItem,
+	},
+	methods: {
+		openBypassSheet(bypassSheet) {
+			this.$router.push('/bypass-sheet/' + bypassSheet)
+		}
 	},
 	data() {
 		return {
