@@ -12,7 +12,4 @@ export default {
 
 <style lang="less" scoped>
 
-.v-list {
-	width: 80%;
-}
 </style>

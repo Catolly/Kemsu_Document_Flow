@@ -20,12 +20,12 @@ export default {
 	margin-bottom: 12px;
 
 	background: #FDFDFD;
-	border: 1.5px solid #F3F3F3;
+	border: 1px solid #F3F3F3;
 	border-radius: 12px;
 
 	.flex(space-between, center);
-
 	transition: .2s ease all;
+	cursor: pointer;
 
 	&:hover {
 		background: #FAFAFA;

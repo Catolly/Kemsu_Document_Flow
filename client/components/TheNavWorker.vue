@@ -36,6 +36,7 @@ export default {
 
   color: @text-grey;
   font-weight: @fw-light;
+  font-size: @fz-large;
 
   &::after {
     display: none;

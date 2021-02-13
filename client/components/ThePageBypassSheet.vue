@@ -50,7 +50,10 @@ export default {
 
 <style lang="less" scoped>
 
-.header,
+.header {
+	padding-top: 48px;
+}
+
 .btn-add-statement {
 	margin-top: 48px;
 }
