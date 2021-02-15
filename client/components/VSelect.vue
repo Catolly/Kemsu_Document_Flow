@@ -38,6 +38,7 @@ export default {
 .container,
 .v-select-wrapper {
 	width: fit-content;
+	position: relative;
 }
 
 .v-select {
