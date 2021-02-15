@@ -80,7 +80,6 @@ from Kemsu_Document.serializers import RegistrationStaffSerializer
 class RegistrationAPIView(APIView):
     permission_classes = [AllowAny]
     serializer_class = RegistrationSerializer
-
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -88,7 +87,8 @@ class RegistrationAPIView(APIView):
 
         return Response(
             {
-                'token': serializer.data.get('token', None),
+                'message': 'Registration is success',
+                    #serializer.data.get('token', None),
             },
             status=status.HTTP_201_CREATED,
         )

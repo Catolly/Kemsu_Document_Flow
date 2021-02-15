@@ -62,23 +62,26 @@ class UserManager(BaseUserManager):
         return user
 
     def create_user(self, username, email, password=None, **extra_fields):
+        extra_fields.setdefault('is_student', True)
         extra_fields.setdefault('is_staff', False)
         extra_fields.setdefault('is_superuser', False)
 
         return self._create_user(username, email, password, **extra_fields)
 
     def create_staff(self, username, email, password=None, **extra_fields):
+        extra_fields.setdefault('is_student', False)
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', False)
 
         return self._create_user(username, email, password, **extra_fields)
 
     def create_superuser(self, username, email, password, **extra_fields):
-        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_staff', False)
         extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('is_student', False)
 
-        if extra_fields.get('is_staff') is not True:
-            raise ValueError('Суперпользователь должен иметь is_staff=True.')
+        #if extra_fields.get('is_staff') is not True:
+        #    raise ValueError('Суперпользователь должен иметь is_staff=True.')
 
         if extra_fields.get('is_superuser') is not True:
             raise ValueError('Суперпользователь должен иметь is_superuser=True.')
@@ -105,18 +108,19 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
+    is_student = models.BooleanField(default=False)
 
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ('username',)
+    USERNAME_FIELD = 'username'
+    #REQUIRED_FIELDS = ()
 
     objects = UserManager()
 
     def __str__(self):
         return self.username
 
-    @property
-    def token(self):
-        return self._generate_jwt_token()
+    # @property
+    # def token(self):
+    #     return self._generate_jwt_token()
 
     def get_full_name(self):
         return self.username
@@ -124,17 +128,17 @@ class User(AbstractBaseUser, PermissionsMixin):
     def get_short_name(self):
         return self.username
 
-    def _generate_jwt_token(self):
-        dt = datetime.now() + timedelta(minutes=10)
-        token = jwt.encode({
-            'id': self.pk,
-            'exp': int(dt.strftime('%S')),
-            'is_staff': self.is_staff,
-            'is_superuser' : self.is_superuser
-        }, settings.SECRET_KEY, algorithm='HS256')
-
-        #return token.encode().decode('utf-8')
-        return token
+    # def _generate_jwt_token(self):
+    #     dt = datetime.now() + timedelta(minutes=10)
+    #     token = jwt.encode({
+    #         'id': self.pk,
+    #         'exp': int(dt.strftime('%S')),
+    #         'is_staff': self.is_staff,
+    #         'is_superuser' : self.is_superuser
+    #     }, settings.SECRET_KEY, algorithm='HS256')
+    #
+    #     #return token.encode().decode('utf-8')
+    #     return token
 
 '''class Document(models.Model):
     id = models.AutoField(primary_key=True)

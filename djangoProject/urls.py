@@ -20,6 +20,10 @@ from django.urls import re_path, include
 
 from .views import RegistrationAPIView, RegistrationStaffAPIView
 from .views import LoginAPIView
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
 '''from djangoProject.views import RegisterEmployee, LoginView, ProfilePage, RegisterStudent
 from djangoProject.views import HomeView, ContactsView, LoginView'''
 
@@ -30,7 +34,10 @@ from djangoProject.views import HomeView, ContactsView, LoginView'''
     path('accounts/register/student', RegisterStudent.as_view(), name="register_student")'''
 
 urlpatterns = [
-    re_path('registration/user', RegistrationAPIView.as_view(), name='user_registration'),
-    re_path('registration/staff', RegistrationStaffAPIView.as_view(), name='staff_registration'),
-    re_path('login/', LoginAPIView.as_view(), name='user_login'),
+    path('api/registration/user', RegistrationAPIView.as_view(), name='user_registration'),
+    path('api/registration/staff', RegistrationStaffAPIView.as_view(), name='staff_registration'),
+    path('login/', LoginAPIView.as_view(), name='user_login'),
+    path('api-auth', include('rest_framework.urls')),
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]

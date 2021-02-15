@@ -9,11 +9,11 @@ class RegistrationSerializer(serializers.ModelSerializer):
         write_only=True,
     )
 
-    token = serializers.CharField(max_length=255, read_only=True)
+    #token = serializers.CharField(max_length=255, read_only=True)
 
     class Meta:
         model = User
-        fields = ('email', 'username', 'password', 'token',)
+        fields = ('username', 'email', 'password')
 
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)
@@ -25,11 +25,11 @@ class RegistrationStaffSerializer(serializers.ModelSerializer):
         write_only=True,
     )
 
-    token = serializers.CharField(max_length=255, read_only=True)
+    #token = serializers.CharField(max_length=255, read_only=True)
 
     class Meta:
         model = User
-        fields = ('email', 'username', 'password', 'token',)
+        fields = ('username', 'email', 'password')
 
     def create(self, validated_data):
         return User.objects.create_staff(**validated_data)
