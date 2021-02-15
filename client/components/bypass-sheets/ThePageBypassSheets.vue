@@ -2,8 +2,8 @@
 	<div class="container">
 		<h1 class="header">Обходной лист</h1>
 		<v-button 
-		@click.native="openAddStatementForm"
-		class="btn-open-add-statement-form blue filled">
+		@click.native="openNewBypassSheet"
+		class="btn-open-new-bypass-sheet blue filled">
 			Добавить заявление
 		</v-button>
 		<div class="bypass-sheet-list-wrapper">
@@ -28,7 +28,7 @@ import VList from '~/components/VList'
 import VListItem from '~/components/VListItem'
 
 export default {
-	name: 'ThePageBypassSheet',
+	name: 'ThePageBypassSheets',
 	components: {
 		VButton,
 		VList,
@@ -36,10 +36,10 @@ export default {
 	},
 	methods: {
 		openBypassSheet(bypassSheet) {
-			this.$router.push('/bypass-sheet/' + bypassSheet)
+			this.$router.push('/bypass-sheets/' + bypassSheet)
 		},
-		openAddStatementForm() {
-			this.$router.push('/new-bypass-sheet')
+		openNewBypassSheet() {
+			this.$router.push('/bypass-sheets/create')
 		}
 	},
 	data() {
