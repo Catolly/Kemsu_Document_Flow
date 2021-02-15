@@ -2,7 +2,8 @@
 	<div class="container">
 		<h1 class="header">Обходной лист</h1>
 		<v-button 
-		class="btn-add-statement blue filled">
+		@click.native="openAddStatementForm"
+		class="btn-open-add-statement-form blue filled">
 			Добавить заявление
 		</v-button>
 		<div class="bypass-sheet-list-wrapper">
@@ -18,7 +19,6 @@
 					</v-list-item>
 			</v-list>
 		</div>
-
 	</div>
 </template>
 
@@ -37,6 +37,9 @@ export default {
 	methods: {
 		openBypassSheet(bypassSheet) {
 			this.$router.push('/bypass-sheet/' + bypassSheet)
+		},
+		openAddStatementForm() {
+			this.$router.push('/new-bypass-sheet')
 		}
 	},
 	data() {
@@ -62,7 +65,7 @@ export default {
 	padding-top: 48px;
 }
 
-.btn-add-statement {
+.btn-open-add-statement-form {
 	margin-top: 48px;
 }
 
