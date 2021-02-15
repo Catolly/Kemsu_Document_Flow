@@ -2,44 +2,56 @@
 	<div class="container">
 		<h1 class="header">Обходной лист</h1>
 		<v-button 
-		class="btn-add-statement blue filled">
+		@click.native="openAddStatementForm"
+		class="btn-open-add-statement-form blue filled">
 			Добавить заявление
 		</v-button>
-		<div class="bypass-sheets">
-			<bypass-sheet 
-			v-for="bypassSheet in bypassSheets"
-			:key="bypassSheet.title"
-			:data="bypassSheet"
-			/>
+		<div class="bypass-sheet-list-wrapper">
+			<v-list class="bypass-sheet-list">
+					<v-list-item
+					v-for="bypassSheet in bypassSheets"
+					:key="bypassSheet.id"
+					@click.native="openBypassSheet(bypassSheet.id)"
+					class="bypass-sheet">
+						<div class="bypass-sheet-title">
+							{{ bypassSheet.title }}
+						</div>
+					</v-list-item>
+			</v-list>
 		</div>
-
 	</div>
 </template>
 
 <script>
 import VButton from '~/components/VButton'
+import VList from '~/components/VList'
+import VListItem from '~/components/VListItem'
 
 export default {
 	name: 'ThePageBypassSheet',
 	components: {
 		VButton,
+		VList,
+		VListItem,
+	},
+	methods: {
+		openBypassSheet(bypassSheet) {
+			this.$router.push('/bypass-sheet/' + bypassSheet)
+		},
+		openAddStatementForm() {
+			this.$router.push('/new-bypass-sheet')
+		}
 	},
 	data() {
 		return {
 			bypassSheets: [
 				{
-					title: 'Обходной лист',
-					points: [
-					{
-						title: 'Пункт 1',
-					},
-					{
-						title: 'Пункт 2',
-					},
-					],
+					id: 0,
+					title: 'Скидка на столовую',
 				},
 				{
-
+					id: 1,
+					title: 'Отчисление',
 				},
 			]
 		}
@@ -49,4 +61,19 @@ export default {
 
 <style lang="less" scoped>
 
+.header {
+	padding-top: 48px;
+}
+
+.btn-open-add-statement-form {
+	margin-top: 48px;
+}
+
+.bypass-sheet-list-wrapper {
+	margin-top: 32px;
+}
+
+.bypass-sheet-title {
+	font-size: @fz-normal;
+}
 </style>

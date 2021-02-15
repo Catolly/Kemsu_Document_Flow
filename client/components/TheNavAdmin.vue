@@ -29,7 +29,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import '~/styles/index.less';
 
 .nav {
   margin-top: 250px;
@@ -43,6 +42,7 @@ export default {
 
   color: @text-grey;
   font-weight: @fw-light;
+  font-size: @fz-large;
 
   &::after {
     display: none;

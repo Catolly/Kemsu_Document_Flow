@@ -27,7 +27,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import '~/styles/index.less';
 
 .nav-wrapper {
   position: fixed;
@@ -36,6 +35,8 @@ export default {
 
   height: 100vh;
   width: @sidebar-width;
+
+  box-shadow: 10px 4px 120px rgba(0, 0, 0, 0.04);
 }
 </style>
 
