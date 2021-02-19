@@ -65,7 +65,7 @@ export default {
 	padding-top: 48px;
 }
 
-.btn-open-add-statement-form {
+.btn-open-new-bypass-sheet {
 	margin-top: 48px;
 }
 
