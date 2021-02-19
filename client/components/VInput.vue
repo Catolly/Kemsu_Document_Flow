@@ -6,6 +6,7 @@
 		@input="updateValue($event.target.value)"
 		:type="type"
 		:required="required"
+		:disabled="disabled"
 		class="input"
 		placeholder=" ">
 		<label 
@@ -30,6 +31,10 @@ export default {
 			default: 'text' 
 		},
 		required: {
+			type: Boolean,
+			default: false
+		},
+		disabled: {
 			type: Boolean,
 			default: false
 		}
