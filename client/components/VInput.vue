@@ -1,5 +1,5 @@
 <template>
-	<div class="container">
+	<div class="input-wrapper">
 		<input 
 		:id="id"
 		:value="value"
@@ -9,7 +9,6 @@
 		class="input"
 		placeholder=" ">
 		<label 
-		:for="id"
 		class="label">
 			{{placeholder}}
 		</label>
@@ -47,7 +46,7 @@ export default {
 
 @input-background: #FDFDFD;
 
-.container {
+.input-wrapper {
 	margin-top: 18px;
 }
 
