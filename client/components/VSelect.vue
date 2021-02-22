@@ -165,12 +165,11 @@ export default {
 .option {
 	background: @select-background;
 	border: 1px solid @select-border;
-	border-top: none;
 
 	&:hover {
 		background: #F2F2F2;
 		border: 1px solid #D2D2D2;
-	}
+	}	
 }
 
 .label {
