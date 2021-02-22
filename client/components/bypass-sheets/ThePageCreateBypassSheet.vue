@@ -8,7 +8,9 @@
 			:title="'Причина'"
 			:options="reasonOptions"
 			required />
-			<document-upload class="document-upload">
+			<document-upload 
+			:documentExampleSrc="documentExampleSrc"
+			class="document-upload">
 				Необходимые документы
 			</document-upload>
 		</form>
@@ -40,13 +42,18 @@ export default {
 					id: 1,
 					value: 'Отчисление',
 				},
-			]
+			],
+			documentExampleSrc: require('~/assets/img/document_example.png'),
 		}
 	}
 }
 </script>
 
 <style lang="less" scoped>
+
+#form {
+	position: relative;
+}
 
 .header {
 	padding-top: 48px;

@@ -6,7 +6,9 @@
 		<div class="document-upload-container">
 			<div class="document-example">
 				<span class="subheader">Образец</span>
-				<img src="" class="document-example-img">
+				<img
+				:src="documentExampleSrc" 
+				class="document-example-img">
 			</div>			
 			<div class="document-upload">
 				<span class="subheader">Заявление</span>
@@ -23,6 +25,9 @@ export default {
 	name: 'FormImageUpload.vue',
 	components: {
 		VImageUpload,
+	},
+	props: {
+		documentExampleSrc: String,
 	}
 }
 </script>

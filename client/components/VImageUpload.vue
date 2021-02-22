@@ -1,12 +1,70 @@
 <template>
 	<div class="v-image-upload">
-		<div class="plus"></div>
+		<div class="v-image-upload-inner">
+			<img 
+			v-if="previewImageURL"
+			:src="previewImageURL"
+			class="preview-img">
+			<img 
+			v-if="previewIconURL"
+			:src="previewIconURL"
+			class="preview-icon">
+			<div class="plus"></div>
+			<input
+			@change="previewFile"
+			type="file"
+			accept="image/*,image/jpeg,application/pdf,application/pdf,application/msworld, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+			class="input">
+		</div>
+		<div 
+		:title="previewName"
+		class="preview-name">
+			{{previewName}}
+		</div>
 	</div>
 </template>
 
 <script>
 export default {
-	name: 'VImageUpload'
+	name: 'VImageUpload',
+	data() {
+		return {
+			previewName: null,
+			previewImageURL: null,
+			previewIconURL: null,
+		}
+	},
+	methods: {
+		previewFile(event) {
+			let file = event.target.files[0]
+			let reader = new FileReader()
+
+			reader.onloadend = () => {
+				this.setPreviewImage(reader.result)
+			}
+			if(file) {
+				this.previewName = file.name
+				
+				if(file.type.includes('image')) {
+					reader.readAsDataURL(file)
+				}
+				else if(file.name.toLowerCase().includes('doc', 'docx')) {
+					this.setPreviewIcon(require('~/assets/icons/doc.svg'))
+				}
+				else if(file.name.toLowerCase().includes('pdf')) {
+					this.setPreviewIcon(require('~/assets/icons/pdf.svg'))
+				}
+			}
+		},
+		setPreviewImage(URL) {
+			this.previewImageURL = URL
+			this.previewIconURL = null
+		},
+		setPreviewIcon(URL) {
+			this.previewImageURL = null
+			this.previewIconURL = URL
+		}
+	},
 }
 </script>
 
@@ -15,17 +73,70 @@ export default {
 .v-image-upload {
 	position: relative;
 
-	background: #FDFDFD;
-	border: 1px solid #D2D2D2;
-	border-radius: 5px;
+}
 
-	transition: .2s ease all;
-	cursor: pointer;
+.v-image-upload-inner {
+	position: relative;
+
+	height: 100%;
+	width: 100%;
+
+	background: #FDFDFD;
+	box-shadow: 0 0 0 1px #D2D2D2;
+	box-sizing: border-box;
+	border-radius: 5px;
+	overflow: hidden;
 
 	&:hover {
 		background: #F2F2F2;
-		border-color: @blue;
+			box-shadow: 0 0 0 1px @blue;
 	}
+}
+
+.input,
+.input::-webkit-file-upload-button {
+	z-index: 2;
+
+	height: 100%;
+	width: 100%;
+
+	outline: 0;
+	opacity: 0;
+	cursor: pointer;
+	user-select: none;
+}
+
+.preview-img {
+	position: absolute;
+	top: 0;
+	left: 0;
+	
+	height: 100%;
+	width: 100%;
+
+	opacity: .5;
+}
+
+.preview-icon {
+	position: absolute;
+	top: 10%;
+	bottom: 10%;
+	left: 10%;
+	right: 10%;
+	
+	height: 80%;
+	width: 80%;
+
+	opacity: .5;
+}
+
+.preview-name {
+	margin-top: 8px;
+
+	font-size: @fz-small;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
 }
 
 .plus {
@@ -35,7 +146,7 @@ export default {
 	width: @size;
 	height: @size;
 
-	top: 50% - .25*@size;
+	top: calc(50% - .5*@size);
 	bottom: 50%;
 	left: 50%;
 	right: 50%;
