@@ -13,6 +13,14 @@
 			class="document-upload">
 				Необходимые документы
 			</document-upload>
+			<div class="btns-wrapper">
+				<v-button class="btn btn-cancel red">
+					Отмена
+				</v-button>
+				<v-button class="btn btn-submit blue filled">
+					Отправить
+				</v-button>
+			</div>
 		</form>
 	</div>
 </template>
@@ -65,6 +73,16 @@ export default {
 
 .document-upload {
 	padding-top: 48px;
+}
+
+.btns-wrapper {
+	position: fixed;
+	right: 48px;
+	bottom: 96px;
+
+	.btn:not(:last-child) {
+		margin-right: 16px;
+	}
 }
 
 </style>
