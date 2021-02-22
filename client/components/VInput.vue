@@ -53,6 +53,7 @@ export default {
 
 .input-wrapper {
 	margin-top: 18px;
+	position: relative;
 }
 
 .label,
