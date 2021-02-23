@@ -49,10 +49,10 @@ export default {
 					reader.readAsDataURL(file)
 				}
 				else if(file.name.toLowerCase().includes('doc', 'docx')) {
-					this.setPreviewIcon(require('~/assets/icons/doc.svg'))
+					this.setPreviewIcon(require('~/assets/icons/VImageUpload/doc.svg'))
 				}
 				else if(file.name.toLowerCase().includes('pdf')) {
-					this.setPreviewIcon(require('~/assets/icons/pdf.svg'))
+					this.setPreviewIcon(require('~/assets/icons/VImageUpload/pdf.svg'))
 				}
 			}
 		},
