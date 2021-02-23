@@ -35,12 +35,12 @@ export default {
 <style lang="less" scoped>
 
 .document-upload-container{
-	.flex(start);
+	.flex(flex-start);
 }
 
 .document-example,
 .document-upload {
-	.flex(start, normal, column);
+	.flex(flex-start, normal, column);
 	margin-top: 24px;
 }
 
