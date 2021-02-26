@@ -12,6 +12,7 @@
 			<div class="plus"></div>
 			<input
 			@change="previewFile"
+			@click.stop=""
 			type="file"
 			accept="image/*,image/jpeg,application/pdf,application/pdf,application/msworld, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
 			class="input">
