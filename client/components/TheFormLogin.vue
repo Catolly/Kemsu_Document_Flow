@@ -19,18 +19,11 @@
 			<p>
 				<NuxtLink to="#">Не помню пароль</NuxtLink>
 			</p>
-			<div class="buttons">
-				<v-button
-				id="login"
-				class="btn blue big filled fluid">
-					Войти
-				</v-button>
-				<v-button
-				id="signup"
-				class="btn blue big fluid">
-					Зарегистрироваться
-				</v-button>
-			</div>
+			<v-button
+			id="login"
+			class="login-btn blue big filled fluid">
+				Войти
+			</v-button>
 		</div>
 	</form>
 </template>
@@ -64,11 +57,15 @@ export default {
     checkForm() {
       this.$v.form.$touch()
       if (!this.$v.form.$error) {
-        this.send()
+        this.validate()
       }
     },
-    send() {
-      /*Sending form data to server*/
+    validate() {
+      /*Validating form data*/
+      this.$router.push('/')
+    },
+    to(path) {
+      this.$router.push(path)
     }
   }
 }
@@ -98,12 +95,8 @@ input {
   line-height: 160%;
 }
 
-.btn {
-  margin-top: 10px;
-
-  &:first-child {
+.login-btn {
     margin-top: 32px;
-  }
 }
 
 p {

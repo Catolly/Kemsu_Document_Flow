@@ -1,14 +1,23 @@
 <template>
-  <section class="container">
+  <div class="container">
   	<logo class="big" />
-    <div id="form-login-wrapper">
+    <div class="content">
       <the-form-login />
+      <NuxtLink 
+      to="/signup"
+      class="signup-link">
+        <v-button
+        class="signup-btn blue big fluid">
+          Зарегистрироваться
+        </v-button>
+      </NuxtLink>
     </div>
-  </section>
+  </div>
 </template>
 
 <script>
 import Logo from '~/components/Logo'
+import VButton from '~/components/VButton'
 import TheFormLogin from '~/components/TheFormLogin'
 
 export default {
@@ -16,6 +25,7 @@ export default {
 	name: 'Login',
   components: {
   	Logo,
+    VButton,
     TheFormLogin,
   }
 }
@@ -23,9 +33,22 @@ export default {
 
 <style lang="less" scoped>
 
-#form-login-wrapper {
+.container {
   height: 100vh;
-  .flex(center, center);
+  .flex(center, center, column);
 }
+
+.content {
+  width: 516px;
+}
+
+.signup-btn {
+  margin-top: 10px;
+}
+
+.signup-link:after {
+  display: none;
+}
+
 </style>
 
