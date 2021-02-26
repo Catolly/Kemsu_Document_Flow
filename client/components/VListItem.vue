@@ -1,5 +1,7 @@
 <template>
-	<div class="v-list-item">
+	<div 
+	@click="clickHanler"
+	class="v-list-item">
 		<slot />
 	</div>
 </template>
@@ -7,6 +9,11 @@
 <script>
 export default {
 	name: 'VListItem',
+	methods: {
+		clickHanler() {
+			this.$emit('click')
+		}
+	}
 }
 </script>
 
