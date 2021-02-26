@@ -29,20 +29,12 @@
       type="password"
       placeholder="Пароль"
       required />
-      <div class="buttons">
-        <v-button
-        id="signup"
-        class="btn blue big filled fluid">
-          Зарегистрироваться
-        </v-button>
-        <v-button
-        id="login"
-        class="btn blue big fluid">
-          Войти
-        </v-button>
-      </div>
+      <v-button
+      id="signup"
+      class="signup-btn blue big filled fluid">
+        Зарегистрироваться
+      </v-button>
     </div>
-    <p>Кто-то зарегистрировался под вашим именем? Обратитесь к <NuxtLink to="#">администрации</NuxtLink></p>
   </form>
 </template>
 
@@ -111,15 +103,8 @@ input {
   line-height: 160%;
 }
 
-.btn {
-  margin-top: 10px;
-
-  &:first-child {
-    margin-top: 32px;
-  }
+.signup-btn {
+  margin-top: 32px;
 }
 
-p {
-  margin-top: 18px;
-}
 </style>
