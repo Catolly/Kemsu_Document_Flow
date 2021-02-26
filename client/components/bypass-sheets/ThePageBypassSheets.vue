@@ -39,7 +39,7 @@ export default {
 			this.$router.push('/bypass-sheets/' + bypassSheet.id)
 		},
 		openAddStatementForm() {
-			this.$router.push('/new-bypass-sheet')
+			this.$router.push('/bypass-sheets/create')
 		}
 	},
 	data() {
