@@ -20,14 +20,13 @@ export default {
 <style lang="less" scoped>
 
 .v-list-item {
-	height: 105px;
 	width: 100%;
 
-	padding: 0 50px;
+	padding: 38px 50px;
 	margin-bottom: 12px;
 
 	background: #FDFDFD;
-	border: 1px solid #F3F3F3;
+	border: 2px solid #F3F3F3;
 	border-radius: 12px;
 
 	.flex(space-between, center);
@@ -39,4 +38,20 @@ export default {
 		border-color: @blue;
 	}
 }
+
+.green {
+	color: @green;
+	border-color: @green;
+}
+
+.red {
+	color: @red;
+	border-color: @red;
+}
+
+.disabled {
+	color: @text-grey;
+	border-color: #F3F3F3;
+}
+
 </style>
