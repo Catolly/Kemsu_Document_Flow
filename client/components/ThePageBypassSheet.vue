@@ -11,7 +11,7 @@
 					<v-list-item
 					v-for="bypassSheet in bypassSheets"
 					:key="bypassSheet.id"
-					@click.native="openBypassSheet(bypassSheet.id)"
+					@click="openBypassSheet(bypassSheet)"
 					class="bypass-sheet">
 						<div class="bypass-sheet-title">
 							{{ bypassSheet.title }}
