@@ -51,6 +51,13 @@ module.exports = {
   },
 
   /*
+  ** CSS configuration
+  */
+  css: [
+    {src: '~/styles/index.less', lang: 'less'}
+  ],
+
+  /*
   ** Plugins configuration
   */
   plugins: [

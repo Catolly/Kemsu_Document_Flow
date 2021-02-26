@@ -1,7 +1,7 @@
 <template>
 	<div class="container">
 		<!-- student -->
-		<the-page-bypass-sheet />
+		<the-page-bypass-sheets />
     <!-- worker -->
 
     <!-- admin -->
@@ -10,12 +10,12 @@
 </template>
 
 <script>
-import ThePageBypassSheet from '~/components/ThePageBypassSheet'
+import ThePageBypassSheets from '~/components/bypass-sheets/ThePageBypassSheets'
 
 export default {
   name: 'index',
   components: {
-    ThePageBypassSheet,
+    ThePageBypassSheets,
   },
 }
 </script>
