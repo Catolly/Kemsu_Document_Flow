@@ -36,7 +36,7 @@ export default {
 	},
 	methods: {
 		openBypassSheet(bypassSheet) {
-			this.$router.push('/bypass-sheet/' + bypassSheet)
+			this.$router.push('/bypass-sheets/' + bypassSheet.id)
 		},
 		openAddStatementForm() {
 			this.$router.push('/new-bypass-sheet')
