@@ -1,6 +1,6 @@
 <template> 
 	<div class="logo">
-		<img class="logo-img" src="~/assets/logo.svg" alt="КемГУ">
+		<img class="logo-img" :src="require('~/assets/logo.svg')" alt="КемГУ">
 	</div>
 </template>
 
