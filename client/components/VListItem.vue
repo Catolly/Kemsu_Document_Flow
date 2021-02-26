@@ -28,7 +28,7 @@ export default {
 	cursor: pointer;
 
 	&:hover {
-		background: #FAFAFA;
+		background: #F2F2F2;
 		border-color: @blue;
 	}
 }

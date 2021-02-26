@@ -1,15 +1,15 @@
 <template>
-	<div class="container">
+	<div class="input-wrapper">
 		<input 
 		:id="id"
 		:value="value"
 		@input="updateValue($event.target.value)"
 		:type="type"
 		:required="required"
+		:disabled="disabled"
 		class="input"
 		placeholder=" ">
 		<label 
-		:for="id"
 		class="label">
 			{{placeholder}}
 		</label>
@@ -33,6 +33,10 @@ export default {
 		required: {
 			type: Boolean,
 			default: false
+		},
+		disabled: {
+			type: Boolean,
+			default: false
 		}
 	},
 	methods: {
@@ -47,8 +51,9 @@ export default {
 
 @input-background: #FDFDFD;
 
-.container {
+.input-wrapper {
 	margin-top: 18px;
+	position: relative;
 }
 
 .label,
