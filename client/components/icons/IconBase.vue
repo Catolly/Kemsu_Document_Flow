@@ -2,7 +2,7 @@
 	<svg 
 	:width="width" 
 	:height="height" 
-	viewBox="0 0 24 16"
+	:viewBox="`0 0 ${width} ${height}`"
 	class="icon-base" 
 	xmlns="http://www.w3.org/2000/svg">
 		<slot />
