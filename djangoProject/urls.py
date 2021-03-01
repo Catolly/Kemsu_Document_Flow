@@ -18,7 +18,15 @@ from django.urls import path
 from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import re_path, include
 
-from .views import RegistrationAPIView, RegistrationStaffAPIView
+from .views import (
+    RegistrationStudentAPIView, RegistrationStaffAPIView,
+    DepartmentList, GroupList,
+    InstituteList, ModuleList,
+    PointList, StaffList,
+    StudentList, UserList,
+    GetBypassSheetsView, PostByPassSheetsView,
+    GetByPassSheetsDetailView,
+)
 from .views import LoginAPIView
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -34,10 +42,22 @@ from djangoProject.views import HomeView, ContactsView, LoginView'''
     path('accounts/register/student', RegisterStudent.as_view(), name="register_student")'''
 
 urlpatterns = [
-    path('api/registration/user', RegistrationAPIView.as_view(), name='user_registration'),
+    path('api/registration/student', RegistrationStudentAPIView.as_view(), name='user_registration'),
     path('api/registration/staff', RegistrationStaffAPIView.as_view(), name='staff_registration'),
-    path('login/', LoginAPIView.as_view(), name='user_login'),
-    path('api-auth', include('rest_framework.urls')),
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    #path('login/', LoginAPIView.as_view(), name='user_login'),
+    #path('api-auth', include('rest_framework.urls')),
+    path('api/login', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('admin/', admin.site.urls),
+    path('api/department/', DepartmentList.as_view(), name='department_list'),
+    path('api/group/', GroupList.as_view(), name='group_list'),
+    path('api/institute/', InstituteList.as_view(), name='institute_list'),
+    path('api/module/', ModuleList.as_view(), name='module_list'),
+    path('api/point/', PointList.as_view(), name='point_list'),
+    path('api/staff/', StaffList.as_view(), name='staff_list'),
+    path('api/student/', StudentList.as_view(), name='student_list'),
+    path('api/user/', UserList.as_view(), name='user_list'),
+    path('api/<int:pk>/bypasssheets/', GetBypassSheetsView.as_view(), name="get_bypass_sheets"),
+    path('api/<int:pk>/bypasssheets/create/', PostByPassSheetsView.as_view(), name="post_bypass_sheets"),
+    path('api/bypassshets/<int:pk>/detail', GetByPassSheetsDetailView.as_view(), name="get_bypass_sheets_detail")
 ]

@@ -1,8 +1,11 @@
 from django.contrib.auth import authenticate
 from rest_framework import serializers
-from .models import User
+from .models import (
+    User, Department, Group, Institute,
+    Module, Point, Staff, Student,
+)
 
-class RegistrationSerializer(serializers.ModelSerializer):
+class RegistrationStudentSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
         max_length=128,
         min_length=8,
@@ -16,7 +19,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
         fields = ('username', 'email', 'password')
 
     def create(self, validated_data):
-        return User.objects.create_user(**validated_data)
+        return User.objects.create_student(**validated_data)
 
 class RegistrationStaffSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
@@ -29,7 +32,7 @@ class RegistrationStaffSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('username', 'email', 'password')
+        fields = ('username', 'email', 'password', 'staff_id')
 
     def create(self, validated_data):
         return User.objects.create_staff(**validated_data)
@@ -70,3 +73,75 @@ class LoginSerializer(serializers.Serializer):
         return {
             'token': user.token,
         }
+
+class RecursiveSerializer(serializers.Serializer):
+
+    def to_representation(self, value):
+        serializer = self.parent.__class__(value, context=self.context)
+        return serializer.data
+
+class DepartmentSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Department
+        fields = "__all__"
+
+class GroupSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Group
+        fields = "__all__"
+
+class InstituteSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Institute
+        fields = "__all__"
+
+class ModuleSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Module
+        fields = "__all__"
+
+class PointSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Point
+        fields = "__all__"
+
+class StaffSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Staff
+        fields = "__all__"
+
+class StudentSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Student
+        fields = "__all__"
+
+class UserSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ("id", "username", "email")
+
+class GetBypassSheetsSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Module
+        exclude = ("student_id",)
+
+class PostByPassSheetsSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Module
+        fields = "__all__"
+
+class GetByPassSheetsDetailSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Point
+        exclude = ("module_id",)
