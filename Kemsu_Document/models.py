@@ -165,6 +165,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     student_id = models.ForeignKey(Student, verbose_name="Студент", on_delete=models.SET_NULL, null=True, blank=True)
 
     USERNAME_FIELD = 'username'
+    EMAIL_FIELD = 'email'
     REQUIRED_FIELDS = ('email',)
 
     objects = UserManager()

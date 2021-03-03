@@ -1,5 +1,11 @@
 from django.contrib.auth import authenticate
+from psycopg2.compat import text_type
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
+from rest_framework.serializers import Serializer
+from rest_framework_simplejwt.tokens import RefreshToken
+from djangoProject import settings
+
 from .models import (
     User, Department, Group, Institute,
     Module, Point, Staff, Student,
@@ -45,6 +51,7 @@ class LoginSerializer(serializers.Serializer):
     token = serializers.CharField(max_length=255, read_only=True)
 
     def validate(self, data):
+        username = data.get('username', None)
         email = data.get('email', None)
         password = data.get('password', None)
 
@@ -58,7 +65,7 @@ class LoginSerializer(serializers.Serializer):
                 'A password is required to log in.'
             )
 
-        user = authenticate(username=email, password=password)
+        user = authenticate(email=email, password=password)
 
         if user is None:
             raise serializers.ValidationError(
@@ -145,3 +152,117 @@ class GetByPassSheetsDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Point
         exclude = ("module_id",)
+
+class TokenEmailSerializer(Serializer):
+    username_field = User.EMAIL_FIELD
+
+    def __init__(self, *args, **kwargs):
+        super(TokenEmailSerializer, self).__init__(*args, **kwargs)
+
+        self.fields[self.username_field] = serializers.CharField()
+        self.fields['password'] = serializers.CharField(max_length=128, write_only=True)
+
+    def validate(self, attrs):
+        # self.user = authenticate(**{
+        #     self.username_field: attrs[self.username_field],
+        #     'password': attrs['password'],
+        # })
+        self.user = User.objects.filter(email=attrs[self.username_field]).first()
+        print(self.user)
+
+        if not self.user:
+            raise ValidationError('The user is not valid.')
+
+        if self.user:
+            if not self.user.check_password(attrs['password']):
+                raise ValidationError('Incorrect credentials.')
+        print(self.user)
+        # Prior to Django 1.10, inactive users could be authenticated with the
+        # default `ModelBackend`.  As of Django 1.10, the `ModelBackend`
+        # prevents inactive users from authenticating.  App designers can still
+        # allow inactive users to authenticate by opting for the new
+        # `AllowAllUsersModelBackend`.  However, we explicitly prevent inactive
+        # users from authenticating to enforce a reasonable policy and provide
+        # sensible backwards compatibility with older Django versions.
+        if self.user is None or not self.user.is_active:
+            raise ValidationError('No active account found with the given credentials')
+
+        return {}
+
+    @classmethod
+    def get_token(cls, user):
+        raise NotImplemented(
+            'Must implement `get_token` method for `MyTokenObtainSerializer` subclasses')
+
+
+class TokenEmailPairSerializer(TokenEmailSerializer):
+    @classmethod
+    def get_token(cls, user):
+        return RefreshToken.for_user(user)
+
+    def validate(self, attrs):
+        data = super(TokenEmailPairSerializer, self).validate(attrs)
+        refresh = self.get_token(self.user)
+
+        data['refresh'] = text_type(refresh)
+        data['access'] = text_type(refresh.access_token)
+        data['expiresIn'] = settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].seconds
+        return data
+
+#-----Авторизация по username
+
+class TokenUsernameSerializer(Serializer):
+    username_field = User.USERNAME_FIELD
+
+    def __init__(self, *args, **kwargs):
+        super(TokenUsernameSerializer, self).__init__(*args, **kwargs)
+
+        self.fields[self.username_field] = serializers.CharField()
+        self.fields['password'] = serializers.CharField(max_length=128, write_only=True)
+
+    def validate(self, attrs):
+        # self.user = authenticate(**{
+        #     self.username_field: attrs[self.username_field],
+        #     'password': attrs['password'],
+        # })
+        self.user = User.objects.filter(username=attrs[self.username_field]).first()
+        print(self.user)
+
+        if not self.user:
+            raise ValidationError('The user is not valid.')
+
+        if self.user:
+            if not self.user.check_password(attrs['password']):
+                raise ValidationError('Incorrect credentials.')
+        print(self.user)
+        # Prior to Django 1.10, inactive users could be authenticated with the
+        # default `ModelBackend`.  As of Django 1.10, the `ModelBackend`
+        # prevents inactive users from authenticating.  App designers can still
+        # allow inactive users to authenticate by opting for the new
+        # `AllowAllUsersModelBackend`.  However, we explicitly prevent inactive
+        # users from authenticating to enforce a reasonable policy and provide
+        # sensible backwards compatibility with older Django versions.
+        if self.user is None or not self.user.is_active:
+            raise ValidationError('No active account found with the given credentials')
+
+        return {}
+
+    @classmethod
+    def get_token(cls, user):
+        raise NotImplemented(
+            'Must implement `get_token` method for `MyTokenObtainSerializer` subclasses')
+
+
+class TokenUsernamePairSerializer(TokenUsernameSerializer):
+    @classmethod
+    def get_token(cls, user):
+        return RefreshToken.for_user(user)
+
+    def validate(self, attrs):
+        data = super(TokenUsernamePairSerializer, self).validate(attrs)
+        refresh = self.get_token(self.user)
+
+        data['refresh'] = text_type(refresh)
+        data['access'] = text_type(refresh.access_token)
+        data['expiresIn'] = settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].seconds
+        return data

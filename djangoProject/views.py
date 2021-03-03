@@ -2,20 +2,23 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework_simplejwt.views import TokenObtainPairView
+
 from Kemsu_Document.models import (
     User, Department, Group, Institute,
     Module, Point, Staff, Student,
 )
 
 from Kemsu_Document.serializers import (LoginSerializer,
-    RegistrationStudentSerializer, RegistrationStaffSerializer,
-    DepartmentSerializer, GroupSerializer,
-    InstituteSerializer, ModuleSerializer,
-    PointSerializer, StaffSerializer,
-    StudentSerializer, UserSerializer,
-    GetBypassSheetsSerializer, PostByPassSheetsSerializer,
-    GetByPassSheetsDetailSerializer,
-)
+                                        RegistrationStudentSerializer, RegistrationStaffSerializer,
+                                        DepartmentSerializer, GroupSerializer,
+                                        InstituteSerializer, ModuleSerializer,
+                                        PointSerializer, StaffSerializer,
+                                        StudentSerializer, UserSerializer,
+                                        GetBypassSheetsSerializer, PostByPassSheetsSerializer,
+                                        GetByPassSheetsDetailSerializer, TokenEmailPairSerializer,
+                                        TokenUsernamePairSerializer,
+                                        )
 
 from .permissions import IsStudentUser
 
@@ -181,3 +184,9 @@ class GetByPassSheetsDetailView(APIView):
         serializer = GetByPassSheetsDetailSerializer(point, many=True)
 
         return Response(serializer.data)
+
+class TokenEmailPairView(TokenObtainPairView):
+    serializer_class = TokenEmailPairSerializer
+
+class TokenUsernamePairView(TokenObtainPairView):
+    serializer_class = TokenUsernamePairSerializer
