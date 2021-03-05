@@ -2,23 +2,25 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 
 from Kemsu_Document.models import (
     User, Department, Group, Institute,
-    Module, Point, Staff, Student,
+    Module, Point,
 )
 
-from Kemsu_Document.serializers import (LoginSerializer,
+from Kemsu_Document.serializers import (
                                         RegistrationStudentSerializer, RegistrationStaffSerializer,
                                         DepartmentSerializer, GroupSerializer,
                                         InstituteSerializer, ModuleSerializer,
-                                        PointSerializer, StaffSerializer,
-                                        StudentSerializer, UserSerializer,
+                                        PointSerializer,UserSerializer,
                                         GetBypassSheetsSerializer, PostByPassSheetsSerializer,
                                         GetByPassSheetsDetailSerializer, TokenEmailPairSerializer,
                                         TokenUsernamePairSerializer,
                                         )
+from . import settings
 
 from .permissions import IsStudentUser
 
@@ -27,44 +29,43 @@ class RegistrationStudentAPIView(APIView):
     serializer_class = RegistrationStudentSerializer
 
     def post(self, request):
+        tokenr = TokenObtainPairSerializer().get_token(request.user)
+        tokena = AccessToken().for_user(request.user)
+
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
         return Response(
             {
-                'message': 'Registration is success',
-                    #serializer.data.get('token', None),
+                'accessToken' : str(tokena),
+                'refreshToken': str(tokenr),
+                'expiresIn' : settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].seconds
             },
             status=status.HTTP_201_CREATED,
         )
 
 class RegistrationStaffAPIView(APIView):
     permission_classes = [AllowAny]
+
     serializer_class = RegistrationStaffSerializer
 
     def post(self, request):
+        tokenr = TokenObtainPairSerializer().get_token(request.user)
+        tokena = AccessToken().for_user(request.user)
+
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
         return Response(
             {
-                'message': 'Registration is success'
-                # 'token': serializer.data.get('token', None),
+                'accessToken': str(tokena),
+                'refreshToken': str(tokenr),
+                'expiresIn': settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].seconds
             },
             status=status.HTTP_201_CREATED,
         )
-
-class LoginAPIView(APIView):
-    permission_classes = [AllowAny]
-    serializer_class = LoginSerializer
-
-    def post(self, request):
-        serializer = self.serializer_class(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        return Response(serializer.data, status=status.HTTP_200_OK)
 
 class DepartmentList(APIView):
     permission_classes = [AllowAny]
@@ -109,25 +110,6 @@ class PointList(APIView):
     def get(self, request):
         point = Point.objects.all()
         serializer = PointSerializer(point, many=True)
-
-        return Response(serializer.data)
-
-class StaffList(APIView):
-    permission_classes = [IsAdminUser]
-
-    def get(self, request):
-        staff = Staff.objects.all()
-        serializer = StaffSerializer(staff, many=True)
-
-        return Response(serializer.data)
-
-
-class StudentList(APIView):
-    permission_classes = [IsAdminUser]
-
-    def get(self, request):
-        student = Student.objects.all()
-        serializer = StudentSerializer(student, many=True)
 
         return Response(serializer.data)
 

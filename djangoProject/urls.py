@@ -22,12 +22,10 @@ from .views import (
     RegistrationStudentAPIView, RegistrationStaffAPIView,
     DepartmentList, GroupList,
     InstituteList, ModuleList,
-    PointList, StaffList,
-    StudentList, UserList,
+    PointList,UserList,
     GetBypassSheetsView, PostByPassSheetsView,
     GetByPassSheetsDetailView, TokenEmailPairView, TokenUsernamePairView,
 )
-from .views import LoginAPIView
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -42,8 +40,8 @@ from djangoProject.views import HomeView, ContactsView, LoginView'''
     path('accounts/register/student', RegisterStudent.as_view(), name="register_student")'''
 
 urlpatterns = [
-    path('api/registration/student', RegistrationStudentAPIView.as_view(), name='user_registration'),
-    path('api/registration/staff', RegistrationStaffAPIView.as_view(), name='staff_registration'),
+    path('api/signup/student', RegistrationStudentAPIView.as_view(), name='user_registration'),
+    path('api/signup/staff', RegistrationStaffAPIView.as_view(), name='staff_registration'),
     #path('login/', LoginAPIView.as_view(), name='user_login'),
     #path('api-auth', include('rest_framework.urls')),
     #path('api/login/fio/', TokenObtainPairView.as_view(), name='token_obtain_pair'),

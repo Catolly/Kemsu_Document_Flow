@@ -8,7 +8,7 @@ from djangoProject import settings
 
 from .models import (
     User, Department, Group, Institute,
-    Module, Point, Staff, Student,
+    Module, Point,
 )
 
 class RegistrationStudentSerializer(serializers.ModelSerializer):
@@ -18,11 +18,21 @@ class RegistrationStudentSerializer(serializers.ModelSerializer):
         write_only=True,
     )
 
-    #token = serializers.CharField(max_length=255, read_only=True)
+    #tokens = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ('username', 'email', 'password')
+        fields = ('username', 'email', 'password', 'group_id', 'status')
+
+    # def get_tokens(self, user):
+    #     tokens = RefreshToken.for_user(user)
+    #     refresh = text_type(tokens)
+    #     access = text_type(tokens.access_token)
+    #     data = {
+    #         "refresh": refresh,
+    #         "access": access
+    #     }
+    #     return data
 
     def create(self, validated_data):
         return User.objects.create_student(**validated_data)
@@ -38,54 +48,10 @@ class RegistrationStaffSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('username', 'email', 'password', 'staff_id')
+        fields = ('username', 'email', 'password', 'department_id', 'status')
 
     def create(self, validated_data):
         return User.objects.create_staff(**validated_data)
-
-class LoginSerializer(serializers.Serializer):
-    email = serializers.EmailField(write_only=True)
-    password = serializers.CharField(max_length=128, write_only=True)
-
-    username = serializers.CharField(max_length=255, read_only=True)
-    token = serializers.CharField(max_length=255, read_only=True)
-
-    def validate(self, data):
-        username = data.get('username', None)
-        email = data.get('email', None)
-        password = data.get('password', None)
-
-        if email is None:
-            raise serializers.ValidationError(
-                'An email address is required to log in.'
-            )
-
-        if password is None:
-            raise serializers.ValidationError(
-                'A password is required to log in.'
-            )
-
-        user = authenticate(email=email, password=password)
-
-        if user is None:
-            raise serializers.ValidationError(
-                'A user with this email and password was not found.'
-            )
-
-        if not user.is_active:
-            raise serializers.ValidationError(
-                'This user has been deactivated.'
-            )
-
-        return {
-            'token': user.token,
-        }
-
-class RecursiveSerializer(serializers.Serializer):
-
-    def to_representation(self, value):
-        serializer = self.parent.__class__(value, context=self.context)
-        return serializer.data
 
 class DepartmentSerializer(serializers.ModelSerializer):
 
@@ -117,17 +83,6 @@ class PointSerializer(serializers.ModelSerializer):
         model = Point
         fields = "__all__"
 
-class StaffSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Staff
-        fields = "__all__"
-
-class StudentSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Student
-        fields = "__all__"
 
 class UserSerializer(serializers.ModelSerializer):
 

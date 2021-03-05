@@ -17,7 +17,7 @@ class Institute(models.Model):
         return self.name
 
 class Group(models.Model):
-    name = models.CharField("Название группы", default=None, max_length=50)
+    name = models.CharField("Название группы", default=None, max_length=50, unique=True)
     recruitment_date = models.DateField("Дата набора", default=date.today)
     institute_id = models.ForeignKey(Institute, verbose_name="Институт", on_delete=models.CASCADE, null=False)
 
@@ -28,62 +28,24 @@ class Group(models.Model):
     def __str__(self):
         return self.name
 
-class Student(models.Model):
-    date_of_enrollment = models.DateField("Дата зачисления", default=date.today)
-    group_id = models.ForeignKey(Group, verbose_name="Группа", on_delete=models.CASCADE, null=False)
-    #module_id = models.ManyToManyField(Module, verbose_name="Модули", related_name="student_module", blank=True)
-
-    first_name = models.CharField(max_length=50, default=None, null=True, blank=True)
-    last_name = models.CharField(max_length=50, default=None, null=True, blank=True)
-    patronymic = models.CharField(max_length=50, default=None, null=True, blank=True)
-
-    class Meta:
-        verbose_name = "Студент"
-        verbose_name_plural = "Студенты"
-
-    def __str__(self):
-        return str(self.group_id)
-
-class Module(models.Model):
-    name = models.CharField("Название модуля", default=None, max_length=50)
-    student_id = models.ForeignKey(Student, verbose_name="Студент", on_delete=models.CASCADE, null=False)
-
-    class Meta:
-        verbose_name = "Модуль"
-        verbose_name_plural = "Модули"
-
-    def __str__(self):
-        return self.name
-
-class Point(models.Model):
-    name = models.CharField("Название пункта", default=None, max_length=50)
-    description = models.TextField("Описание", default=None, blank=True)
-    file = models.ImageField("Файл", upload_to="Kemsu_Document/media/", blank=True)
-    module_id = models.ForeignKey(Module, verbose_name="Модуль", on_delete=models.SET_NULL, null=True, blank=True)
-    STATUS = (
-        ('Не отправленно', 'но'),
-        ('На подписании', 'нп'),
-        ('Отказанно', 'о'),
-        ('Подписанно', 'п'),
-    )
-    status = models.CharField(max_length=20, choices=STATUS, blank=True, default='Не отправленно', help_text='Статус документа')
-
-    def create_module(self, name, description, module):
-        self.name = name
-        self.description = description
-        self.module_id = module
-        self.save()
-
-    class Meta:
-        verbose_name = "Пункт"
-        verbose_name_plural = "Пункты"
-
-    def __str__(self):
-        return self.name
+# class Student(models.Model):
+#     date_of_enrollment = models.DateField("Дата зачисления", default=date.today)
+#     group_id = models.ForeignKey(Group, verbose_name="Группа", on_delete=models.CASCADE, null=False)
+#     #module_id = models.ManyToManyField(Module, verbose_name="Модули", related_name="student_module", blank=True)
+#
+#     first_name = models.CharField(max_length=50, default=None, null=True, blank=True)
+#     last_name = models.CharField(max_length=50, default=None, null=True, blank=True)
+#     patronymic = models.CharField(max_length=50, default=None, null=True, blank=True)
+#
+#     class Meta:
+#         verbose_name = "Студент"
+#         verbose_name_plural = "Студенты"
+#
+#     def __str__(self):
+#         return "Студент"
 
 class Department(models.Model):
     name = models.CharField("Название отдела", default=None, max_length=50)
-    point_id = models.ForeignKey(Point, verbose_name="Пункт", on_delete=models.SET_NULL, null=True, blank=True)
 
     class Meta:
         verbose_name = "Отдел"
@@ -92,20 +54,20 @@ class Department(models.Model):
     def __str__(self):
         return self.name
 
-class Staff(models.Model):
-
-    department_id = models.ForeignKey(Department, verbose_name="Отдел", on_delete=models.SET_NULL, null=True)
-
-    first_name = models.CharField(max_length=50, default=None, null=True, blank=True)
-    last_name = models.CharField(max_length=50, default=None, null=True, blank=True)
-    patronymic = models.CharField(max_length=50, default=None, null=True, blank=True)
-
-    class Meta:
-        verbose_name = "Работник"
-        verbose_name_plural = "Работники"
-
-    def __str__(self):
-        return str(self.department_id)
+# class Staff(models.Model):
+#
+#     department_id = models.ForeignKey(Department, verbose_name="Отдел", on_delete=models.SET_NULL, null=True)
+#
+#     first_name = models.CharField(max_length=50, default=None, null=True, blank=True)
+#     last_name = models.CharField(max_length=50, default=None, null=True, blank=True)
+#     patronymic = models.CharField(max_length=50, default=None, null=True, blank=True)
+#
+#     class Meta:
+#         verbose_name = "Работник"
+#         verbose_name_plural = "Работники"
+#
+#     def __str__(self):
+#         return str(self.department_id)
 
 
 class UserManager(BaseUserManager):
@@ -152,6 +114,7 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(db_index=True, max_length=50, unique=True)
+
     email = models.EmailField(
         validators=[validators.validate_email],
         unique=True,
@@ -161,8 +124,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     #is_student = models.BooleanField(default=False)
 
-    staff_id = models.ForeignKey(Staff, verbose_name="Работник", on_delete=models.SET_NULL, null=True, blank=True)
-    student_id = models.ForeignKey(Student, verbose_name="Студент", on_delete=models.SET_NULL, null=True, blank=True)
+    department_id = models.ForeignKey(Department, verbose_name="Отдел", on_delete=models.SET_NULL, null=True)
+    group_id = models.ForeignKey(Group, verbose_name="Группа", on_delete=models.SET_NULL, null=True)
+
+    status = models.CharField(max_length=20)
 
     USERNAME_FIELD = 'username'
     EMAIL_FIELD = 'email'
@@ -177,8 +142,41 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.username
 
-    # def get_full_name(self):
-    #     return self.last_name + " " + self.first_name + " " + self.patronymic
-    #
-    # def get_short_name(self):
-    #     return self.last_name + " " + self.first_name
+class Module(models.Model):
+    name = models.CharField("Название модуля", default=None, max_length=50)
+    student_id = models.ForeignKey(User, verbose_name="Студент", on_delete=models.CASCADE, null=False)
+
+    class Meta:
+        verbose_name = "Модуль"
+        verbose_name_plural = "Модули"
+
+    def __str__(self):
+        return self.name
+
+class Point(models.Model):
+    name = models.CharField("Название пункта", default=None, max_length=50)
+    description = models.TextField("Описание", default=None, blank=True)
+    file = models.ImageField("Файл", upload_to="Kemsu_Document/media/", blank=True)
+    module_id = models.ForeignKey(Module, verbose_name="Модуль", on_delete=models.SET_NULL, null=True, blank=True)
+    point_id = models.ForeignKey(Department, verbose_name="Отдел", on_delete=models.SET_NULL, null=True, blank=True)
+
+    STATUS = (
+        ('Не отправленно', 'но'),
+        ('На подписании', 'нп'),
+        ('Отказанно', 'о'),
+        ('Подписанно', 'п'),
+    )
+    status = models.CharField(max_length=20, choices=STATUS, blank=True, default='Не отправленно', help_text='Статус документа')
+
+    def create_module(self, name, description, module):
+        self.name = name
+        self.description = description
+        self.module_id = module
+        self.save()
+
+    class Meta:
+        verbose_name = "Пункт"
+        verbose_name_plural = "Пункты"
+
+    def __str__(self):
+        return self.name
