@@ -19,7 +19,7 @@ from Kemsu_Document.serializers import (
     PointSerializer, UserSerializer,
     GetBypassSheetsSerializer, PostByPassSheetsSerializer,
     GetByPassSheetsDetailSerializer, TokenEmailPairSerializer,
-    TokenUsernamePairSerializer,
+    TokenUsernamePairSerializer, UpdateUserSerializer,
 )
 from . import settings
 
@@ -125,6 +125,13 @@ class UserList(APIView):
         serializer = UserSerializer(user)
 
         return Response(serializer.data)
+
+    def patch(self, request, pk):
+        user = User.objects.get(id=pk)
+        serializer = UpdateUserSerializer(user, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 class GetBypassSheetsView(APIView):
 

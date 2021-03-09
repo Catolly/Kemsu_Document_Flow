@@ -224,3 +224,18 @@ class TokenUsernamePairSerializer(TokenUsernameSerializer):
         data['access'] = text_type(refresh.access_token)
         data['expiresIn'] = settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].seconds
         return data
+
+class UpdateUserSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ('fullname',)
+
+    def create(self, validated_data):
+        user = User.objects.update_or_create(
+            defaults = {
+                'fullname' : validated_data.get('fullname')
+            }
+        )
+        return user
+
