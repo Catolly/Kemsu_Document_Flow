@@ -3,6 +3,7 @@ from psycopg2.compat import text_type
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import Serializer
+from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.tokens import RefreshToken
 from djangoProject import settings
 
@@ -18,11 +19,9 @@ class RegistrationStudentSerializer(serializers.ModelSerializer):
         write_only=True,
     )
 
-    #tokens = serializers.SerializerMethodField()
-
     class Meta:
         model = User
-        fields = ('username', 'email', 'password', 'group_id', 'status')
+        fields = ('fullname', 'email', 'password', 'group_id', 'status')
 
     # def get_tokens(self, user):
     #     tokens = RefreshToken.for_user(user)
@@ -35,7 +34,7 @@ class RegistrationStudentSerializer(serializers.ModelSerializer):
     #     return data
 
     def create(self, validated_data):
-        return User.objects.create_student(**validated_data)
+         return User.objects.create_student(**validated_data)
 
 class RegistrationStaffSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
@@ -48,7 +47,7 @@ class RegistrationStaffSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('username', 'email', 'password', 'department_id', 'status')
+        fields = ('fullname', 'email', 'password', 'department_id', 'status')
 
     def create(self, validated_data):
         return User.objects.create_staff(**validated_data)
@@ -57,7 +56,7 @@ class DepartmentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Department
-        fields = "__all__"
+        exclude = ('id',)
 
 class GroupSerializer(serializers.ModelSerializer):
 
@@ -86,9 +85,13 @@ class PointSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
 
+    departments = DepartmentSerializer(many=True, read_only=True)
+    institute = serializers.SlugRelatedField(slug_field='name', read_only=True)
+    group = serializers.SlugRelatedField(slug_field='name', read_only=True)
+
     class Meta:
         model = User
-        fields = ("id", "username", "email")
+        fields = ("id", "fullname", "email", 'departments', 'group', 'institute')
 
 class GetBypassSheetsSerializer(serializers.ModelSerializer):
 

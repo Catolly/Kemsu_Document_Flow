@@ -45,14 +45,16 @@ class Group(models.Model):
 #         return "Студент"
 
 class Department(models.Model):
-    name = models.CharField("Название отдела", default=None, max_length=50)
+    title = models.CharField("Название отдела", default=None, max_length=100)
+
+    address = models.CharField("Адрес", default=None, max_length=50, null=True, blank=True)
 
     class Meta:
         verbose_name = "Отдел"
         verbose_name_plural = "Отделы"
 
     def __str__(self):
-        return self.name
+        return self.title
 
 # class Staff(models.Model):
 #
@@ -71,35 +73,41 @@ class Department(models.Model):
 
 
 class UserManager(BaseUserManager):
-    def _create_user(self, username, email, password=None, **extra_fields):
-        if not username:
+    def _create_user(self, fullname, email, password=None, **extra_fields):
+        if not fullname:
             raise ValueError('Указанное имя пользователя должно быть установлено')
 
         if not email:
             raise ValueError('Данный адрес электронной почты должен быть установлен')
 
         email = self.normalize_email(email)
-        user = self.model(username=username, email=email, **extra_fields)
+        user = self.model(fullname=fullname, email=email, **extra_fields)
         user.set_password(password)
+        user.save(using=self._db)
+
+        if user.status == "Студент":
+            user.departments.set([1, 2, 3, 4, 5, 6, 7, 8])
+
         user.save(using=self._db)
 
         return user
 
-    def create_student(self, username, email, password=None, **extra_fields):
+    def create_student(self, fullname, email, password=None, **extra_fields):
         # extra_fields.setdefault('is_student', True)
         extra_fields.setdefault('is_staff', False)
         extra_fields.setdefault('is_superuser', False)
+        extra_fields.setdefault('institute_id', extra_fields.get('group_id').institute_id)
 
-        return self._create_user(username, email, password, **extra_fields)
+        return self._create_user(fullname, email, password, **extra_fields)
 
-    def create_staff(self, username, email, password=None, **extra_fields):
+    def create_staff(self, fullname, email, password=None, **extra_fields):
         # extra_fields.setdefault('is_student', False)
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', False)
 
-        return self._create_user(username, email, password, **extra_fields)
+        return self._create_user(fullname, email, password, **extra_fields)
 
-    def create_superuser(self, username, email, password, **extra_fields):
+    def create_superuser(self, fullname, email, password, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
         #extra_fields.setdefault('is_student', False)
@@ -110,10 +118,10 @@ class UserManager(BaseUserManager):
         if extra_fields.get('is_superuser') is not True:
             raise ValueError('Суперпользователь должен иметь is_superuser=True.')
 
-        return self._create_user(username, email, password, **extra_fields)
+        return self._create_user(fullname, email, password, **extra_fields)
 
 class User(AbstractBaseUser, PermissionsMixin):
-    username = models.CharField(db_index=True, max_length=50, unique=True)
+    fullname = models.CharField(db_index=True, max_length=50, unique=True)
 
     email = models.EmailField(
         validators=[validators.validate_email],
@@ -124,12 +132,13 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     #is_student = models.BooleanField(default=False)
 
-    department_id = models.ForeignKey(Department, verbose_name="Отдел", on_delete=models.SET_NULL, null=True)
-    group_id = models.ForeignKey(Group, verbose_name="Группа", on_delete=models.SET_NULL, null=True)
+    department = models.ForeignKey(Department, verbose_name="Отдел", on_delete=models.SET_NULL, null=True, blank=True)
+    group = models.ForeignKey(Group, verbose_name="Группа", on_delete=models.SET_NULL, null=True, blank=True)
+    departments = models.ManyToManyField(Department, verbose_name="Отделы", related_name="student_departments")
+    institute = models.ForeignKey(Institute, verbose_name="Институт", on_delete=models.SET_NULL, null=True, blank=True)
 
     status = models.CharField(max_length=20)
-
-    USERNAME_FIELD = 'username'
+    USERNAME_FIELD = 'fullname'
     EMAIL_FIELD = 'email'
     REQUIRED_FIELDS = ('email',)
 
@@ -140,7 +149,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name_plural = "Пользователи"
 
     def __str__(self):
-        return self.username
+        return self.fullname
 
 class Module(models.Model):
     name = models.CharField("Название модуля", default=None, max_length=50)

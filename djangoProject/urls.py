@@ -15,14 +15,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth.views import LoginView
 from django.urls import re_path, include
 
 from .views import (
     RegistrationStudentAPIView, RegistrationStaffAPIView,
     DepartmentList, GroupList,
     InstituteList, ModuleList,
-    PointList,UserList,
+    PointList, UserList,
     GetBypassSheetsView, PostByPassSheetsView,
     GetByPassSheetsDetailView, TokenEmailPairView, TokenUsernamePairView,
 )
@@ -56,7 +56,7 @@ urlpatterns = [
     # path('api/point/', PointList.as_view(), name='point_list'),
     # path('api/staff/', StaffList.as_view(), name='staff_list'),
     # path('api/student/', StudentList.as_view(), name='student_list'),
-    # path('api/user/', UserList.as_view(), name='user_list'),
+    path('api/users/<int:pk>', UserList.as_view(), name='user_list'),
     # path('api/<int:pk>/bypasssheets/', GetBypassSheetsView.as_view(), name="get_bypass_sheets"),
     # path('api/<int:pk>/bypasssheets/create/', PostByPassSheetsView.as_view(), name="post_bypass_sheets"),
     # path('api/bypassshets/<int:pk>/detail', GetByPassSheetsDetailView.as_view(), name="get_bypass_sheets_detail")

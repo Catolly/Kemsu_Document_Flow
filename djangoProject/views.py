@@ -1,4 +1,5 @@
-from rest_framework import status
+from rest_framework import status, permissions
+from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -12,14 +13,14 @@ from Kemsu_Document.models import (
 )
 
 from Kemsu_Document.serializers import (
-                                        RegistrationStudentSerializer, RegistrationStaffSerializer,
-                                        DepartmentSerializer, GroupSerializer,
-                                        InstituteSerializer, ModuleSerializer,
-                                        PointSerializer,UserSerializer,
-                                        GetBypassSheetsSerializer, PostByPassSheetsSerializer,
-                                        GetByPassSheetsDetailSerializer, TokenEmailPairSerializer,
-                                        TokenUsernamePairSerializer,
-                                        )
+    RegistrationStudentSerializer, RegistrationStaffSerializer,
+    DepartmentSerializer, GroupSerializer,
+    InstituteSerializer, ModuleSerializer,
+    PointSerializer, UserSerializer,
+    GetBypassSheetsSerializer, PostByPassSheetsSerializer,
+    GetByPassSheetsDetailSerializer, TokenEmailPairSerializer,
+    TokenUsernamePairSerializer,
+)
 from . import settings
 
 from .permissions import IsStudentUser
@@ -35,6 +36,7 @@ class RegistrationStudentAPIView(APIView):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
+
 
         return Response(
             {
@@ -115,11 +117,12 @@ class PointList(APIView):
 
 
 class UserList(APIView):
-    permission_classes = [IsAdminUser]
+    #permission_classes = [IsAdminUser]
+    permission_classes = [AllowAny]
 
-    def get(self, request):
-        user = User.objects.all()
-        serializer = UserSerializer(user, many=True)
+    def get(self, request, pk):
+        user = User.objects.get(id=pk)
+        serializer = UserSerializer(user)
 
         return Response(serializer.data)
 
