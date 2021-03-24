@@ -7,26 +7,26 @@ from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.models import BaseUserManager
 
 class Institute(models.Model):
-    name = models.CharField("Название института", default=None, max_length=50)
+    title = models.CharField("Название института", default=None, max_length=50)
 
     class Meta:
         verbose_name = "Институт"
         verbose_name_plural = "Институты"
 
     def __str__(self):
-        return self.name
+        return self.title
 
 class Group(models.Model):
-    name = models.CharField("Название группы", default=None, max_length=50, unique=True)
+    title = models.CharField("Название группы", default=None, max_length=50, unique=True)
     recruitment_date = models.DateField("Дата набора", default=date.today)
-    institute_id = models.ForeignKey(Institute, verbose_name="Институт", on_delete=models.CASCADE, null=False)
+    institute = models.ForeignKey(Institute, verbose_name="Институт", on_delete=models.CASCADE, null=False)
 
     class Meta:
         verbose_name = "Группа"
         verbose_name_plural = "Группы"
 
     def __str__(self):
-        return self.name
+        return self.title
 
 # class Student(models.Model):
 #     date_of_enrollment = models.DateField("Дата зачисления", default=date.today)
@@ -88,15 +88,14 @@ class UserManager(BaseUserManager):
         # if user.status == "Студент":
         #     user.departments.set([1, 2, 3, 4, 5, 6, 7, 8])
 
-        user.save(using=self._db)
-
         return user
 
     def create_student(self, fullname, email, password=None, **extra_fields):
         # extra_fields.setdefault('is_student', True)
         extra_fields.setdefault('is_staff', False)
         extra_fields.setdefault('is_superuser', False)
-        extra_fields.setdefault('institute', extra_fields.get('group').institute_id)
+        extra_fields.setdefault('status', 'Студент')
+        #extra_fields.setdefault('institute', extra_fields.get('group').institute_id)
 
         return self._create_user(fullname, email, password, **extra_fields)
 
@@ -104,6 +103,7 @@ class UserManager(BaseUserManager):
         # extra_fields.setdefault('is_student', False)
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', False)
+        extra_fields.setdefault('status', 'Работник')
 
         return self._create_user(fullname, email, password, **extra_fields)
 
@@ -132,12 +132,18 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     #is_student = models.BooleanField(default=False)
 
-    department = models.ForeignKey(Department, verbose_name="Отдел", on_delete=models.SET_NULL, null=True, blank=True)
-    group = models.ForeignKey(Group, verbose_name="Группа", on_delete=models.SET_NULL, null=True, blank=True)
-    departments = models.ManyToManyField(Department, verbose_name="Отделы", related_name="student_departments")
-    institute = models.ForeignKey(Institute, verbose_name="Институт", on_delete=models.SET_NULL, null=True, blank=True)
+    #department = models.ForeignKey(Department, verbose_name="Отдел", on_delete=models.SET_NULL, null=True, blank=True)
+    #group = models.ForeignKey(Group, verbose_name="Группа", on_delete=models.SET_NULL, null=True, blank=True)
+    #departments = models.ManyToManyField(Department, verbose_name="Отделы", related_name="student_departments")
+    #institute = models.ForeignKey(Institute, verbose_name="Институт", on_delete=models.SET_NULL, null=True, blank=True)
 
-    status = models.CharField(max_length=20)
+    STATUS = (
+        ('Работник', 'работник'),
+        ('Студент', 'студент'),
+        ('Администратор', 'администратор'),
+    )
+
+    status = models.CharField(max_length=20, choices=STATUS, blank=True, help_text='Статус пользователя')
     USERNAME_FIELD = 'fullname'
     EMAIL_FIELD = 'email'
     REQUIRED_FIELDS = ('email',)
@@ -151,9 +157,25 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.fullname
 
+class Staff(models.Model):
+    user = models.OneToOneField(User, verbose_name="Пользователь", on_delete=models.CASCADE, primary_key=True, related_name="staff")
+    department = models.ForeignKey(Department, verbose_name="Отдел", on_delete=models.SET_NULL, null=True, blank=True, related_name="department")
+    contactNumber = models.CharField("Контактный номер", default="Номер не установлен", max_length=50)
+
+    def __str__(self):
+        return self.user.fullname
+
+class Student(models.Model):
+    user = models.OneToOneField(User, verbose_name="Пользователь", on_delete=models.CASCADE, primary_key=True, related_name="student")
+    group = models.ForeignKey(Group, verbose_name="Группа", on_delete=models.SET_NULL, null=True, blank=True, related_name="group")
+    recordBookNumber = models.CharField("Номер зачётной книжки", max_length=50)
+
+    def __str__(self):
+        return self.user.fullname
+
 class Module(models.Model):
     title = models.CharField("Название модуля", default=None, max_length=50)
-    student_id = models.ForeignKey(User, verbose_name="Студент", on_delete=models.CASCADE, null=False, related_name='ol')
+    student_id = models.ForeignKey(User, verbose_name="Студент", on_delete=models.CASCADE, null=False)
 
     class Meta:
         verbose_name = "Модуль"
@@ -176,9 +198,8 @@ class Point(models.Model):
     description = models.TextField("Описание", default=None, blank=True)
     #file = models.ImageField("Файл", upload_to="Kemsu_Document/media/", blank=True)
     module_id = models.ForeignKey(Module, verbose_name="Модуль", on_delete=models.SET_NULL, null=True, blank=True, related_name="points")
+    staff = models.ForeignKey(Staff, verbose_name="Работник", on_delete=models.SET_NULL, null=True, blank=True)
     #point_id = models.ForeignKey(Department, verbose_name="Отдел", on_delete=models.SET_NULL, null=True, blank=True)
-
-
 
     STATUS = (
         ('Не отправленно', 'но'),

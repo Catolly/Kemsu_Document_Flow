@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from rest_framework import status, permissions
 from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
@@ -9,7 +10,7 @@ from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 
 from Kemsu_Document.models import (
     User, Department, Group, Institute,
-    Module, Point,
+    Module, Point, Student,
 )
 
 from Kemsu_Document.serializers import (
@@ -19,11 +20,11 @@ from Kemsu_Document.serializers import (
     PointSerializer, UserSerializer,
     BypassSheetsSerializer, PostByPassSheetsSerializer,
     GetByPassSheetsDetailSerializer, TokenEmailPairSerializer,
-    TokenUsernamePairSerializer, UpdateUserSerializer,
+    TokenUsernamePairSerializer, UpdateUserSerializer, StudentSerializer,
 )
 from . import settings
+from .permissions import IsOwnerOrReadOnly
 
-from .permissions import IsStudentUser
 
 class RegistrationStudentAPIView(APIView):
     permission_classes = [AllowAny]
@@ -107,13 +108,13 @@ class PointList(APIView):
         return Response(serializer.data)
 
 
-class UserList(APIView):
+class StudentList(APIView):
     #permission_classes = [IsAdminUser]
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, pk):
-        user = User.objects.get(id=pk)
-        serializer = UserSerializer(user)
+        student = Student.objects.get(user=pk)
+        serializer = StudentSerializer(student)
 
         return Response(serializer.data)
 
@@ -123,6 +124,10 @@ class UserList(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    # def test_func(self):
+    #     obj = self.get_object()
+    #     return obj == self.request.user
 
 class BypassSheetsView(APIView):
 

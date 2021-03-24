@@ -21,9 +21,8 @@ from django.urls import re_path, include
 from .views import (
     RegistrationStudentAPIView, RegistrationStaffAPIView,
     GroupList, InstituteList, ModuleList,
-    PointList, UserList,
-    BypassSheetsView, PostByPassSheetsView,
-    GetByPassSheetsDetailView, TokenEmailPairView, TokenUsernamePairView,
+    PointList, BypassSheetsView, PostByPassSheetsView,
+    GetByPassSheetsDetailView, TokenEmailPairView, TokenUsernamePairView, StudentList,
 )
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -55,7 +54,7 @@ urlpatterns = [
     # path('api/point/', PointList.as_view(), name='point_list'),
     # path('api/staff/', StaffList.as_view(), name='staff_list'),
     # path('api/student/', StudentList.as_view(), name='student_list'),
-    path('api/users/<int:pk>/', UserList.as_view(), name='user_list'),
+    path('api/users/<int:pk>/', StudentList.as_view(), name='user_list'),
     path('api/bypass_sheets/', BypassSheetsView.as_view(), name="bypass_sheets"),
     # path('api/<int:pk>/bypasssheets/create/', PostByPassSheetsView.as_view(), name="post_bypass_sheets"),
     # path('api/bypassshets/<int:pk>/detail', GetByPassSheetsDetailView.as_view(), name="get_bypass_sheets_detail")

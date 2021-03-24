@@ -9,10 +9,24 @@ from djangoProject import settings
 
 from .models import (
     User, Department, Group, Institute,
-    Module, Point, Statement, UploadedDocuments, RequiredDocuments,
+    Module, Point, Statement, UploadedDocuments, RequiredDocuments, Staff, Student,
 )
 
-class RegistrationStudentSerializer(serializers.ModelSerializer):
+# class RegistrationStudentSerializer(serializers.ModelSerializer):
+#     password = serializers.CharField(
+#         max_length=128,
+#         min_length=8,
+#         write_only=True,
+#     )
+#
+#     class Meta:
+#         model = User
+#         fields = ('fullname', 'email', 'password', 'group', 'status')
+#
+#     def create(self, validated_data):
+#          return User.objects.create_student(**validated_data)
+
+class RegistrationUserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
         max_length=128,
         min_length=8,
@@ -21,36 +35,37 @@ class RegistrationStudentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('fullname', 'email', 'password', 'group', 'status')
-
-    # def get_tokens(self, user):
-    #     tokens = RefreshToken.for_user(user)
-    #     refresh = text_type(tokens)
-    #     access = text_type(tokens.access_token)
-    #     data = {
-    #         "refresh": refresh,
-    #         "access": access
-    #     }
-    #     return data
-
-    def create(self, validated_data):
-         return User.objects.create_student(**validated_data)
+        fields = ('fullname', 'email', 'password')
 
 class RegistrationStaffSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(
-        max_length=128,
-        min_length=8,
-        write_only=True,
-    )
 
-    #token = serializers.CharField(max_length=255, read_only=True)
+    user = RegistrationUserSerializer(required=True, read_only=False)
 
     class Meta:
-        model = User
-        fields = ('fullname', 'email', 'password', 'department_id', 'status')
+        model = Staff
+        fields = ('user', 'department')
 
     def create(self, validated_data):
-        return User.objects.create_staff(**validated_data)
+        user_data = validated_data['user']
+        if user_data:
+            staff = User.objects.create_staff(**user_data)
+            validated_data['user'] = staff
+        return Staff.objects.create(**validated_data)
+
+class RegistrationStudentSerializer(serializers.ModelSerializer):
+
+    user = RegistrationUserSerializer(required=True, read_only=False)
+
+    class Meta:
+        model = Student
+        fields = ('user', 'group', 'recordBookNumber')
+
+    def create(self, validated_data):
+        user_data = validated_data['user']
+        if user_data:
+            student = User.objects.create_student(**user_data)
+            validated_data['user'] = student
+        return Student.objects.create(**validated_data)
 
 class DepartmentSerializer(serializers.ModelSerializer):
 
@@ -60,9 +75,11 @@ class DepartmentSerializer(serializers.ModelSerializer):
 
 class GroupSerializer(serializers.ModelSerializer):
 
+    institute = serializers.SlugRelatedField(slug_field='title', read_only=True)
+
     class Meta:
         model = Group
-        fields = "__all__"
+        fields = ('title', 'institute')
 
 class InstituteSerializer(serializers.ModelSerializer):
 
@@ -94,18 +111,26 @@ class PointSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Point
-        fields = ("title", "status", "uploadedDocuments", "requiredDocuments")
+        fields = ("title", "status", "uploadedDocuments", "requiredDocuments", "staff")
 
 class UserSerializer(serializers.ModelSerializer):
 
-    departments = DepartmentSerializer(many=True, read_only=True)
-    institute = serializers.SlugRelatedField(slug_field='name', read_only=True)
-    group = serializers.SlugRelatedField(slug_field='name', read_only=True)
-    ol = ModuleSerializer(many=True, read_only=True)
-
     class Meta:
         model = User
-        fields = ("id", "fullname", "email", 'departments', 'group', 'institute', 'ol')
+        fields = ('id', 'fullname', 'email')
+
+class StudentSerializer(serializers.ModelSerializer):
+
+    # departments = DepartmentSerializer(many=True, read_only=True)
+    # institute = serializers.SlugRelatedField(slug_field='name', read_only=True)
+    # group = serializers.SlugRelatedField(slug_field='name', read_only=True)
+    # group = serializers.SlugRelatedField(slug_field='name', read_only=True)
+    user = UserSerializer(required=False, read_only=True)
+    group = GroupSerializer(required=False, read_only=True)
+
+    class Meta:
+        model = Student
+        fields = ('user', 'group')
 
 class StatementSerializer(serializers.ModelSerializer):
 

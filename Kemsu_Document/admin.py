@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import (
     Department, Group, Institute, Module,
-    Point, User, Statement
+    Point, User, Statement, Staff, Student
 )
 
 # Register your models here.
@@ -13,3 +13,5 @@ admin.site.register(Institute)
 admin.site.register(Module)
 admin.site.register(Point)
 admin.site.register(Statement)
+admin.site.register(Staff)
+admin.site.register(Student)
