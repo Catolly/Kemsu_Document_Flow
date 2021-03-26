@@ -121,7 +121,7 @@ class UserManager(BaseUserManager):
         return self._create_user(fullname, email, password, **extra_fields)
 
 class User(AbstractBaseUser, PermissionsMixin):
-    fullname = models.CharField(db_index=True, max_length=50, unique=True)
+    fullname = models.CharField(max_length=50)
 
     email = models.EmailField(
         validators=[validators.validate_email],
@@ -144,9 +144,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
 
     status = models.CharField(max_length=20, choices=STATUS, blank=True, help_text='Статус пользователя')
-    USERNAME_FIELD = 'fullname'
+    USERNAME_FIELD = 'email'
     EMAIL_FIELD = 'email'
-    REQUIRED_FIELDS = ('email',)
+    REQUIRED_FIELDS = ('fullname',)
 
     objects = UserManager()
 
@@ -168,7 +168,7 @@ class Staff(models.Model):
 class Student(models.Model):
     user = models.OneToOneField(User, verbose_name="Пользователь", on_delete=models.CASCADE, primary_key=True, related_name="student")
     group = models.ForeignKey(Group, verbose_name="Группа", on_delete=models.SET_NULL, null=True, blank=True, related_name="group")
-    recordBookNumber = models.CharField("Номер зачётной книжки", max_length=50)
+    recordBookNumber = models.CharField("Номер зачётной книжки", max_length=50, unique=True)
 
     def __str__(self):
         return self.user.fullname
