@@ -8,6 +8,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from djangoProject import settings
 from django.utils.text import gettext_lazy as _
 
+from .exceptions import GroupNotFoundError, ThisUserIsAlreadyExistException, ThisEmailIsAlreadyExistError
 from .models import (
     User, Department, Group, Institute,
     Module, Point, Statement, UploadedDocuments, RequiredDocuments, Staff, Student,
@@ -55,17 +56,47 @@ class RegistrationStaffSerializer(serializers.ModelSerializer):
 
 class RegistrationStudentSerializer(serializers.ModelSerializer):
 
-    user = RegistrationUserSerializer(required=True, read_only=False)
+    #user = RegistrationUserSerializer(required=True, read_only=False)
+    group = serializers.CharField(max_length=50)
+    fullname = serializers.CharField(max_length=50)
+    password = serializers.CharField(
+        max_length=128,
+        min_length=8,
+        write_only=True,
+    )
+    email = serializers.EmailField(max_length=50)
 
     class Meta:
         model = Student
-        fields = ('user', 'group', 'recordBookNumber')
+        #fields = ('user', 'group', 'recordBookNumber')
+        fields = ('fullname', 'password', 'email', 'group', 'recordBookNumber')
 
     def create(self, validated_data):
-        user_data = validated_data['user']
-        if user_data:
+        user_data = dict()
+        user_data.setdefault('fullname', validated_data.pop('fullname'))
+        user_data.setdefault('email', validated_data.pop('email'))
+        user_data.setdefault('password', validated_data.pop('password'))
+
+        fullnameIsExist = User.objects.filter(fullname=user_data['fullname'])
+
+        recordBookNumber = validated_data['recordBookNumber']
+
+        if len(fullnameIsExist) != 0 and recordBookNumber == "":
+            raise ThisUserIsAlreadyExistException
+
+        try:
+            group = Group.objects.get(title=validated_data['group'])
+        except Exception:
+            raise GroupNotFoundError
+        try:
             student = User.objects.create_student(**user_data)
-            validated_data['user'] = student
+        except Exception:
+            raise ThisEmailIsAlreadyExistError
+
+        validated_data['user'] = student
+
+        validated_data['group'] = group
+
         return Student.objects.create(**validated_data)
 
 class DepartmentSerializer(serializers.ModelSerializer):

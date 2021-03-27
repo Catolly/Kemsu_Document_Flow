@@ -10,6 +10,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 
+from Kemsu_Document.exceptions import GroupNotFoundError, ThisUserIsAlreadyExistException, ThisEmailIsAlreadyExistError
 from Kemsu_Document.models import (
     User, Department, Group, Institute,
     Module, Point, Student,
@@ -22,10 +23,10 @@ from Kemsu_Document.serializers import (
     PointSerializer, UserSerializer,
     BypassSheetsSerializer, PostByPassSheetsSerializer,
     GetByPassSheetsDetailSerializer, TokenEmailPairSerializer,
-    TokenUsernamePairSerializer, UpdateUserSerializer, StudentSerializer, RefreshTokenSerializer,
+    TokenUsernamePairSerializer, UpdateUserSerializer, StudentSerializer,
+    RefreshTokenSerializer,
 )
 from . import settings
-from .permissions import IsOwnerOrReadOnly
 
 
 class RegistrationStudentAPIView(APIView):
@@ -33,14 +34,34 @@ class RegistrationStudentAPIView(APIView):
     serializer_class = RegistrationStudentSerializer
 
     def post(self, request):
-        tokenr = TokenObtainPairSerializer().get_token(request.user)
+        tokenr = RefreshToken()
         tokena = AccessToken().for_user(request.user)
 
-        serializer = self.serializer_class(data=request.data)
+        serializer = RegistrationStudentSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
-
-
+        try:
+            serializer.save()
+        except GroupNotFoundError:
+            return Response(
+                {
+                    "message": "This group does not exist"
+                },
+                status=status.HTTP_200_OK
+            )
+        except ThisUserIsAlreadyExistException:
+            return Response(
+                {
+                    "message": "A user with this full name already exists. Please enter your record book number"
+                },
+                status=status.HTTP_200_OK
+            )
+        except ThisEmailIsAlreadyExistError:
+            return Response(
+                {
+                    "message": "This email is already exist"
+                },
+                status=status.HTTP_200_OK
+            )
         return Response(
             {
                 'accessToken' : str(tokena),
@@ -56,8 +77,8 @@ class RegistrationStaffAPIView(APIView):
     serializer_class = RegistrationStaffSerializer
 
     def post(self, request):
-        tokenr = TokenObtainPairSerializer().get_token(request.user)
-        tokena = AccessToken().for_user(request.user)
+        # tokenr = TokenObtainPairSerializer().get_token(request.user)
+        # tokena = AccessToken().for_user(request.user)
 
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -65,8 +86,8 @@ class RegistrationStaffAPIView(APIView):
 
         return Response(
             {
-                'accessToken': str(tokena),
-                'refreshToken': str(tokenr),
+                # 'accessToken': str(tokena),
+                # 'refreshToken': str(tokenr),
                 'expiresIn': settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].seconds
             },
             status=status.HTTP_201_CREATED,

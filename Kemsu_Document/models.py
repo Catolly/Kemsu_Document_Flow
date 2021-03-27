@@ -168,7 +168,7 @@ class Staff(models.Model):
 class Student(models.Model):
     user = models.OneToOneField(User, verbose_name="Пользователь", on_delete=models.CASCADE, primary_key=True, related_name="student")
     group = models.ForeignKey(Group, verbose_name="Группа", on_delete=models.SET_NULL, null=True, blank=True, related_name="group")
-    recordBookNumber = models.CharField("Номер зачётной книжки", max_length=50, unique=True)
+    recordBookNumber = models.CharField("Номер зачётной книжки", max_length=50, null=True, blank=True)
 
     def __str__(self):
         return self.user.fullname
