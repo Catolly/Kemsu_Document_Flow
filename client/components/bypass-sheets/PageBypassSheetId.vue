@@ -3,13 +3,33 @@
 		<h1 class="header">
 			Обходной лист - {{title}}
 		</h1>
+		<v-list class="point-list">
+			<v-list-item-point
+				v-for="point in points"
+				:key="point.id"
+				@click="toggle(point)"
+				:id="point.id"
+				:status="point.status"
+				:title="point.title"
+				:reason="point.reason"
+				:requiredDocuments="point.requiredDocuments"
+				:worker="point.worker"
+				:phone="point.phone"
+				class="point" />
+		</v-list>	
 	</div>
 </template>
 
 <script>
+import VList from '~/components/VList'
+import VListItemPoint from '~/components/bypass-sheets/VListItemPoint'
 
 export default {
 	name: 'PageBypassSheet',
+	components: {
+		VList,
+		VListItemPoint,
+	},
 	data() {
 		return {
 			id: 0,
@@ -104,5 +124,8 @@ export default {
 	margin-top: 48px;
 }
 
+.point-list {
+	margin-top: 48px;
+}
 
 </style>
