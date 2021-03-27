@@ -7,6 +7,7 @@
 <script>
 export default {
 	name: 'empty',
+	middleware: 'checkUserIsLoggedOut'
 }
 </script>
 
