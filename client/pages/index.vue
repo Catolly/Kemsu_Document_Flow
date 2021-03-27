@@ -2,7 +2,7 @@
 	<div class="container">
 		<!-- student -->
 		<the-page-bypass-sheets />
-    <!-- worker -->
+    <!-- staff -->
 
     <!-- admin -->
 
