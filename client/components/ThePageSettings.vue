@@ -13,16 +13,17 @@
 			id="first-name" 
 			class="v-input" />
 			<v-input
-			:value="patronymic"
+			:value="middleName"
 			placeholder="Отчество"
-			id="patronymic" 
+			id="middleName" 
 			class="v-input" />
 			<div 
-			v-for="item in about"
-			:key="item.title"
-			class="about-field">
-			<span class="field-title">{{item.title}}</span>
-			<span class="field-body">{{item.body}}</span>
+			v-for="departmentsItem in departments"
+			:key="departmentsItem.title"
+			class="departments-field">
+				<span class="field-title">{{departmentsItem.title}}</span>
+				<span class="field-body">{{departmentsItem.body}}</span>
+			</div>
 		</div>
 	</div>
 	<div class="footer">
@@ -55,10 +56,10 @@ export default {
 		return {
 			lastName: 'Козырева',
 			firstName: 'Татьяна',
-			patronymic: 'Андреевна',
-			about: [
+			middleName: 'Андреевна',
+			departments: [
 				{
-					title: 'Интитут, группа',
+					title: 'Институт, группа',
 					body: 'Факультет 1, КГУ, группа 45'
 				},
 				{
@@ -78,7 +79,7 @@ export default {
 					body: 'Факультет 1, КГУ, группа 45'
 				},
 				{
-					title: 'ОКБ Бюро пропусков',
+					title: 'Профком студентов',
 					body: 'Факультет 1, КГУ, группа 45'
 				},
 				{
@@ -99,7 +100,7 @@ export default {
 				},
 			]
 		}
-	}
+	},
 }
 </script>
 
@@ -121,7 +122,7 @@ export default {
 		width: 360px;
 	}
 
-	.about-field {
+	.departments-field {
 		.flex(flex-start, normal, column);
 	}
 
