@@ -1,22 +1,20 @@
 <template>
-	<form @submit.prevent="checkForm()" id="form"> 
+	<form @submit.prevent="checkForm" id="form"> 
 		<h1 id="form-header">Вход</h1>
 		<div id="form-inner">
 			<v-input
 			v-model.trim="form.username"
-			:class="$v.form.username.$error ? 'is-invalid' : ''"
+			placeholder="Ф.И.О. / Email"
 			id="username"
-			type="text"
-			placeholder="Ф.И.О."
+      class="username"
 			required />
 			<v-input
 			v-model.trim="form.password"
-			:class="$v.form.password.$error ? 'is-invalid' : ''"
+			placeholder="Пароль"
 			id="password"
 			type="password"
-			placeholder="Пароль"
 			required />
-			<p>
+			<p class="forgot-password">
 				<NuxtLink to="#">Не помню пароль</NuxtLink>
 			</p>
 			<v-button
@@ -29,15 +27,14 @@
 </template>
 
 <script>
-import VInput from '~/components/VInput'
 import VButton from '~/components/VButton'
-import { required, minLength, email } from 'vuelidate/lib/validators'
+import VInput from '~/components/VInput'
 
 export default {
   name: 'TheFormLogin',
   components: {
-    VInput,
     VButton,
+    VInput,
   },
   data() {
     return {
@@ -47,27 +44,19 @@ export default {
       }
     }
   },
-  validations: {
-    form: {
-      username: { required },
-      password: { required },
-    },
-  },
   methods: {
     checkForm() {
-      this.$v.form.$touch()
-      if (!this.$v.form.$error) {
-        this.validate()
-      }
+      // Проверка данных формы
+      // ...
+      this.login()
     },
-    validate() {
-      /*Validating form data*/
+    async login() {   
+      // // Валидация данных на сервере
+      // // ...
+
       this.$router.push('/')
     },
-    to(path) {
-      this.$router.push(path)
-    }
-  }
+  },
 }
 </script>
 
@@ -85,21 +74,17 @@ export default {
 #form-inner {
   margin-top: 48px;
 
-  & p {
+  .username {
+    width: 100%;
+  }
+
+  .forgot-password {
     margin-top: 8px;
+  }
+
+  .login-btn {
+    margin-top: 32px;
   }
 }
 
-input {
-  font-size: @fz-large;
-  line-height: 160%;
-}
-
-.login-btn {
-    margin-top: 32px;
-}
-
-p {
-  margin-top: 18px;
-}
 </style>

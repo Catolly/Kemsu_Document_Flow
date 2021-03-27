@@ -1,25 +1,25 @@
 <template>
-	<form @submit.prevent="checkForm()" id="form"> 
+	<form @submit.prevent="checkForm" id="form"> 
     <h1 id="form-header">Регистрация</h1>
     <div id="form-inner">
       <v-input
       v-model.trim="form.username"
-      :class="$v.form.username.$error ? 'is-invalid' : ''"
       id="username"
+      class="username"
       type="text"
       placeholder="Ф.И.О."
       required />
       <v-input
       v-model.trim="form.email"
-      :class="$v.form.email.$error ? 'is-invalid' : ''"
       id="email"
+      class="email"
       type="email"
       placeholder="Email"
       required />
       <v-input
       v-model.trim="form.password"
-      :class="$v.form.password.$error ? 'is-invalid' : ''"
       id="password"
+      class="password"
       type="password"
       placeholder="Пароль"
       required />
@@ -28,20 +28,30 @@
       class="signup-btn blue big filled fluid">
         Зарегистрироваться
       </v-button>
+      <NuxtLink 
+      to="/login"
+      class="login-link">
+        <v-button
+        class="login-btn blue big fluid">
+          Войти
+        </v-button>
+      </NuxtLink>
+      <p class="signup-problem">
+        Кто-то зарегистрировался под вашим именем? Обратитесь к <NuxtLink to="#">администрации</NuxtLink>
+      </p>
     </div>
   </form>
 </template>
 
 <script>
-import VInput from '~/components/VInput'
 import VButton from '~/components/VButton'
-import { required, minLength, email } from 'vuelidate/lib/validators'
+import VInput from '~/components/VInput'
 
 export default {
   name: 'TheFormSingupStudent',
   components: {
-    VInput,
     VButton,
+    VInput,
   },
   data() {
     return {
@@ -52,22 +62,16 @@ export default {
       }
     }
   },
-  validations: {
-    form: {
-      username: { required, minLength: minLength(5) },
-      email: { required, email },
-      password: { required },
-    },
   },
   methods: {
     checkForm() {
-      this.$v.form.$touch()
-      if (!this.$v.form.$error) {
-        this.send()
-      }
+      // Проверка данных формы
+      // ...
+      this.signup()
     },
-    send() {
-      /*Sending form data to server*/
+    async signup() {
+
+      this.$router.push('/')
     },
   }
 }
@@ -77,7 +81,7 @@ export default {
 @import '~/styles/index.less';
 
 #form {
-	width: 516px;
+  width: 516px;
 }
 
 #form-header {
@@ -87,18 +91,28 @@ export default {
 #form-inner {
   margin-top: 48px;
 
-  & p {
+  .username {
+    width: 100%;
+  }
+
+  .forgot-password {
     margin-top: 8px;
   }
-}
 
-input {
-  font-size: @fz-large;
-  line-height: 160%;
-}
+  .signup-btn {
+    margin-top: 32px;
+  }
 
-.signup-btn {
-  margin-top: 32px;
-}
+  .login-btn {
+    margin-top: 10px;
+  }
 
+  .login-link:after {
+    display: none;
+  }
+
+  .signup-problem {
+    margin-top: 16px;
+  }
+}
 </style>
