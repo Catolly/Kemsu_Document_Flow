@@ -25,24 +25,27 @@
 				<span class="field-body">{{departmentsItem.body}}</span>
 			</div>
 		</div>
-	</div>
-	<div class="footer">
-		<NuxtLink to="/login" class="logout">
-			Выйти из аккаунта
-		</NuxtLink>
-		<div class="btns-wrapper">
-			<v-button class="btn btn-cancel red">
-				Отмена
-			</v-button>
-			<v-button class="btn btn-submit blue filled">
-				Отправить
-			</v-button>
+		<div class="footer">
+			<span @click="logout">
+				<NuxtLink  to="#" class="logout">
+					Выйти из аккаунта
+				</NuxtLink>
+			</span>
+			<div class="btns-wrapper">
+				<v-button class="btn btn-cancel red">
+					Отмена
+				</v-button>
+				<v-button class="btn btn-submit blue filled">
+					Отправить
+				</v-button>
+			</div>
 		</div>
 	</div>
-</div>
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
 import VInput from '~/components/VInput'
 import VButton from '~/components/VButton'
 
@@ -100,6 +103,15 @@ export default {
 				},
 			]
 		}
+	},
+	methods: {
+		...mapActions([
+			'clearTokens'
+		]),
+		async logout() {
+			await this.clearTokens()
+			this.$router.push('/login')
+		},
 	},
 }
 </script>
