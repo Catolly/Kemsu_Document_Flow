@@ -22,7 +22,7 @@ from .views import (
     RegistrationStudentAPIView, RegistrationStaffAPIView,
     GroupList, InstituteList, ModuleList,
     PointList, BypassSheetsView, PostByPassSheetsView,
-    GetByPassSheetsDetailView, TokenEmailPairView, TokenUsernamePairView, StudentList,
+    GetByPassSheetsDetailView, TokenEmailPairView, TokenUsernamePairView, StudentList, LogoutView,
 )
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -45,6 +45,7 @@ urlpatterns = [
     #path('api/login/fio/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     #path('api/login/fio/', TokenUsernamePairView.as_view(), name='token_username_pair'),
     path('api/login/', TokenEmailPairView.as_view(), name='token_email_pair'),
+    path('api/logout/', LogoutView.as_view(), name='auth_logout'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('admin/', admin.site.urls),
     # path('api/department/', DepartmentList.as_view(), name='department_list'),

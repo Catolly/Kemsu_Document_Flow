@@ -6,6 +6,7 @@ from rest_framework.serializers import Serializer
 from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.tokens import RefreshToken
 from djangoProject import settings
+from django.utils.text import gettext_lazy as _
 
 from .models import (
     User, Department, Group, Institute,
@@ -287,3 +288,19 @@ class UpdateUserSerializer(serializers.ModelSerializer):
         )
         return user
 
+class RefreshTokenSerializer(serializers.Serializer):
+    refresh = serializers.CharField()
+
+    default_error_messages = {
+        'bad_token': _('Token is invalid or expired')
+    }
+
+    def validate(self, attrs):
+        self.token = attrs['refresh']
+        return attrs
+
+    def save(self, **kwargs):
+        try:
+            RefreshToken(self.token).blacklist()
+        except TokenError:
+            self.fail('bad_token')

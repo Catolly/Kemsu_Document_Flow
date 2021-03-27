@@ -1,3 +1,5 @@
+import base64
+
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from rest_framework import status, permissions
 from rest_framework.generics import GenericAPIView
@@ -20,7 +22,7 @@ from Kemsu_Document.serializers import (
     PointSerializer, UserSerializer,
     BypassSheetsSerializer, PostByPassSheetsSerializer,
     GetByPassSheetsDetailSerializer, TokenEmailPairSerializer,
-    TokenUsernamePairSerializer, UpdateUserSerializer, StudentSerializer,
+    TokenUsernamePairSerializer, UpdateUserSerializer, StudentSerializer, RefreshTokenSerializer,
 )
 from . import settings
 from .permissions import IsOwnerOrReadOnly
@@ -178,3 +180,13 @@ class TokenEmailPairView(TokenObtainPairView):
 
 class TokenUsernamePairView(TokenObtainPairView):
     serializer_class = TokenUsernamePairSerializer
+
+class LogoutView(GenericAPIView):
+    serializer_class = RefreshTokenSerializer
+    permission_classes = (permissions.IsAuthenticated, )
+
+    def post(self, request, *args):
+        sz = self.get_serializer(data=request.data)
+        sz.is_valid(raise_exception=True)
+        sz.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
