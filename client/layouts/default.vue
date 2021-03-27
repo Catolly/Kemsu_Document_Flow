@@ -17,6 +17,7 @@ export default {
 		Sidebar,
 		Logo,
 	},
+	middleware: 'checkUserIsLoggedIn'
 }
 </script>
 
