@@ -46,6 +46,8 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
+
 import VButton from '~/components/VButton'
 import VInput from '~/components/VInput'
 import VInputAutocomplete from '~/components/VInputAutocomplete'
@@ -99,12 +101,43 @@ export default {
     }
   },
   methods: {
+    ...mapMutations ([
+      'updateTokens'
+    ]),
     checkForm() {
       // Проверка данных формы
       // ...
       this.signup()
     },
     async signup() {
+      // const body = JSON.stringify({
+      //   fullName: 'TEST FULLNAME',
+      //   email: 'TEST EMAIL',
+      //   group: 'TEST GROUP',
+      //   password: 'TEST PASSWORD'
+      // })
+
+      // // Отправка данных на сервер
+      // // ...
+      // try {
+      //   const tokens = await fetch('http://mydoc.kemsu.ru/api/signup/student', {
+      //     method: 'POST',
+      //     headers: {
+      //       'Accept': 'application/json',
+      //       'Content-Type': 'application/json',
+      //       'X-Content-Type-Options': 'nosniff',
+      //       'OPTIONS': '*',
+      //     },
+      //     body,
+      //   })
+      //   .then(response => response.json())
+      //   .then(tokens => {
+      //     console.log(tokens)
+      //     this.updateTokens(tokens)
+      //   })
+      // } catch (err) {
+      //   console.error(err)
+      // }
 
       this.$router.push('/')
     },
