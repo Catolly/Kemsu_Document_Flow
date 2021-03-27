@@ -2,8 +2,10 @@
 	<form @submit.prevent="checkForm" id="form"> 
     <h1 id="form-header">Регистрация</h1>
     <div id="form-inner">
-      <v-input
+      <v-input-autocomplete
       v-model.trim="form.username"
+      :options="relevantUsersOptions"
+      autocomplete="off"
       id="username"
       class="username"
       type="text"
@@ -46,12 +48,14 @@
 <script>
 import VButton from '~/components/VButton'
 import VInput from '~/components/VInput'
+import VInputAutocomplete from '~/components/VInputAutocomplete'
 
 export default {
   name: 'TheFormSingupStudent',
   components: {
     VButton,
     VInput,
+    VInputAutocomplete,
   },
   data() {
     return {
@@ -59,9 +63,40 @@ export default {
         username: '',
         email: '',
         password: '',
-      }
+      },
+      relevantUsers: [
+        {
+          id: 34,
+          fullName: 'Козырева Татьяна Андреевна',
+          group: "M-174",
+        },
+        {
+          id: 64,
+          fullName: 'Козырева Татьяна Андреевна',
+          group: "M-185",
+        },
+        {
+          id: 18,
+          fullName: 'Сергиенко Анатолий Николаевич',
+          group: "M-174",
+        },
+        {
+          id: 93,
+          fullName: 'Оооооооооооооооооооочень длинное имя',
+          group: "M-174",
+        },
+      ],
     }
   },
+  computed: {
+    relevantUsersOptions() {
+      return this.relevantUsers.map(user => { 
+        return {
+          id: user.id,
+          value: user.fullName + ' - ' + user.group
+        }
+      })
+    }
   },
   methods: {
     checkForm() {
