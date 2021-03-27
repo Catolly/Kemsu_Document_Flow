@@ -3,16 +3,15 @@
 		<form id="form">
 			<h1 class="header">Обходной лист</h1>
 			<v-select 
-			class="reason"
-			id="reason"
-			:title="'Причина'"
+			placeholder="Причина"
 			:options="reasonOptions"
+			id="reason"
+			class="reason"
 			required />
 			<document-upload 
 			:documentExampleSrc="documentExampleSrc"
-			class="document-upload">
-				Необходимые документы
-			</document-upload>
+			:title="'Необходимые документы'	"
+			class="document-upload" />
 			<div class="btns-wrapper">
 				<v-button class="btn btn-cancel red">
 					Отмена

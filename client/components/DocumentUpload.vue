@@ -1,7 +1,7 @@
 <template>
 	<div class="container">
 		<h2 class="header">
-			<slot></slot>
+			{{title}}
 		</h2>
 		<div class="document-upload-container">
 			<div class="document-example">
@@ -27,7 +27,14 @@ export default {
 		VImageUpload,
 	},
 	props: {
-		documentExampleSrc: String,
+		title: {
+			type: String,
+			required: true
+		},
+		documentExampleSrc: {
+			type: String,
+			required: true
+		}
 	}
 }
 </script>
