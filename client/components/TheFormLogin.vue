@@ -27,6 +27,8 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
+
 import VButton from '~/components/VButton'
 import VInput from '~/components/VInput'
 
@@ -45,6 +47,9 @@ export default {
     }
   },
   methods: {
+    ...mapMutations([
+      'updateTokens'
+    ]),
     checkForm() {
       // Проверка данных формы
       // ...
@@ -53,6 +58,14 @@ export default {
     async login() {   
       // // Валидация данных на сервере
       // // ...
+      const tokens = await new Promise((res, rej) => {
+        setTimeout(() => res({
+          accessToken: 'logged',
+          refreshToken: 'logged',
+          expiresIn: Date.now() + 1800e3,
+        }), 500)
+      })
+      this.updateTokens(tokens)
 
       this.$router.push('/')
     },
