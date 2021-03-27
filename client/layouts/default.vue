@@ -1,7 +1,6 @@
 <template>
 	<div class="container">
-		<logo />
-		<sidebar-layout />
+		<sidebar />
 		<div class="content-wrapper">
 			<Nuxt />
 		</div>
@@ -9,12 +8,13 @@
 </template>
 
 <script>
-import SidebarLayout from '~/layouts/SidebarLayout'
+import Sidebar from '~/components/Sidebar'
 import Logo from '~/components/Logo'
 
 export default {
+	name: 'default',
 	components: {
-		SidebarLayout,
+		Sidebar,
 		Logo,
 	},
 }

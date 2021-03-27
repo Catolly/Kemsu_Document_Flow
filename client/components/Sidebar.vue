@@ -1,9 +1,10 @@
 <template>
   <div class="container">
+    <logo />
     <!-- Определяем, какие права у юзера -->
     <div class="nav-wrapper">
       <the-nav-student />
-      <!-- <the-nav-worker /> -->
+      <!-- <the-nav-Staff /> -->
       <!-- <the-nav-admin /> -->
     </div>
   </div>
@@ -12,15 +13,15 @@
 <script>
 import Logo from '~/components/Logo'
 import TheNavStudent from '~/components/TheNavStudent'
-import TheNavWorker from '~/components/TheNavWorker'
+import TheNavStaff from '~/components/TheNavStaff'
 import TheNavAdmin from '~/components/TheNavAdmin'
 
 export default {
-  name: 'SidebarLayout',
+  name: 'Sidebar',
   components: {
     Logo,
     TheNavStudent,
-    TheNavWorker,
+    TheNavStaff,
     TheNavAdmin,
   },
 }
@@ -38,5 +39,6 @@ export default {
 
   box-shadow: 10px 4px 120px rgba(0, 0, 0, 0.04);
 }
+
 </style>
 
