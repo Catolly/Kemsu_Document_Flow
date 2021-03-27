@@ -12,4 +12,8 @@ export default {
 
 <style lang="less" scoped>
 
+.v-list * {
+	margin-top: 12px;
+}
+
 </style>

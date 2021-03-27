@@ -1,5 +1,7 @@
 <template>
-	<button class="v-button">
+	<button 
+	tabindex="0"
+	class="v-button">
 		<slot />
 	</button>
 </template>
@@ -18,10 +20,13 @@ export default {
   font-size: @fz-normal;
   font-weight: @fw-medium;
 
-  background-color: transparent;
-  
   border-radius: 10px;
-  border: none;
+	border: 1px solid #000;
+	background: transparent;
+
+	&:hover {
+		background: rgba(0, 0, 0, .025);
+	}
 }
 
 .big {
@@ -53,43 +58,49 @@ export default {
 .red {
 	color: @red;
 	border: 1px solid @red;
+	&:focus,
 	&:hover {
-		color: @red-hover;
-		border-color: @red-hover;
-	}
-	&.filled {
+		color: #fff;
 		background-color: @red;
 	}
+	&.filled {
+		background: @red;
+	}
+	&.filled:focus,
 	&.filled:hover {
-		background-color: @red-hover;
+		background: @red-hover;
 	}
 }
 .green {
 	color: @green;
 	border: 1px solid @green;
+	&:focus,
 	&:hover {
-		color: @green-hover;
-		border-color: @green-hover;
+		color: #fff;
+		background-color: @red;
 	}
 	&.filled {
-		background-color: @green;
+		background: @green;
 	}
+	&.filled:focus,
 	&.filled:hover {
-		background-color: @green-hover;
+		background: @green-hover;
 	}
 }
 .blue {
 	color: @blue;
 	border: 1px solid @blue;
+	&:focus,
 	&:hover {
-		color: @blue-hover;
-		border-color: @blue-hover;
+		color: #fff;
+		background-color: @red;
 	}
 	&.filled {
-		background-color: @blue;
+		background: @blue;
 	}
+	&.filled:focus,
 	&.filled:hover {
-		background-color: @blue-hover;
+		background: @blue-hover;
 	}
 }
 

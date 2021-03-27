@@ -13,35 +13,39 @@
 			id="first-name" 
 			class="v-input" />
 			<v-input
-			:value="patronymic"
+			:value="middleName"
 			placeholder="Отчество"
-			id="patronymic" 
+			id="middleName" 
 			class="v-input" />
 			<div 
-			v-for="item in about"
-			:key="item.title"
-			class="about-field">
-			<span class="field-title">{{item.title}}</span>
-			<span class="field-body">{{item.body}}</span>
+			v-for="departmentsItem in departments"
+			:key="departmentsItem.title"
+			class="departments-field">
+				<span class="field-title">{{departmentsItem.title}}</span>
+				<span class="field-body">{{departmentsItem.body}}</span>
+			</div>
+		</div>
+		<div class="footer">
+			<span @click="logout">
+				<NuxtLink  to="#" class="logout">
+					Выйти из аккаунта
+				</NuxtLink>
+			</span>
+			<div class="btns-wrapper">
+				<v-button class="btn btn-cancel red">
+					Отмена
+				</v-button>
+				<v-button class="btn btn-submit blue filled">
+					Отправить
+				</v-button>
+			</div>
 		</div>
 	</div>
-	<div class="footer">
-		<NuxtLink to="/login" class="logout">
-			Выйти из аккаунта
-		</NuxtLink>
-		<div class="btns-wrapper">
-			<v-button class="btn btn-cancel red">
-				Отмена
-			</v-button>
-			<v-button class="btn btn-submit blue filled">
-				Отправить
-			</v-button>
-		</div>
-	</div>
-</div>
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
 import VInput from '~/components/VInput'
 import VButton from '~/components/VButton'
 
@@ -55,10 +59,10 @@ export default {
 		return {
 			lastName: 'Козырева',
 			firstName: 'Татьяна',
-			patronymic: 'Андреевна',
-			about: [
+			middleName: 'Андреевна',
+			departments: [
 				{
-					title: 'Интитут, группа',
+					title: 'Институт, группа',
 					body: 'Факультет 1, КГУ, группа 45'
 				},
 				{
@@ -78,7 +82,7 @@ export default {
 					body: 'Факультет 1, КГУ, группа 45'
 				},
 				{
-					title: 'ОКБ Бюро пропусков',
+					title: 'Профком студентов',
 					body: 'Факультет 1, КГУ, группа 45'
 				},
 				{
@@ -99,7 +103,16 @@ export default {
 				},
 			]
 		}
-	}
+	},
+	methods: {
+		...mapActions([
+			'clearTokens'
+		]),
+		async logout() {
+			await this.clearTokens()
+			this.$router.push('/login')
+		},
+	},
 }
 </script>
 
@@ -121,7 +134,7 @@ export default {
 		width: 360px;
 	}
 
-	.about-field {
+	.departments-field {
 		.flex(flex-start, normal, column);
 	}
 

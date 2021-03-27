@@ -8,7 +8,7 @@
 		</v-button>
 		<div class="bypass-sheet-list-wrapper">
 			<v-list class="bypass-sheet-list">
-					<v-list-item
+					<v-list-item-base
 					v-for="bypassSheet in bypassSheets"
 					:key="bypassSheet.id"
 					@click="openBypassSheet(bypassSheet)"
@@ -16,7 +16,7 @@
 						<div class="bypass-sheet-title">
 							{{ bypassSheet.title }}
 						</div>
-					</v-list-item>
+					</v-list-item-base>
 			</v-list>
 		</div>
 	</div>
@@ -25,14 +25,14 @@
 <script>
 import VButton from '~/components/VButton'
 import VList from '~/components/VList'
-import VListItem from '~/components/VListItem'
+import VListItemBase from '~/components/VListItemBase'
 
 export default {
 	name: 'ThePageBypassSheet',
 	components: {
 		VButton,
 		VList,
-		VListItem,
+		VListItemBase,
 	},
 	methods: {
 		openBypassSheet(bypassSheet) {

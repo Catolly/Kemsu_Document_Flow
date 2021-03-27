@@ -5,8 +5,10 @@
       <the-form-login />
       <NuxtLink 
       to="/signup"
+      tabindex="-1"
       class="signup-link">
         <v-button
+        tabindex="0"
         class="signup-btn blue big fluid">
           Зарегистрироваться
         </v-button>
@@ -27,7 +29,7 @@ export default {
   	Logo,
     VButton,
     TheFormLogin,
-  }
+  },
 }
 </script>
 

@@ -1,25 +1,20 @@
 <template>
-	<div 
-	@click="clickHanler"
-	class="v-list-item">
+	<div
+	@click="$emit('click')"
+	class="v-list-item-base">
 		<slot />
 	</div>
 </template>
 
 <script>
 export default {
-	name: 'VListItem',
-	methods: {
-		clickHanler() {
-			this.$emit('click')
-		}
-	}
+	name: 'VListItemBase'
 }
 </script>
 
 <style lang="less" scoped>
 
-.v-list-item {
+.v-list-item-base {
 	width: 100%;
 
 	padding: 38px 50px;
@@ -37,21 +32,6 @@ export default {
 		background: #F2F2F2;
 		border-color: @blue;
 	}
-}
-
-.green {
-	color: @green;
-	border-color: @green;
-}
-
-.red {
-	color: @red;
-	border-color: @red;
-}
-
-.disabled {
-	color: @text-grey;
-	border-color: #F3F3F3;
 }
 
 </style>

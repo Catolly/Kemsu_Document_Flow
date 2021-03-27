@@ -11,22 +11,24 @@
 			<span
 			:required="required"
 			class="selected">
-				{{selected}}
+			{{selected}}
 				<div class="arrow" />
 			</span>
 			<label 
-			:class="selected ? 'small' : ''"
+			:class="{
+				'small': selected
+			}"
 			class="label">
-				{{title}}
+				{{placeholder}}
 			</label>
 			<div 
-			v-show="open"
+			v-show="isOpen"
 			class="option-wrapper">
 				<div
-					v-for="option in options"
-					:key="option.id"
-					@click="select(option)"
-					class="option">
+				v-for="option in options"
+				:key="option.id"
+				@click="select(option)"
+				class="option">
 					{{option.value}}
 				</div> 
 			</div>
@@ -35,51 +37,51 @@
 </template>
 
 <script>
-import VInput from '~/components/VInput'
+	import VInput from '~/components/VInput'
 
-export default {
-	name: 'VSelect',
-	components: {
-		VInput,
-	},
-	data() {
-		return {
-			selected: null,
-			open: false,
-		}
-	},
-	props: {
-		id: {
-			type: String,
-			required: true
+	export default {
+		name: 'VSelect',
+		components: {
+			VInput,
 		},
-		title: String,
-		options: {
-			type: Array,
-			required: true
+		data() {
+			return {
+				selected: null,
+				isOpen: false,
+			}
 		},
-		required: {
-			type: Boolean,
-			default: false
+		props: {
+			id: {
+				type: String,
+				required: true
+			},
+			placeholder: String,
+			options: {
+				type: Array,
+				required: true
+			},
+			required: {
+				type: Boolean,
+				default: false
+			},
+			disabled: {
+				type: Boolean,
+				default: false
+			},
 		},
-		disabled: {
-			type: Boolean,
-			default: false
+		methods: {
+			close() {
+				this.$refs.select.blur()
+			},
+			changeFocus() {
+				this.isOpen = !this.isOpen
+			},
+			select(option) {
+				this.selected = option.value
+				this.close()
+			},
 		},
-	},
-	methods: {
-		close() {
-			this.$refs.select.blur()
-		},
-		changeFocus() {
-			this.open = !this.open
-		},
-		select(option) {
-			this.selected = option.value
-			this.close()
-		},
- 	},
-}
+	}
 </script>
 
 <style lang="less" scoped>
@@ -88,14 +90,14 @@ export default {
 @select-border: #F3F3F3;
 
 .select-wrapper {
-	width: fit-content;
+	width: 500px;
 	position: relative;
 }
 
 .select,
 .option {
 	position: relative;
-	width: 500px;
+	width: 100%;	
 
 	font-size: @fz-large;
 }
@@ -108,7 +110,7 @@ export default {
 .select {
 	&:focus .selected {
 		border-color: @blue;
-  	border-radius: 10px 10px 0 0;
+		border-radius: 10px 10px 0 0;
 	}
 	
 	&:focus .label {
@@ -136,7 +138,7 @@ export default {
 .option {
 	.flex(center, normal, column);
 	height: 70px;
-  width: 100%;
+	width: 100%;
 	padding-left: 24px;
 }
 
@@ -150,6 +152,7 @@ export default {
 
 .option-wrapper {
 	position: absolute;
+	top: calc(100% - 1px);
 	height: 100%;
 	width: 100%;
 
@@ -174,8 +177,8 @@ export default {
 
 .label {
 	position: absolute;
-  top: 1.2em;
-  left: 1.2em;
+	top: 1.2em;
+	left: 1.2em;
 	
 	color: @text-grey;
 	background: linear-gradient(to top, @select-background 50%, transparent 0);

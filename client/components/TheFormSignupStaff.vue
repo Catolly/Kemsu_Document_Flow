@@ -18,10 +18,18 @@
       type="email"
       placeholder="Email"
       required />
+      <v-input-autocomplete
+      v-model.trim="form.department"
+      :options="departmentsOptions"
+      autocomplete="off"
+      id="department"
+      class="department"
+      type="text"
+      placeholder="Отдел, в котором работаете"
+      required />
       <v-input
       v-model.trim="form.password"
       id="password"
-      class="password"
       type="password"
       placeholder="Пароль"
       required />
@@ -46,14 +54,12 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
-
 import VButton from '~/components/VButton'
 import VInput from '~/components/VInput'
 import VInputAutocomplete from '~/components/VInputAutocomplete'
 
 export default {
-  name: 'TheFormSingupStudent',
+  name: 'TheFormSingupStaff',
   components: {
     VButton,
     VInput,
@@ -64,9 +70,32 @@ export default {
       form: {
         username: '',
         email: '',
+        department: '',
         password: '',
       },
       relevantUsers: [
+        {
+          id: 34,
+          fullName: 'Козырева Татьяна Андреевна',
+          group: "M-174",
+        },
+        {
+          id: 64,
+          fullName: 'Козырева Татьяна Андреевна',
+          group: "M-185",
+        },
+        {
+          id: 18,
+          fullName: 'Сергиенко Анатолий Николаевич',
+          group: "M-174",
+        },
+        {
+          id: 93,
+          fullName: 'Оооооооооооооооооооочень длинное имя',
+          group: "M-174",
+        },
+      ],
+      departments: [
         {
           id: 34,
           fullName: 'Козырева Татьяна Андреевна',
@@ -98,46 +127,25 @@ export default {
           value: user.fullName + ' - ' + user.group
         }
       })
+    },
+    departmentsOptions() {
+      return this.departments.map(department => { 
+        return {
+          id: department.id,
+          value: department.fullName + ' - ' + department.group
+        }
+      })
     }
   },
   methods: {
-    ...mapMutations ([
-      'updateTokens'
-    ]),
     checkForm() {
       // Проверка данных формы
       // ...
       this.signup()
     },
     async signup() {
-      // const body = JSON.stringify({
-      //   fullName: 'TEST FULLNAME',
-      //   email: 'TEST EMAIL',
-      //   group: 'TEST GROUP',
-      //   password: 'TEST PASSWORD'
-      // })
-
-      // // Отправка данных на сервер
-      // // ...
-      // try {
-      //   const tokens = await fetch('http://mydoc.kemsu.ru/api/signup/student', {
-      //     method: 'POST',
-      //     headers: {
-      //       'Accept': 'application/json',
-      //       'Content-Type': 'application/json',
-      //       'X-Content-Type-Options': 'nosniff',
-      //       'OPTIONS': '*',
-      //     },
-      //     body,
-      //   })
-      //   .then(response => response.json())
-      //   .then(tokens => {
-      //     console.log(tokens)
-      //     this.updateTokens(tokens)
-      //   })
-      // } catch (err) {
-      //   console.error(err)
-      // }
+      // Отправка данных на сервер
+      // ...
 
       this.$router.push('/')
     },
@@ -183,4 +191,5 @@ export default {
     margin-top: 16px;
   }
 }
+
 </style>

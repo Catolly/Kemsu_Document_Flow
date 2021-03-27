@@ -50,7 +50,6 @@ export default {
 <style lang="less" scoped>
 
 @input-background: #FDFDFD;
-
 .input-wrapper {
 	margin-top: 18px;
 	position: relative;
@@ -69,7 +68,7 @@ export default {
   background: @input-background;
   border: 1px solid #F3F3F3;
   border-radius: 10px;
-
+  
   &:focus {
   	border-color: @blue;
   }

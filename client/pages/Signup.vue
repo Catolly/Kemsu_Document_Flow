@@ -2,19 +2,8 @@
   <div class="container">
     <logo class="big" />
     <div class="content">
-      <the-form-signup-worker v-if="$route.query.worker"/>
+      <the-form-signup-staff v-if="$route.query.staff"/>
       <the-form-signup-student v-else/>
-      <NuxtLink 
-      to="/login"
-      class="login-link">
-        <v-button
-        class="login-btn blue big fluid">
-          Войти
-        </v-button>
-      </NuxtLink>
-      <p class="signup-problem">
-        Кто-то зарегистрировался под вашим именем? Обратитесь к <NuxtLink to="#">администрации</NuxtLink>
-      </p>
     </div>
   </div>
 </template>
@@ -22,7 +11,7 @@
 <script>
 import Logo from '~/components/Logo'
 import VButton from '~/components/VButton'
-import TheFormSignupWorker from '~/components/TheFormSignupWorker'
+import TheFormSignupStaff from '~/components/TheFormSignupStaff'
 import TheFormSignupStudent from '~/components/TheFormSignupStudent'
 
 export default {
@@ -31,7 +20,7 @@ export default {
   components: {
   	Logo,
     VButton,
-    TheFormSignupWorker,
+    TheFormSignupStaff,
     TheFormSignupStudent,
   }
 }
@@ -46,18 +35,6 @@ export default {
 
 .content {
   width: 516px;
-}
-
-.login-btn {
-  margin-top: 10px;
-}
-
-.login-link:after {
-  display: none;
-}
-
-.signup-problem {
-  margin-top: 16px;
 }
 
 </style>
