@@ -1,3 +1,6 @@
+from datetime import time
+from plistlib import Data
+
 from django.contrib.auth import authenticate
 from psycopg2.compat import text_type
 from rest_framework import serializers
@@ -7,26 +10,13 @@ from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.tokens import RefreshToken
 from djangoProject import settings
 from django.utils.text import gettext_lazy as _
+import time
 
 from .exceptions import GroupNotFoundError, ThisUserIsAlreadyExistException, ThisEmailIsAlreadyExistError
 from .models import (
     User, Department, Group, Institute,
     Module, Point, Statement, UploadedDocuments, RequiredDocuments, Staff, Student,
 )
-
-# class RegistrationStudentSerializer(serializers.ModelSerializer):
-#     password = serializers.CharField(
-#         max_length=128,
-#         min_length=8,
-#         write_only=True,
-#     )
-#
-#     class Meta:
-#         model = User
-#         fields = ('fullname', 'email', 'password', 'group', 'status')
-#
-#     def create(self, validated_data):
-#          return User.objects.create_student(**validated_data)
 
 class RegistrationUserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
@@ -56,7 +46,6 @@ class RegistrationStaffSerializer(serializers.ModelSerializer):
 
 class RegistrationStudentSerializer(serializers.ModelSerializer):
 
-    #user = RegistrationUserSerializer(required=True, read_only=False)
     group = serializers.CharField(max_length=50, write_only=True)
     fullname = serializers.CharField(max_length=50, write_only=True)
     password = serializers.CharField(
@@ -81,7 +70,7 @@ class RegistrationStudentSerializer(serializers.ModelSerializer):
         data = {
             "refresh": refresh,
             "access": access,
-            "expiresIn" : settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].seconds
+            "expiresIn" : int(round(time.time() * 1000)) + int(round(settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].seconds * 1000))
         }
         return data
 

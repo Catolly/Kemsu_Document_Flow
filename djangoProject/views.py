@@ -35,8 +35,6 @@ class RegistrationStudentAPIView(APIView):
     serializer_class = RegistrationStudentSerializer
 
     def post(self, request):
-        # tokenr = RefreshToken()
-        # tokena = AccessToken().for_user(request.user)
 
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -48,28 +46,23 @@ class RegistrationStudentAPIView(APIView):
                 {
                     "message": "This group does not exist"
                 },
-                status=status.HTTP_200_OK
+                status=status.HTTP_409_CONFLICT
             )
         except ThisUserIsAlreadyExistException:
             return Response(
                 {
                     "message": "A user with this full name already exists. Please enter your record book number"
                 },
-                status=status.HTTP_200_OK
+                status=status.HTTP_409_CONFLICT
             )
         except ThisEmailIsAlreadyExistError:
             return Response(
                 {
                     "message": "This email is already exist"
                 },
-                status=status.HTTP_200_OK
+                status=status.HTTP_409_CONFLICT
             )
         return Response(
-            # {
-            #     'accessToken' : str(tokena),
-            #     'refreshToken': str(tokenr),
-            #     'expiresIn' : settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].seconds
-            # },
             serializer.data,
             status=status.HTTP_201_CREATED,
         )
