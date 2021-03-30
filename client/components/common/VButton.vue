@@ -61,7 +61,7 @@ export default {
 	&:focus,
 	&:hover {
 		color: #fff;
-		background-color: @red;
+		background-color: @red-hover;
 	}
 	&.filled {
 		background: @red;
@@ -77,10 +77,10 @@ export default {
 	&:focus,
 	&:hover {
 		color: #fff;
-		background-color: @red;
+		background-color: @green;
 	}
 	&.filled {
-		background: @green;
+		background: @green-hover;
 	}
 	&.filled:focus,
 	&.filled:hover {
@@ -93,7 +93,7 @@ export default {
 	&:focus,
 	&:hover {
 		color: #fff;
-		background-color: @red;
+		background-color: @blue-hover;
 	}
 	&.filled {
 		background: @blue;

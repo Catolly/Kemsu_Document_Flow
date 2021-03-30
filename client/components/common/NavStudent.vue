@@ -5,15 +5,6 @@
     exact
     class="nav-link">Обходной лист</NuxtLink>
     <NuxtLink 
-    to="/users"
-    class="nav-link">Пользователи</NuxtLink>
-    <NuxtLink 
-    to="/signs"
-    class="nav-link">Подписи</NuxtLink>
-    <NuxtLink 
-    to="/history"
-    class="nav-link">История</NuxtLink>
-    <NuxtLink 
     to="/settings"
     class="nav-link">Настройки</NuxtLink>
     <NuxtLink 
@@ -24,7 +15,7 @@
 
 <script>
 export default {
-  name: 'TheNavAdmin'
+  name: 'NavStudent'
 }
 </script>
 

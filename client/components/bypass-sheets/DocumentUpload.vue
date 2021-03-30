@@ -19,10 +19,10 @@
 </template>
 
 <script>
-import VImageUpload from '~/components/VImageUpload'
+import VImageUpload from '~/components/bypass-sheets/VImageUpload'
 
 export default {
-	name: 'FormImageUpload.vue',
+	name: 'DocumentUpload',
 	components: {
 		VImageUpload,
 	},

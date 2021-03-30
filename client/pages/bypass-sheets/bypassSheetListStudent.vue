@@ -6,32 +6,27 @@
 		class="btn-open-add-statement-form blue filled">
 			Добавить заявление
 		</v-button>
-		<div class="bypass-sheet-list-wrapper">
-			<v-list class="bypass-sheet-list">
-					<v-list-item-base
-					v-for="bypassSheet in bypassSheets"
-					:key="bypassSheet.id"
-					@click="openBypassSheet(bypassSheet)"
-					class="bypass-sheet">
-						<div class="bypass-sheet-title">
-							{{ bypassSheet.title }}
-						</div>
-					</v-list-item-base>
-			</v-list>
+		<div class="bypass-sheet-list">
+			<v-list-item-base
+			v-for="bypassSheet in bypassSheets"
+			:key="bypassSheet.id"
+			@click="openBypassSheet(bypassSheet)"
+			class="bypass-sheet">
+				<div class="bypass-sheet-title">
+					{{ bypassSheet.title }}
+				</div>
+			</v-list-item-base>
 		</div>
 	</div>
 </template>
 
 <script>
-import VButton from '~/components/VButton'
-import VList from '~/components/VList'
-import VListItemBase from '~/components/VListItemBase'
+import VButton from '~/components/common/VButton'
+import VListItemBase from '~/components/common/VListItemBase'
 
 export default {
-	name: 'ThePageBypassSheet',
 	components: {
 		VButton,
-		VList,
 		VListItemBase,
 	},
 	methods: {
@@ -69,8 +64,12 @@ export default {
 	margin-top: 48px;
 }
 
-.bypass-sheet-list-wrapper {
+.bypass-sheet-list {
 	margin-top: 32px;
+
+	* {
+		margin-top: 12px;
+	}
 }
 
 .bypass-sheet-title {

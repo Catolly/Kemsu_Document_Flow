@@ -8,14 +8,12 @@
 </template>
 
 <script>
-import Sidebar from '~/components/Sidebar'
-import Logo from '~/components/Logo'
+import Sidebar from '~/components/common/Sidebar'
 
 export default {
 	name: 'default',
 	components: {
 		Sidebar,
-		Logo,
 	},
 	middleware: 'checkUserIsLoggedIn'
 }

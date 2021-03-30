@@ -54,12 +54,12 @@
 </template>
 
 <script>
-import VButton from '~/components/VButton'
-import VInput from '~/components/VInput'
-import VInputAutocomplete from '~/components/VInputAutocomplete'
+import VButton from '~/components/common/VButton'
+import VInput from '~/components/common/VInput'
+import VInputAutocomplete from '~/components/common/VInputAutocomplete'
 
 export default {
-  name: 'TheFormSingupStaff',
+  name: 'FormSingupStaff',
   components: {
     VButton,
     VInput,

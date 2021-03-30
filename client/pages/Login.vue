@@ -1,8 +1,7 @@
 <template>
   <div class="container">
-  	<logo class="big" />
     <div class="content">
-      <the-form-login />
+      <form-login />
       <NuxtLink 
       to="/signup"
       tabindex="-1"
@@ -18,17 +17,15 @@
 </template>
 
 <script>
-import Logo from '~/components/Logo'
-import VButton from '~/components/VButton'
-import TheFormLogin from '~/components/TheFormLogin'
+import VButton from '~/components/common/VButton'
+import FormLogin from '~/components/common/FormLogin'
 
 export default {
 	layout: 'empty',
 	name: 'Login',
   components: {
-  	Logo,
     VButton,
-    TheFormLogin,
+    FormLogin,
   },
 }
 </script>

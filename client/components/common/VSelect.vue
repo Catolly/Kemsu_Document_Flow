@@ -37,13 +37,8 @@
 </template>
 
 <script>
-	import VInput from '~/components/VInput'
-
 	export default {
 		name: 'VSelect',
-		components: {
-			VInput,
-		},
 		data() {
 			return {
 				selected: null,

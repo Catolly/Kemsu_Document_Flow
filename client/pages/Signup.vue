@@ -1,27 +1,24 @@
 <template>
   <div class="container">
-    <logo class="big" />
     <div class="content">
-      <the-form-signup-staff v-if="$route.query.staff"/>
-      <the-form-signup-student v-else/>
+      <form-signup-staff v-if="$route.query.staff"/>
+      <form-signup-student v-else/>
     </div>
   </div>
 </template>
 
 <script>
-import Logo from '~/components/Logo'
-import VButton from '~/components/VButton'
-import TheFormSignupStaff from '~/components/TheFormSignupStaff'
-import TheFormSignupStudent from '~/components/TheFormSignupStudent'
+import VButton from '~/components/common/VButton'
+import FormSignupStaff from '~/components/common/FormSignupStaff'
+import FormSignupStudent from '~/components/common/FormSignupStudent'
 
 export default {
 	layout: 'empty',
 	name: 'Signup',
   components: {
-  	Logo,
     VButton,
-    TheFormSignupStaff,
-    TheFormSignupStudent,
+    FormSignupStaff,
+    FormSignupStudent,
   }
 }
 </script>
