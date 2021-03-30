@@ -57,19 +57,33 @@ class RegistrationStaffSerializer(serializers.ModelSerializer):
 class RegistrationStudentSerializer(serializers.ModelSerializer):
 
     #user = RegistrationUserSerializer(required=True, read_only=False)
-    group = serializers.CharField(max_length=50)
-    fullname = serializers.CharField(max_length=50)
+    group = serializers.CharField(max_length=50, write_only=True)
+    fullname = serializers.CharField(max_length=50, write_only=True)
     password = serializers.CharField(
         max_length=128,
         min_length=8,
         write_only=True,
     )
-    email = serializers.EmailField(max_length=50)
+    email = serializers.EmailField(max_length=50, write_only=True)
+
+    tokens = serializers.SerializerMethodField()
+
+    recordBookNumber = serializers.CharField(max_length=50, write_only=True, allow_blank=True)
 
     class Meta:
         model = Student
-        #fields = ('user', 'group', 'recordBookNumber')
-        fields = ('fullname', 'password', 'email', 'group', 'recordBookNumber')
+        fields = ('fullname', 'password', 'email', 'group', 'recordBookNumber', 'tokens')
+
+    def get_tokens(self, user):
+        tokens = RefreshToken.for_user(user)
+        refresh = text_type(tokens)
+        access = text_type(tokens.access_token)
+        data = {
+            "refresh": refresh,
+            "access": access,
+            "expiresIn" : settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].seconds
+        }
+        return data
 
     def create(self, validated_data):
         user_data = dict()
@@ -89,15 +103,17 @@ class RegistrationStudentSerializer(serializers.ModelSerializer):
         except Exception:
             raise GroupNotFoundError
         try:
-            student = User.objects.create_student(**user_data)
+            user = User.objects.create_student(**user_data)
         except Exception:
             raise ThisEmailIsAlreadyExistError
 
-        validated_data['user'] = student
+        validated_data['user'] = user
 
         validated_data['group'] = group
 
-        return Student.objects.create(**validated_data)
+        Student.objects.create(**validated_data)
+
+        return user
 
 class DepartmentSerializer(serializers.ModelSerializer):
 
@@ -234,6 +250,7 @@ class TokenEmailSerializer(Serializer):
 
 
 class TokenEmailPairSerializer(TokenEmailSerializer):
+
     @classmethod
     def get_token(cls, user):
         return RefreshToken.for_user(user)

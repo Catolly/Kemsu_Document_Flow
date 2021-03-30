@@ -24,21 +24,23 @@ from Kemsu_Document.serializers import (
     BypassSheetsSerializer, PostByPassSheetsSerializer,
     GetByPassSheetsDetailSerializer, TokenEmailPairSerializer,
     TokenUsernamePairSerializer, UpdateUserSerializer, StudentSerializer,
-    RefreshTokenSerializer,
+    RefreshTokenSerializer, TokenEmailSerializer,
 )
 from . import settings
 
 
 class RegistrationStudentAPIView(APIView):
     permission_classes = [AllowAny]
+
     serializer_class = RegistrationStudentSerializer
 
     def post(self, request):
-        tokenr = RefreshToken()
-        tokena = AccessToken().for_user(request.user)
+        # tokenr = RefreshToken()
+        # tokena = AccessToken().for_user(request.user)
 
-        serializer = RegistrationStudentSerializer(data=request.data)
+        serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
+
         try:
             serializer.save()
         except GroupNotFoundError:
@@ -63,11 +65,12 @@ class RegistrationStudentAPIView(APIView):
                 status=status.HTTP_200_OK
             )
         return Response(
-            {
-                'accessToken' : str(tokena),
-                'refreshToken': str(tokenr),
-                'expiresIn' : settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].seconds
-            },
+            # {
+            #     'accessToken' : str(tokena),
+            #     'refreshToken': str(tokenr),
+            #     'expiresIn' : settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].seconds
+            # },
+            serializer.data,
             status=status.HTTP_201_CREATED,
         )
 
