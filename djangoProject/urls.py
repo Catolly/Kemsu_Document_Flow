@@ -47,7 +47,7 @@ urlpatterns = [
     path('api/login/', TokenEmailPairView.as_view(), name='token_email_pair'),
     path('api/logout/', LogoutView.as_view(), name='auth_logout'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('admin/', admin.site.urls),
+    path('api/admin/', admin.site.urls),
     # path('api/department/', DepartmentList.as_view(), name='department_list'),
     # path('api/group/', GroupList.as_view(), name='group_list'),
     # path('api/institute/', InstituteList.as_view(), name='institute_list'),
