@@ -28,7 +28,7 @@ import VList from '~/components/VList'
 import VListItemBase from '~/components/VListItemBase'
 
 export default {
-	name: 'ThePageBypassSheetsStudent',
+	name: 'ThePageBypassSheet',
 	components: {
 		VButton,
 		VList,

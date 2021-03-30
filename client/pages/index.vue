@@ -1,23 +1,21 @@
 <template>
 	<div class="container">
 		<!-- student -->
-		<the-page-bypass-sheets-student />
-    
+		<the-page-bypass-sheets />
     <!-- staff -->
-    <!-- <the-page-staff-bypass-sheets /> -->
-    
+
     <!-- admin -->
 
   </div>
 </template>
 
 <script>
-import ThePageBypassSheetsStudent from '~/components/bypass-sheets/ThePageBypassSheetsStudent'
+import ThePageBypassSheets from '~/components/bypass-sheets/ThePageBypassSheets'
 
 export default {
   name: 'index',
   components: {
-    ThePageBypassSheetsStudent,
+    ThePageBypassSheets,
   },
 }
 </script>
