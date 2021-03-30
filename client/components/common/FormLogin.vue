@@ -29,11 +29,11 @@
 <script>
 import { mapMutations } from 'vuex'
 
-import VButton from '~/components/VButton'
-import VInput from '~/components/VInput'
+import VButton from '~/components/common/VButton'
+import VInput from '~/components/common/VInput'
 
 export default {
-  name: 'TheFormLogin',
+  name: 'FormLogin',
   components: {
     VButton,
     VInput,

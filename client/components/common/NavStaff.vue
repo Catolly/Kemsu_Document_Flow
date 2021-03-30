@@ -18,7 +18,7 @@
 
 <script>
 export default {
-  name: 'TheNavStaff'
+  name: 'NavStaff'
 }
 </script>
 

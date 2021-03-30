@@ -3,26 +3,26 @@
     <logo />
     <!-- Определяем, какие права у юзера -->
     <div class="nav-wrapper">
-      <the-nav-student />
-      <!-- <the-nav-Staff /> -->
-      <!-- <the-nav-admin /> -->
+      <nav-student />
+      <!-- <nav-staff /> -->
+      <!-- <nav-admin /> -->
     </div>
   </div>
 </template>
 
 <script>
-import Logo from '~/components/Logo'
-import TheNavStudent from '~/components/TheNavStudent'
-import TheNavStaff from '~/components/TheNavStaff'
-import TheNavAdmin from '~/components/TheNavAdmin'
+import Logo from '~/components/common/Logo'
+import NavStudent from '~/components/common/NavStudent'
+import NavStaff from '~/components/common/NavStaff'
+import NavAdmin from '~/components/common/NavAdmin'
 
 export default {
   name: 'Sidebar',
   components: {
     Logo,
-    TheNavStudent,
-    TheNavStaff,
-    TheNavAdmin,
+    NavStudent,
+    NavStaff,
+    NavAdmin,
   },
 }
 </script>

@@ -79,12 +79,12 @@
 </template>
 
 <script>
-import VListItemBase from '~/components/VListItemBase'
-import VImageUpload from '~/components/VImageUpload'
-import VButton from '~/components/VButton'
+import VListItemBase from '~/components/common/VListItemBase'
+import VImageUpload from '~/components/bypass-sheets/VImageUpload'
+import VButton from '~/components/common/VButton'
 
 export default {
-	name: 'VListItemPoint',
+	name: 'BypassSheetPoint',
 	components: {
 		VListItemBase,
 		VImageUpload,
