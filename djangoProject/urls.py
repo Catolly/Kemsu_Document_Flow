@@ -22,7 +22,7 @@ from .views import (
     RegistrationStudentAPIView, RegistrationStaffAPIView,
     GroupList, InstituteList, ModuleList,
     PointList, BypassSheetsView, PostByPassSheetsView,
-    GetByPassSheetsDetailView, TokenEmailPairView, TokenUsernamePairView, StudentList, LogoutView,
+    GetByPassSheetsDetailView, TokenEmailPairView, TokenUsernamePairView, StudentList, LogoutView, DepartmentsView,
 )
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -59,4 +59,6 @@ urlpatterns = [
     path('api/bypass_sheets/', BypassSheetsView.as_view(), name="bypass_sheets"),
     # path('api/<int:pk>/bypasssheets/create/', PostByPassSheetsView.as_view(), name="post_bypass_sheets"),
     # path('api/bypassshets/<int:pk>/detail', GetByPassSheetsDetailView.as_view(), name="get_bypass_sheets_detail")
+    path('api/departments/', DepartmentsView.as_view(),name="departments_view"),
+    path('api/departments/<str:institute>/', DepartmentsView.as_view(),name="departments_view/institute"),
 ]

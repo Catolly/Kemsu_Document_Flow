@@ -24,7 +24,7 @@ from Kemsu_Document.serializers import (
     BypassSheetsSerializer, PostByPassSheetsSerializer,
     GetByPassSheetsDetailSerializer, TokenEmailPairSerializer,
     TokenUsernamePairSerializer, UpdateUserSerializer, StudentSerializer,
-    RefreshTokenSerializer,
+    RefreshTokenSerializer, DepartmentsSerializer,
 )
 from . import settings
 
@@ -211,3 +211,17 @@ class LogoutView(GenericAPIView):
         sz.is_valid(raise_exception=True)
         sz.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+class DepartmentsView(APIView):
+    permission_classes = [AllowAny]
+    def get(self,request):
+        departments = Department.objects.all()
+        serializer_class = DepartmentsSerializer(departments,many=True)
+        return Response(serializer_class.data,status=status.HTTP_200_OK)
+
+    def get(self,request,institute):
+        institute = Institute.objects.get(title=institute)
+        departments = Department.objects.filter(institute=institute.id )
+        departments |= Department.objects.filter(institute=None)
+        serializer_class = DepartmentsSerializer(departments, many=True)
+        return Response(serializer_class.data, status=status.HTTP_200_OK)

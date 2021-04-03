@@ -179,6 +179,9 @@ class BypassSheetsSerializer(serializers.ModelSerializer):
         model = Module
         fields = ("title", "statements", "points", )
 
+
+
+
 class PostByPassSheetsSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -335,3 +338,9 @@ class RefreshTokenSerializer(serializers.Serializer):
             RefreshToken(self.token).blacklist()
         except TokenError:
             self.fail('bad_token')
+
+class DepartmentsSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Department
+        fields = ('title','address','institute')
