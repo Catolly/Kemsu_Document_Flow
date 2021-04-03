@@ -6,3 +6,9 @@ class ThisUserIsAlreadyExistException(Exception):
 
 class ThisEmailIsAlreadyExistError(Exception):
     pass
+
+class DepartmentNotFoundException(Exception):
+    pass
+
+class UserWithThisFullNameDoesNotExist(Exception):
+    pass

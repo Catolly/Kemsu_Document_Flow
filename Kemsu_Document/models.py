@@ -28,22 +28,6 @@ class Group(models.Model):
     def __str__(self):
         return self.title
 
-# class Student(models.Model):
-#     date_of_enrollment = models.DateField("Дата зачисления", default=date.today)
-#     group_id = models.ForeignKey(Group, verbose_name="Группа", on_delete=models.CASCADE, null=False)
-#     #module_id = models.ManyToManyField(Module, verbose_name="Модули", related_name="student_module", blank=True)
-#
-#     first_name = models.CharField(max_length=50, default=None, null=True, blank=True)
-#     last_name = models.CharField(max_length=50, default=None, null=True, blank=True)
-#     patronymic = models.CharField(max_length=50, default=None, null=True, blank=True)
-#
-#     class Meta:
-#         verbose_name = "Студент"
-#         verbose_name_plural = "Студенты"
-#
-#     def __str__(self):
-#         return "Студент"
-
 class Department(models.Model):
     title = models.CharField("Название отдела", default=None, max_length=100)
 
@@ -55,22 +39,6 @@ class Department(models.Model):
 
     def __str__(self):
         return self.title
-
-# class Staff(models.Model):
-#
-#     department_id = models.ForeignKey(Department, verbose_name="Отдел", on_delete=models.SET_NULL, null=True)
-#
-#     first_name = models.CharField(max_length=50, default=None, null=True, blank=True)
-#     last_name = models.CharField(max_length=50, default=None, null=True, blank=True)
-#     patronymic = models.CharField(max_length=50, default=None, null=True, blank=True)
-#
-#     class Meta:
-#         verbose_name = "Работник"
-#         verbose_name_plural = "Работники"
-#
-#     def __str__(self):
-#         return str(self.department_id)
-
 
 class UserManager(BaseUserManager):
     def _create_user(self, fullname, email, password=None, **extra_fields):
@@ -91,11 +59,9 @@ class UserManager(BaseUserManager):
         return user
 
     def create_student(self, fullname, email, password=None, **extra_fields):
-        # extra_fields.setdefault('is_student', True)
         extra_fields.setdefault('is_staff', False)
         extra_fields.setdefault('is_superuser', False)
         extra_fields.setdefault('status', 'Студент')
-        #extra_fields.setdefault('institute', extra_fields.get('group').institute_id)
 
         return self._create_user(fullname, email, password, **extra_fields)
 
@@ -104,13 +70,13 @@ class UserManager(BaseUserManager):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', False)
         extra_fields.setdefault('status', 'Работник')
+        extra_fields.setdefault('is_active', False)
 
         return self._create_user(fullname, email, password, **extra_fields)
 
     def create_superuser(self, fullname, email, password, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
-        #extra_fields.setdefault('is_student', False)
 
         #if extra_fields.get('is_staff') is not True:
         #    raise ValueError('Суперпользователь должен иметь is_staff=True.')
@@ -130,12 +96,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
-    #is_student = models.BooleanField(default=False)
-
-    #department = models.ForeignKey(Department, verbose_name="Отдел", on_delete=models.SET_NULL, null=True, blank=True)
-    #group = models.ForeignKey(Group, verbose_name="Группа", on_delete=models.SET_NULL, null=True, blank=True)
-    #departments = models.ManyToManyField(Department, verbose_name="Отделы", related_name="student_departments")
-    #institute = models.ForeignKey(Institute, verbose_name="Институт", on_delete=models.SET_NULL, null=True, blank=True)
 
     STATUS = (
         ('Работник', 'работник'),
@@ -193,13 +153,10 @@ class Statement(models.Model):
         return self.title
 
 class Point(models.Model):
-    #title = models.ForeignKey(Department, verbose_name='Название пункта', on_delete=models.CASCADE, null=False)
     title = models.CharField("Название пункта", default=None, max_length=50)
     description = models.TextField("Описание", default=None, blank=True)
-    #file = models.ImageField("Файл", upload_to="Kemsu_Document/media/", blank=True)
     module_id = models.ForeignKey(Module, verbose_name="Модуль", on_delete=models.SET_NULL, null=True, blank=True, related_name="points")
     staff = models.ForeignKey(Staff, verbose_name="Работник", on_delete=models.SET_NULL, null=True, blank=True)
-    #point_id = models.ForeignKey(Department, verbose_name="Отдел", on_delete=models.SET_NULL, null=True, blank=True)
 
     STATUS = (
         ('Не отправленно', 'но'),

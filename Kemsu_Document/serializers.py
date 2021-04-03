@@ -1,7 +1,5 @@
 from datetime import time
-from plistlib import Data
 
-from django.contrib.auth import authenticate
 from psycopg2.compat import text_type
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
@@ -12,37 +10,55 @@ from djangoProject import settings
 from django.utils.text import gettext_lazy as _
 import time
 
-from .exceptions import GroupNotFoundError, ThisUserIsAlreadyExistException, ThisEmailIsAlreadyExistError
+from .exceptions import GroupNotFoundError, ThisUserIsAlreadyExistException, ThisEmailIsAlreadyExistError, \
+    DepartmentNotFoundException, UserWithThisFullNameDoesNotExist
 from .models import (
     User, Department, Group, Institute,
     Module, Point, Statement, UploadedDocuments, RequiredDocuments, Staff, Student,
 )
 
-class RegistrationUserSerializer(serializers.ModelSerializer):
+class RegistrationStaffSerializer(serializers.ModelSerializer):
+
+    department = serializers.CharField(max_length=50, write_only=True)
+    fullname = serializers.CharField(max_length=50, write_only=True)
     password = serializers.CharField(
         max_length=128,
         min_length=8,
         write_only=True,
     )
-
-    class Meta:
-        model = User
-        fields = ('fullname', 'email', 'password')
-
-class RegistrationStaffSerializer(serializers.ModelSerializer):
-
-    user = RegistrationUserSerializer(required=True, read_only=False)
+    email = serializers.EmailField(max_length=50, write_only=True)
 
     class Meta:
         model = Staff
-        fields = ('user', 'department')
+        fields = ('fullname', 'password', 'email', 'department')
 
     def create(self, validated_data):
-        user_data = validated_data['user']
-        if user_data:
-            staff = User.objects.create_staff(**user_data)
-            validated_data['user'] = staff
-        return Staff.objects.create(**validated_data)
+        user_data = dict()
+        user_data.setdefault('fullname', validated_data.pop('fullname'))
+        user_data.setdefault('email', validated_data.pop('email'))
+        user_data.setdefault('password', validated_data.pop('password'))
+
+        fullnameIsExist = User.objects.filter(fullname=user_data['fullname'])
+
+        if len(fullnameIsExist) != 0:
+            raise ThisUserIsAlreadyExistException
+        try:
+            department = Department.objects.get(title=validated_data['department'])
+        except Exception:
+            raise DepartmentNotFoundException
+        try:
+            user = User.objects.create_staff(**user_data)
+        except Exception:
+            raise ThisEmailIsAlreadyExistError
+
+        validated_data['user'] = user
+
+        validated_data['department'] = department
+
+        Staff.objects.create(**validated_data)
+
+        return user
+
 
 class RegistrationStudentSerializer(serializers.ModelSerializer):
 
@@ -104,12 +120,6 @@ class RegistrationStudentSerializer(serializers.ModelSerializer):
 
         return user
 
-class DepartmentSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Department
-        exclude = ('id',)
-
 class GroupSerializer(serializers.ModelSerializer):
 
     institute = serializers.SlugRelatedField(slug_field='title', read_only=True)
@@ -158,10 +168,6 @@ class UserSerializer(serializers.ModelSerializer):
 
 class StudentSerializer(serializers.ModelSerializer):
 
-    # departments = DepartmentSerializer(many=True, read_only=True)
-    # institute = serializers.SlugRelatedField(slug_field='name', read_only=True)
-    # group = serializers.SlugRelatedField(slug_field='name', read_only=True)
-    # group = serializers.SlugRelatedField(slug_field='name', read_only=True)
     user = UserSerializer(required=False, read_only=True)
     group = GroupSerializer(required=False, read_only=True)
 
@@ -190,12 +196,6 @@ class PostByPassSheetsSerializer(serializers.ModelSerializer):
         model = Module
         fields = "__all__"
 
-class GetByPassSheetsDetailSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Point
-        exclude = ("module_id",)
-
 class TokenEmailSerializer(Serializer):
     username_field = User.EMAIL_FIELD
 
@@ -211,7 +211,6 @@ class TokenEmailSerializer(Serializer):
         #     'password': attrs['password'],
         # })
         self.user = User.objects.filter(email=attrs[self.username_field]).first()
-        print(self.user)
 
         if not self.user:
             raise ValidationError('The user is not valid.')
@@ -219,7 +218,6 @@ class TokenEmailSerializer(Serializer):
         if self.user:
             if not self.user.check_password(attrs['password']):
                 raise ValidationError('Incorrect credentials.')
-        print(self.user)
         # Prior to Django 1.10, inactive users could be authenticated with the
         # default `ModelBackend`.  As of Django 1.10, the `ModelBackend`
         # prevents inactive users from authenticating.  App designers can still
@@ -253,64 +251,6 @@ class TokenEmailPairSerializer(TokenEmailSerializer):
         data['expiresIn'] = settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].seconds
         return data
 
-#-----Авторизация по username
-
-class TokenUsernameSerializer(Serializer):
-    username_field = User.USERNAME_FIELD
-
-    def __init__(self, *args, **kwargs):
-        super(TokenUsernameSerializer, self).__init__(*args, **kwargs)
-
-        self.fields[self.username_field] = serializers.CharField()
-        self.fields['password'] = serializers.CharField(max_length=128, write_only=True)
-
-    def validate(self, attrs):
-        # self.user = authenticate(**{
-        #     self.username_field: attrs[self.username_field],
-        #     'password': attrs['password'],
-        # })
-        self.user = User.objects.filter(username=attrs[self.username_field]).first()
-        print(self.user)
-
-        if not self.user:
-            raise ValidationError('The user is not valid.')
-
-        if self.user:
-            if not self.user.check_password(attrs['password']):
-                raise ValidationError('Incorrect credentials.')
-        print(self.user)
-        # Prior to Django 1.10, inactive users could be authenticated with the
-        # default `ModelBackend`.  As of Django 1.10, the `ModelBackend`
-        # prevents inactive users from authenticating.  App designers can still
-        # allow inactive users to authenticate by opting for the new
-        # `AllowAllUsersModelBackend`.  However, we explicitly prevent inactive
-        # users from authenticating to enforce a reasonable policy and provide
-        # sensible backwards compatibility with older Django versions.
-        if self.user is None or not self.user.is_active:
-            raise ValidationError('No active account found with the given credentials')
-
-        return {}
-
-    @classmethod
-    def get_token(cls, user):
-        raise NotImplemented(
-            'Must implement `get_token` method for `MyTokenObtainSerializer` subclasses')
-
-
-class TokenUsernamePairSerializer(TokenUsernameSerializer):
-    @classmethod
-    def get_token(cls, user):
-        return RefreshToken.for_user(user)
-
-    def validate(self, attrs):
-        data = super(TokenUsernamePairSerializer, self).validate(attrs)
-        refresh = self.get_token(self.user)
-
-        data['refresh'] = text_type(refresh)
-        data['access'] = text_type(refresh.access_token)
-        data['expiresIn'] = settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].seconds
-        return data
-
 class UpdateUserSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -325,7 +265,7 @@ class UpdateUserSerializer(serializers.ModelSerializer):
         )
         return user
 
-class RefreshTokenSerializer(serializers.Serializer):
+class LogoutSerializer(serializers.Serializer):
     refresh = serializers.CharField()
 
     default_error_messages = {
@@ -341,3 +281,29 @@ class RefreshTokenSerializer(serializers.Serializer):
             RefreshToken(self.token).blacklist()
         except TokenError:
             self.fail('bad_token')
+
+class RefreshTokenSerializer(serializers.Serializer):
+    refresh = serializers.CharField()
+
+    def validate(self, attrs):
+        refresh = RefreshToken(attrs['refresh'])
+
+        data = {'access': str(refresh.access_token)}
+
+        if settings.SIMPLE_JWT['ROTATE_REFRESH_TOKENS']:
+            if settings.SIMPLE_JWT['BLACKLIST_AFTER_ROTATION']:
+                try:
+                    # Attempt to blacklist the given refresh token
+                    refresh.blacklist()
+                except AttributeError:
+                    # If blacklist app not installed, `blacklist` method will
+                    # not be present
+                    pass
+
+            refresh.set_jti()
+            refresh.set_exp()
+
+            data['refresh'] = str(refresh)
+            data['expiresIn'] = int(round(time.time() * 1000)) + int(round(settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].seconds * 1000))
+
+        return data
