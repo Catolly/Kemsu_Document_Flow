@@ -3,7 +3,7 @@ from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, Bl
 
 from .models import (
     Department, Group, Institute, Module,
-    Point, User, Statement, Staff, Student
+    Point, User, Statement, Staff, Student, RequiredDocuments, UploadedDocuments
 )
 
 # Register your models here.
@@ -17,5 +17,5 @@ admin.site.register(Point)
 admin.site.register(Statement)
 admin.site.register(Staff)
 admin.site.register(Student)
-# admin.site.register(OutstandingToken)
-# admin.site.register(BlacklistedToken)
+admin.site.register(RequiredDocuments)
+admin.site.register(UploadedDocuments)

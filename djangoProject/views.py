@@ -9,15 +9,15 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from Kemsu_Document.exceptions import GroupNotFoundError, ThisUserIsAlreadyExistException, ThisEmailIsAlreadyExistError, \
     DepartmentNotFoundException
 from Kemsu_Document.models import (
-    User, Group, Institute,
-    Module, Point, Student,
+    User, Module,
+    Point, Student,
 )
 
 from Kemsu_Document.serializers import (
     RegistrationStudentSerializer, RegistrationStaffSerializer,
     BypassSheetsSerializer, TokenEmailPairSerializer,
     UpdateUserSerializer, StudentSerializer,
-    LogoutSerializer, RefreshTokenSerializer,
+    LogoutSerializer, RefreshTokenSerializer, PostByPassSheetsSerializer,
 )
 
 from .permissions import PermissionIsStaff
@@ -119,13 +119,29 @@ class StudentList(APIView):
 
 class BypassSheetsView(APIView):
 
+    #permission_classes = [IsAuthenticated]
     permission_classes = [AllowAny]
 
     def get(self, request):
         module = Module.objects.all()
         serializer = BypassSheetsSerializer(module, many=True)
 
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        serializer = PostByPassSheetsSerializer(data=request.data, context={"request" : request})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(status=status.HTTP_201_CREATED)
+
+class BypassSheetsViewId(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, pk):
+        module = Module.objects.get(id=pk)
+        serializer = BypassSheetsSerializer(module)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 # class PostByPassSheetsView(APIView):
 #     permission_classes = [IsAuthenticated]
@@ -166,13 +182,4 @@ class LogoutView(GenericAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 class RefreshTokenView(TokenRefreshView):
-    # serializer_class = RefreshTokenSerializer
-    # #permission_classes = (permissions.IsAuthenticated, )
-    # permission_classes = [AllowAny]
-    #
-    # def post(self, request, *args):
-    #     sz = self.get_serializer(data=request.data)
-    #     sz.is_valid(raise_exception=True)
-    #     sz.save()
-    #     return Response(sz.data, status=status.HTTP_204_NO_CONTENT)
     serializer_class = RefreshTokenSerializer

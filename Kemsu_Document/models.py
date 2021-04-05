@@ -135,7 +135,7 @@ class Student(models.Model):
 
 class Module(models.Model):
     title = models.CharField("Название модуля", default=None, max_length=50)
-    student_id = models.ForeignKey(User, verbose_name="Студент", on_delete=models.CASCADE, null=False)
+    student_id = models.ForeignKey(Student, verbose_name="Студент", on_delete=models.CASCADE, null=False)
 
     class Meta:
         verbose_name = "Модуль"

@@ -151,10 +151,19 @@ class RequiredDocumentsSerializer(serializers.ModelSerializer):
         model = RequiredDocuments
         fields = ("title", "img")
 
+class StaffSerializer(serializers.ModelSerializer):
+
+    user = serializers.SlugRelatedField('fullname', read_only=True)
+
+    class Meta:
+        model = Staff
+        fields = ('user', )
+
 class PointSerializer(serializers.ModelSerializer):
 
     uploadedDocuments = UploadedDocumentSerializer(many=True, read_only=True)
     requiredDocuments = RequiredDocumentsSerializer(many=True, read_only=True)
+    staff = StaffSerializer(read_only=True)
 
     class Meta:
         model = Point
@@ -190,11 +199,54 @@ class BypassSheetsSerializer(serializers.ModelSerializer):
         model = Module
         fields = ("title", "statements", "points", )
 
+class PostStatementsSerializer(serializers.ModelSerializer):
+
+    title = serializers.CharField(max_length=50, write_only=True)
+    img = serializers.ImageField(use_url=True, allow_empty_file=True, allow_null=True)
+
+    class Meta:
+        model = Statement
+        fields = ('title', 'img')
+
 class PostByPassSheetsSerializer(serializers.ModelSerializer):
+
+    statements = PostStatementsSerializer(many=True, write_only=True)
+
+    title = serializers.CharField(max_length=50, write_only=True)
 
     class Meta:
         model = Module
-        fields = "__all__"
+        fields = ('title', 'statements')
+
+    def statementsCreate(self, statements_data, module):
+
+        for statement_data in statements_data:
+            statement_data['module'] = module
+            Statement.objects.create(**statement_data)
+
+    def create(self, validated_data):
+        user = None
+        request = self.context.get("request")
+
+        if request and hasattr(request, "user"):
+            user = request.user
+
+        statements_data_ordered_dict = validated_data.pop('statements')
+
+        statements_data = []
+
+        for statement_data in statements_data_ordered_dict:
+            statements_data.append(dict(statement_data))
+
+        student = Student.objects.get(user=user.id)
+
+        validated_data['student_id'] = student
+
+        module = Module.objects.create(**validated_data)
+
+        self.statementsCreate(statements_data, module)
+
+        return module
 
 class TokenEmailSerializer(Serializer):
     username_field = User.EMAIL_FIELD
