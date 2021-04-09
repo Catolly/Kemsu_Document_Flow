@@ -15,25 +15,24 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from django.contrib.auth.views import LoginView
 from django.urls import re_path, include
 
 from .views import (
     RegistrationStudentAPIView, RegistrationStaffAPIView,
-    BypassSheetsView, TokenEmailPairView,
-    StudentList, LogoutView,
-    RefreshTokenView, BypassSheetsViewId
+    BypassSheetsView, StudentList,
+    LogoutView, RefreshTokenView,
+    LoginView, BypassSheetView
 )
 from rest_framework_simplejwt.views import TokenRefreshView
 
 urlpatterns = [
     path('api/signup/student', RegistrationStudentAPIView.as_view(), name='user_registration'),
     path('api/signup/staff', RegistrationStaffAPIView.as_view(), name='staff_registration'),
-    path('api/login/', TokenEmailPairView.as_view(), name='token_email_pair'),
     path('api/logout/', LogoutView.as_view(), name='auth_logout'),
     path('api/token/refresh/', RefreshTokenView.as_view(), name='token_refresh'),
     path('admin/', admin.site.urls),
-    path('api/users/<int:pk>/', StudentList.as_view(), name='user_list'),
+    path('api/users/<int:pk>/', StudentList.as_view(), name='student_list'),
     path('api/bypass_sheets/', BypassSheetsView.as_view(), name="bypass_sheets"),
-    path('api/bypass_sheets/<int:pk>/', BypassSheetsViewId.as_view(), name="bypass_sheets"),
+    path('api/bypass_sheets/<int:pk>/', BypassSheetView.as_view(), name="bypass_sheet"),
+    path('api/login/', LoginView.as_view(), name="login")
 ]

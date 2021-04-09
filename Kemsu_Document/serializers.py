@@ -11,7 +11,7 @@ from django.utils.text import gettext_lazy as _
 import time
 
 from .exceptions import GroupNotFoundError, ThisUserIsAlreadyExistException, ThisEmailIsAlreadyExistError, \
-    DepartmentNotFoundException, UserWithThisFullNameDoesNotExist
+    DepartmentNotFoundException, UserWithThisFullNameDoesNotExistException, UserWithThisEmailDoesNotExistException
 from .models import (
     User, Department, Group, Institute,
     Module, Point, Statement, UploadedDocuments, RequiredDocuments, Staff, Student,
@@ -47,6 +47,8 @@ class RegistrationStaffSerializer(serializers.ModelSerializer):
         except Exception:
             raise DepartmentNotFoundException
         try:
+            if department.title == 'Отдел администрирования':
+                user_data['status'] = 'Администратор'
             user = User.objects.create_staff(**user_data)
         except Exception:
             raise ThisEmailIsAlreadyExistError
@@ -249,20 +251,50 @@ class PostByPassSheetsSerializer(serializers.ModelSerializer):
         return module
 
 class TokenEmailSerializer(Serializer):
-    username_field = User.EMAIL_FIELD
+    #username_field = User.EMAIL_FIELD
 
     def __init__(self, *args, **kwargs):
         super(TokenEmailSerializer, self).__init__(*args, **kwargs)
 
-        self.fields[self.username_field] = serializers.CharField()
+        self.fields['username_field'] = serializers.CharField()
         self.fields['password'] = serializers.CharField(max_length=128, write_only=True)
+        self.fields['recordBookNumber'] = serializers.CharField(max_length=128, write_only=True, allow_blank=True, allow_null=True)
+
+    def getUser(self, attrs):
+        email_or_fullname = attrs['username_field']
+        if email_or_fullname.find('@') != -1:
+             return User.objects.filter(email=attrs['username_field']).first()
+        else:
+            users = User.objects.filter(fullname=email_or_fullname)
+            if len(users) > 1:
+                recordBookNumber = attrs['recordBookNumber']
+
+                if recordBookNumber == '':
+                    raise ValidationError('More than 1 user with this name is registered in this system. If you are student - please enter the correct recordbook number, or log in using your email')
+
+                user = None
+
+                for not_confirmed_student in users:
+                    user = Student.objects.filter(user=not_confirmed_student, recordBookNumber=recordBookNumber).first()
+                    if user:
+                        break
+
+                if not user:
+                    raise ValidationError('More than 1 user with this name is registered in this system. If you are student - please enter the correct recordbook number, or log in using your email')
+
+                return User.objects.get(id=user.user.id)
+            else:
+                return users.first()
 
     def validate(self, attrs):
         # self.user = authenticate(**{
         #     self.username_field: attrs[self.username_field],
         #     'password': attrs['password'],
         # })
-        self.user = User.objects.filter(email=attrs[self.username_field]).first()
+
+        #self.user = User.objects.filter(email=attrs[self.username_field]).first()
+
+        self.user = self.getUser(attrs)
 
         if not self.user:
             raise ValidationError('The user is not valid.')
@@ -277,8 +309,10 @@ class TokenEmailSerializer(Serializer):
         # `AllowAllUsersModelBackend`.  However, we explicitly prevent inactive
         # users from authenticating to enforce a reasonable policy and provide
         # sensible backwards compatibility with older Django versions.
-        if self.user is None or not self.user.is_active:
+        if self.user is None:
             raise ValidationError('No active account found with the given credentials')
+        if not self.user.is_active:
+            raise ValidationError('Your account has not been verified by the administrator')
 
         return {}
 
@@ -358,4 +392,40 @@ class RefreshTokenSerializer(serializers.Serializer):
             data['refresh'] = str(refresh)
             data['expiresIn'] = int(round(time.time() * 1000)) + int(round(settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].seconds * 1000))
 
+        return data
+
+class LoginSerializer(serializers.Serializer):
+    email_or_fullname = serializers.CharField(write_only=True)
+
+    password = password = serializers.CharField(
+        max_length=128,
+        min_length=8,
+        write_only=True,
+    )
+
+    recordBookNumber = serializers.CharField(allow_blank=True, write_only=True)
+
+    def get_tokens(self, user):
+        return RefreshToken.for_user(user)
+
+    def emailLogin(self, attrs):
+        try:
+            user = User.objects.get(email=attrs['email_or_fullname'])
+        except Exception:
+            raise UserWithThisEmailDoesNotExistException
+        if not user.check_password(attrs['password']):
+            raise ValidationError('Incorrect credentials.')
+        return self.get_tokens(user)
+
+    def fullnameLogin(self, attrs):
+        pass
+
+    def validate(self, attrs):
+        email_or_fullname = attrs['email_or_fullname']
+        # if email_or_fullname.find('@') == -1:
+        #     tokens = self.fullnameLogin(attrs)
+        # else:
+        #     tokens = self.emailLogin(attrs)
+        tokens = self.emailLogin(attrs)
+        data = {'access': str(tokens.access_token)}
         return data

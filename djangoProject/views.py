@@ -17,14 +17,14 @@ from Kemsu_Document.serializers import (
     RegistrationStudentSerializer, RegistrationStaffSerializer,
     BypassSheetsSerializer, TokenEmailPairSerializer,
     UpdateUserSerializer, StudentSerializer,
-    LogoutSerializer, RefreshTokenSerializer, PostByPassSheetsSerializer,
+    LogoutSerializer, RefreshTokenSerializer, PostByPassSheetsSerializer, LoginSerializer,
 )
 
-from .permissions import PermissionIsStaff
+from .permissions import IsAdmin, IsStudent, IsStaff, StudentListViewPermission, BypassSheetsViewPermission
 
 
 class RegistrationStudentAPIView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = (permissions.AllowAny,)
 
     serializer_class = RegistrationStudentSerializer
 
@@ -62,7 +62,7 @@ class RegistrationStudentAPIView(APIView):
         )
 
 class RegistrationStaffAPIView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = (permissions.AllowAny,)
 
     serializer_class = RegistrationStaffSerializer
 
@@ -102,12 +102,11 @@ class RegistrationStaffAPIView(APIView):
         )
 
 class StudentList(APIView):
-    permission_classes = [PermissionIsStaff]
+    permission_classes = (StudentListViewPermission,)
 
     def get(self, request, pk):
         student = Student.objects.get(user=pk)
         serializer = StudentSerializer(student)
-
         return Response(serializer.data)
 
     def patch(self, request, pk):
@@ -119,12 +118,11 @@ class StudentList(APIView):
 
 class BypassSheetsView(APIView):
 
-    #permission_classes = [IsAuthenticated]
-    permission_classes = [AllowAny]
+    permission_classes = (BypassSheetsViewPermission,)
 
     def get(self, request):
-        module = Module.objects.all()
-        serializer = BypassSheetsSerializer(module, many=True)
+        modules = Module.objects.filter(student_id=request.user.id)
+        serializer = BypassSheetsSerializer(modules, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -134,8 +132,8 @@ class BypassSheetsView(APIView):
         serializer.save()
         return Response(status=status.HTTP_201_CREATED)
 
-class BypassSheetsViewId(APIView):
-    permission_classes = [AllowAny]
+class BypassSheetView(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
 
     def get(self, request, pk):
         module = Module.objects.get(id=pk)
@@ -143,32 +141,7 @@ class BypassSheetsViewId(APIView):
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-# class PostByPassSheetsView(APIView):
-#     permission_classes = [IsAuthenticated]
-#
-#     def create_points(self, pk):
-#         point = Point()
-#         module = Module.objects.get(id=pk)
-#         point.create_module('Отдел1', 'Описание1', module)
-#         point2 = Point()
-#         point2.create_module('Отдел2', 'Описание2', module)
-#         point3 = Point()
-#         point3.create_module('Отдел3', 'Описание3', module)
-#         point4 = Point()
-#         point4.create_module('Отдел4', 'Описание4', module)
-#         point5 = Point()
-#         point5.create_module('Отдел5', 'Описание5', module)
-#
-#
-#     def post(self, request, pk):
-#         request.data.update({"student_id" : pk})
-#         serializer = PostByPassSheetsSerializer(data=request.data)
-#         serializer.is_valid(raise_exception=True)
-#         serializer.save()
-#         self.create_points(serializer.data["id"])
-#         return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-class TokenEmailPairView(TokenObtainPairView):
+class LoginView(TokenObtainPairView):
     serializer_class = TokenEmailPairSerializer
 
 class LogoutView(GenericAPIView):

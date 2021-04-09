@@ -10,5 +10,8 @@ class ThisEmailIsAlreadyExistError(Exception):
 class DepartmentNotFoundException(Exception):
     pass
 
-class UserWithThisFullNameDoesNotExist(Exception):
+class UserWithThisFullNameDoesNotExistException(Exception):
+    pass
+
+class UserWithThisEmailDoesNotExistException(Exception):
     pass

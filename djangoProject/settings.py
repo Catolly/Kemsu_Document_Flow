@@ -54,10 +54,10 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CORS_ORIGIN_WHITELIST = [
-    "http://localhost:8080",
-    "http://127.0.0.1:8000",
-]
+# CORS_ORIGIN_WHITELIST = [
+#     "http://localhost:8080",
+#     "http://127.0.0.1:8000",
+# ]
 
 ROOT_URLCONF = 'djangoProject.urls'
 
@@ -87,7 +87,7 @@ WSGI_APPLICATION = 'djangoProject.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'Kemsu_Document',
+        'NAME': 'kemsu_document',
         'USER': 'postgres',
         'PASSWORD': 'password',
         'HOST': 'localhost',
