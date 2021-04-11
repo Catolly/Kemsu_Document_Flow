@@ -8,8 +8,9 @@
   		:disabled="disabled"
   		class="app-input"
   		placeholder=" "
+      ref="appInput"
     >
-		<label class="label">{{placeholder}}</label>
+		<label @click="focus" class="label">{{placeholder}}</label>
 	</div>
 </template>
 
@@ -37,7 +38,10 @@ export default {
 	methods: {
 		updateValue(value) {
       this.$emit('input', value)
-		}
+		},
+    focus() {
+      this.$refs.appInput.focus()
+    }
 	},
 }
 </script>
@@ -105,6 +109,8 @@ export default {
 
 	color: @text-grey;
 	background: linear-gradient(to top, @input-background 50%, transparent 0);
+
+  user-select: none;
 }
 
 </style>
