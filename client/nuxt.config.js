@@ -37,6 +37,13 @@ module.exports = {
   },
 
   /*
+  **  BuildModules configuration
+   */
+  buildModules: [
+    ['@nuxtjs/vuetify', { /* module options */ }]
+  ],
+
+  /*
   ** Modules configuration
   */
   modules: [
