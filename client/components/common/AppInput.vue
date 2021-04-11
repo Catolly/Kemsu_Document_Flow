@@ -1,36 +1,24 @@
 <template>
 	<div class="input-wrapper">
 		<input
-		:id="id"
-		:value="value"
-		@input="updateValue($event.target.value)"
-		:type="type"
-		:required="required"
-		:disabled="disabled"
 		class="input"
-		placeholder=" ">
-		<label
-		class="label">
-			{{placeholder}}
-		</label>
-    <icon-search class="icon-search" />
+  		:value="value"
+  		@input="updateValue($event.target.value)"
+  		:type="type"
+  		:required="required"
+  		:disabled="disabled"
+  		placeholder=" "
+    >
+		<label class="label">{{placeholder}}</label>
 	</div>
 </template>
 
 <script>
-import IconSearch from '~/components/icons/IconSearch'
-
 export default {
 	name: 'AppInput',
-  components: {
-    IconSearch
-  },
+
 	props: {
 		value: String,
-		id: {
-			type: String,
-			required: true
-		},
 		placeholder: String,
 		type: {
 			type: String,
@@ -45,37 +33,27 @@ export default {
 			default: false
 		}
 	},
+
 	methods: {
 		updateValue(value) {
-			this.$emit('input', value)
+      this.$emit('input', value)
 		}
-	}
+	},
 }
 </script>
 
 <style lang="less" scoped>
 @input-background: #FDFDFD;
 
-.input-wrapper {
-	margin-top: 18px;
 	position: relative;
 
   height: 70px;
   width: 100%;
 
-  &.round .input {
-    border-radius: 100px;
-  }
-  .icon-search {
-    display: none;
-  }
-  &.search .icon-search{
-    .absolute();
-    top: calc(50% - 12px);
-    right: 18px;
 
-    height: 24px;
-    width: 24px;
+  &.round,
+  &.round .app-input {
+    border-radius: 100px;
   }
 }
 
