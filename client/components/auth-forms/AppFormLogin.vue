@@ -1,14 +1,14 @@
 <template>
-	<form @submit.prevent="checkForm" id="form"> 
+	<form @submit.prevent="checkForm" id="form">
 		<h1 id="form-header">Вход</h1>
 		<div id="form-inner">
-			<v-input
+			<app-input
 			v-model.trim="form.username"
 			placeholder="Ф.И.О. / Email"
 			id="username"
       class="username"
 			required />
-			<v-input
+			<app-input
 			v-model.trim="form.password"
 			placeholder="Пароль"
 			id="password"
@@ -17,11 +17,11 @@
 			<p class="forgot-password">
 				<NuxtLink to="#">Не помню пароль</NuxtLink>
 			</p>
-			<v-button
+			<app-button
 			id="login"
 			class="login-btn blue big filled fluid">
 				Войти
-			</v-button>
+			</app-button>
 		</div>
 	</form>
 </template>
@@ -29,14 +29,14 @@
 <script>
 import { mapMutations } from 'vuex'
 
-import VButton from '~/components/common/VButton'
-import VInput from '~/components/common/VInput'
+import AppButton from '~/components/common/AppButton'
+import AppInput from '~/components/common/AppInput'
 
 export default {
-  name: 'FormLogin',
+  name: 'AppFormLogin',
   components: {
-    VButton,
-    VInput,
+    AppButton,
+    AppInput,
   },
   data() {
     return {
@@ -55,7 +55,7 @@ export default {
       // ...
       this.login()
     },
-    async login() {   
+    async login() {
       // // Валидация данных на сервере
       // // ...
       const tokens = await new Promise((res, rej) => {

@@ -1,12 +1,12 @@
 <template>
-	<div 
+	<div
 	@focusin="focusIn($event)"
 	@keydown.down="onArrowDown"
 	@keydown.tab="onTab"
 	@keydown.up="onArrowUp"
 	@keydown.enter="onEnter"
 	class="input-wrapper">
-		<input 
+		<input
 		:id="id"
 		@input="updateValue($event.target.value)"
 		:value="value"
@@ -18,13 +18,13 @@
 		ref="input"
 		class="input"
 		placeholder=" ">
-		<label 
+		<label
 		:for="id"
 		class="label">
 			{{placeholder}}
 		</label>
-		<div 
-		v-show="isOpen"	
+		<div
+		v-show="isOpen"
 		v-if="filteredOptions.length"
 		class="autocomplete">
 			<div
@@ -35,14 +35,14 @@
 			class="option"
 			tabindex="0">
 				{{option.value}}
-			</div> 
+			</div>
 		</div>
 	</div>
 </template>
 
 <script>
 export default {
-	name: 'VInputAutocomplete',
+	name: 'AppAutocomplete',
 	data() {
 		return {
 			isOpen: false,
@@ -56,9 +56,9 @@ export default {
 			required: true
 		},
 		placeholder: String,
-		type: { 
+		type: {
 			type: String,
-			default: 'text' 
+			default: 'text'
 		},
 		options: Array,
 		required: {
@@ -137,7 +137,7 @@ export default {
 			return this.options.filter(item =>
 				item.value.toLowerCase().startsWith(
 					this.value.toLowerCase()
-					) 
+					)
 				&& item.value.toLowerCase() != this.value.toLowerCase()
 				)
 		}
@@ -184,10 +184,10 @@ export default {
   }
   &:focus + .label,
   &:not(:placeholder-shown) + .label {
-	  font-size: @fz-small; 
+	  font-size: @fz-small;
 	  top: -0.875em;
 	  left: 1.5em;
-	  padding: 0.25em 0.5em; 
+	  padding: 0.25em 0.5em;
   }
   &.open:focus {
   	border-radius: 10px 10px 0 0;
@@ -198,7 +198,7 @@ export default {
 	position: absolute;
   top: 1.2em;
   left: 1.2em;
-	
+
 	color: @text-grey;
 	background: linear-gradient(to top, @input-background 50%, transparent 0);
 }
@@ -214,13 +214,13 @@ export default {
 
 	box-shadow: 2px 2px 10px rgba(0, 0, 0, .05);
 	border-radius: 0 0 10px 10px;
-	
+
 	.option {
 		.flex(center, normal, column);
 		position: relative;
 		min-height: 70px;
 		padding: 23px 0;
-		width: 100%;	
+		width: 100%;
 
 		font-size: @fz-large;
 		background: @input-background;
@@ -232,12 +232,12 @@ export default {
 
 		&:hover {
 			background: #F2F2F2;
-			border-color: transparent;	
+			border-color: transparent;
 		}
 		&.active,
 		&:focus {
 			background: #DFDFDF;
-			border-color: transparent;	
+			border-color: transparent;
 		}
 	}
 

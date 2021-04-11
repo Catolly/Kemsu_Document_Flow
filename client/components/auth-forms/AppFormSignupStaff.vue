@@ -1,8 +1,8 @@
 <template>
-	<form @submit.prevent="checkForm" id="form"> 
+	<form @submit.prevent="checkForm" id="form">
     <h1 id="form-header">Регистрация</h1>
     <div id="form-inner">
-      <v-input-autocomplete
+      <app-autocomplete
       v-model.trim="form.username"
       :options="relevantUsersOptions"
       autocomplete="off"
@@ -11,32 +11,40 @@
       type="text"
       placeholder="Ф.И.О."
       required />
-      <v-input
+      <app-input
       v-model.trim="form.email"
       id="email"
       class="email"
       type="email"
       placeholder="Email"
       required />
-      <v-input
+      <app-autocomplete
+      v-model.trim="form.department"
+      :options="departmentsOptions"
+      autocomplete="off"
+      id="department"
+      class="department"
+      type="text"
+      placeholder="Отдел, в котором работаете"
+      required />
+      <app-input
       v-model.trim="form.password"
       id="password"
-      class="password"
       type="password"
       placeholder="Пароль"
       required />
-      <v-button
+      <app-button
       id="signup"
       class="signup-btn blue big filled fluid">
         Зарегистрироваться
-      </v-button>
-      <NuxtLink 
+      </app-button>
+      <NuxtLink
       to="/login"
       class="login-link">
-        <v-button
+        <app-button
         class="login-btn blue big fluid">
           Войти
-        </v-button>
+        </app-button>
       </NuxtLink>
       <p class="signup-problem">
         Кто-то зарегистрировался под вашим именем? Обратитесь к <NuxtLink to="#">администрации</NuxtLink>
@@ -46,27 +54,48 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
-
-import VButton from '~/components/common/VButton'
-import VInput from '~/components/common/VInput'
-import VInputAutocomplete from '~/components/common/VInputAutocomplete'
+import AppButton from '~/components/common/AppButton'
+import AppInput from '~/components/common/AppInput'
+import AppAutocomplete from '~/components/common/AppAutocomplete'
 
 export default {
-  name: 'FormSingupStudent',
+  name: 'FormSingupStaff',
   components: {
-    VButton,
-    VInput,
-    VInputAutocomplete,
+    AppButton,
+    AppInput,
+    AppAutocomplete,
   },
   data() {
     return {
       form: {
         username: '',
         email: '',
+        department: '',
         password: '',
       },
       relevantUsers: [
+        {
+          id: 34,
+          fullName: 'Козырева Татьяна Андреевна',
+          group: "M-174",
+        },
+        {
+          id: 64,
+          fullName: 'Козырева Татьяна Андреевна',
+          group: "M-185",
+        },
+        {
+          id: 18,
+          fullName: 'Сергиенко Анатолий Николаевич',
+          group: "M-174",
+        },
+        {
+          id: 93,
+          fullName: 'Оооооооооооооооооооочень длинное имя',
+          group: "M-174",
+        },
+      ],
+      departments: [
         {
           id: 34,
           fullName: 'Козырева Татьяна Андреевна',
@@ -92,52 +121,31 @@ export default {
   },
   computed: {
     relevantUsersOptions() {
-      return this.relevantUsers.map(user => { 
+      return this.relevantUsers.map(user => {
         return {
           id: user.id,
           value: user.fullName + ' - ' + user.group
         }
       })
+    },
+    departmentsOptions() {
+      return this.departments.map(department => {
+        return {
+          id: department.id,
+          value: department.fullName + ' - ' + department.group
+        }
+      })
     }
   },
   methods: {
-    ...mapMutations ([
-      'updateTokens'
-    ]),
     checkForm() {
       // Проверка данных формы
       // ...
       this.signup()
     },
     async signup() {
-      // const body = JSON.stringify({
-      //   fullName: 'TEST FULLNAME',
-      //   email: 'TEST EMAIL',
-      //   group: 'TEST GROUP',
-      //   password: 'TEST PASSWORD'
-      // })
-
-      // // Отправка данных на сервер
-      // // ...
-      // try {
-      //   const tokens = await fetch('http://mydoc.kemsu.ru/api/signup/student', {
-      //     method: 'POST',
-      //     headers: {
-      //       'Accept': 'application/json',
-      //       'Content-Type': 'application/json',
-      //       'X-Content-Type-Options': 'nosniff',
-      //       'OPTIONS': '*',
-      //     },
-      //     body,
-      //   })
-      //   .then(response => response.json())
-      //   .then(tokens => {
-      //     console.log(tokens)
-      //     this.updateTokens(tokens)
-      //   })
-      // } catch (err) {
-      //   console.error(err)
-      // }
+      // Отправка данных на сервер
+      // ...
 
       this.$router.push('/')
     },
@@ -183,4 +191,5 @@ export default {
     margin-top: 16px;
   }
 }
+
 </style>

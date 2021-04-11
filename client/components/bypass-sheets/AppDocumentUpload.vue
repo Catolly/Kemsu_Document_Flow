@@ -3,28 +3,28 @@
 		<h2 class="header">
 			{{title}}
 		</h2>
-		<div class="document-upload-container">
+		<div class="app-document-upload-container">
 			<div class="document-example">
 				<span class="subheader">Образец</span>
 				<img
-				:src="documentExampleSrc" 
+				:src="documentExampleSrc"
 				class="document-example-img">
-			</div>			
-			<div class="document-upload">
+			</div>
+			<div class="app-document-upload">
 				<span class="subheader">Заявление</span>
-				<v-image-upload class="v-image-upload" />
+				<app-image-upload class="app-image-upload" />
 			</div>
 		</div>
 	</div>
 </template>
 
 <script>
-import VImageUpload from '~/components/bypass-sheets/VImageUpload'
+import AppImageUpload from '~/components/bypass-sheets/AppImageUpload'
 
 export default {
-	name: 'DocumentUpload',
+	name: 'AppDocumentUpload',
 	components: {
-		VImageUpload,
+		AppImageUpload,
 	},
 	props: {
 		title: {
@@ -41,12 +41,12 @@ export default {
 
 <style lang="less" scoped>
 
-.document-upload-container{
+.app-document-upload-container{
 	.flex(flex-start);
 }
 
 .document-example,
-.document-upload {
+.app-document-upload {
 	.flex(flex-start, normal, column);
 	margin-top: 24px;
 }
@@ -64,10 +64,10 @@ export default {
 }
 
 .document-example-img,
-.v-image-upload {
+.app-image-upload {
 	height: 200px;
 	width: 200px;
-	
+
 	margin-top: 16px;
 }
 

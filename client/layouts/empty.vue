@@ -1,19 +1,19 @@
 <template>
 	<div class="container">
-		<logo class="big" />
+		<icon-logo class="big" />
 		<Nuxt />
 	</div>
 </template>
 
 <script>
-import Logo from '~/components/common/Logo'
+import IconLogo from '~/components/icons/IconLogo'
 
 export default {
 	name: 'empty',
 	components: {
-		Logo,
+		IconLogo,
 	},
-	middleware: 'checkUserIsLoggedOut',
+	// middleware: 'checkUserIsLoggedOut',
 }
 </script>
 

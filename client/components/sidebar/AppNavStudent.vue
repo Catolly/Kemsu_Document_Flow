@@ -1,13 +1,13 @@
 <template>
   <nav class="nav">
-    <NuxtLink 
+    <NuxtLink
     to="/"
     exact
     class="nav-link">Обходной лист</NuxtLink>
-    <NuxtLink 
+    <NuxtLink
     to="/settings"
     class="nav-link">Настройки</NuxtLink>
-    <NuxtLink 
+    <NuxtLink
     to="/contacts"
     class="nav-link">Контакты</NuxtLink>
   </nav>
@@ -15,7 +15,7 @@
 
 <script>
 export default {
-  name: 'NavStudent'
+  name: 'AppNavStudent'
 }
 </script>
 

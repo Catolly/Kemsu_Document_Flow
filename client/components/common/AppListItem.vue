@@ -1,24 +1,23 @@
 <template>
 	<div
 	@click="$emit('click')"
-	class="v-list-item-base">
+	class="app-list-item">
 		<slot />
 	</div>
 </template>
 
 <script>
 export default {
-	name: 'VListItemBase'
+	name: 'AppListItem'
 }
 </script>
 
 <style lang="less" scoped>
 
-.v-list-item-base {
+.app-list-item {
 	width: 100%;
 
 	padding: 38px 50px;
-	margin-bottom: 12px;
 
 	background: #FDFDFD;
 	border: 2px solid #F3F3F3;
@@ -26,6 +25,7 @@ export default {
 
 	.flex(space-between, center);
 	transition: .2s ease all;
+  transition: margin 0s;
 	cursor: pointer;
 
 	&:hover {
