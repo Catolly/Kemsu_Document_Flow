@@ -1,12 +1,12 @@
 <template>
-	<div class="input-wrapper">
+	<div class="app-input-wrapper">
 		<input
-		class="input"
   		:value="value"
   		@input="updateValue($event.target.value)"
   		:type="type"
   		:required="required"
   		:disabled="disabled"
+  		class="app-input"
   		placeholder=" "
     >
 		<label class="label">{{placeholder}}</label>
@@ -45,11 +45,24 @@ export default {
 <style lang="less" scoped>
 @input-background: #FDFDFD;
 
+.label,
+.app-input {
+	transition: .2s ease all;
+}
+
+.app-input, // need to not hide parent corners
+.app-input-wrapper {
+  border-radius: 10px;
+}
+
+.app-input-wrapper {
 	position: relative;
 
   height: 70px;
   width: 100%;
 
+  border: 1px solid #F3F3F3;
+  background: @input-background;
 
   &.round,
   &.round .app-input {
@@ -57,57 +70,41 @@ export default {
   }
 }
 
-.label,
-.input {
-	transition: .2s ease all;
-}
-
-.input {
+.app-input {
   position: relative;
 
-  height: inherit;
-  width: inherit;
+  min-height: 100%;
+  min-width: 100%;
   padding-left: 24px;
 
-  background: @input-background;
-  border: 1px solid #F3F3F3;
-  border-radius: 10px;
+  border: 1px solid transparent;
 
   &:focus {
   	border-color: @blue;
+    & + .label {
+    	color: @blue;
+    }
   }
-  &:focus + .label {
-  	color: @blue;
-  }
-  &:focus + .label,
-  &:not(:placeholder-shown) + .label {
-	  font-size: @fz-small;
-	  top: -0.875em;
-	  left: 1.5em;
-	  padding: 0.25em 0.5em;
+
+  // fix placeholder on input top border
+  &:focus,
+  &:not(:placeholder-shown) {
+    & + .label {
+  	  font-size: @fz-small;
+  	  top: -0.875em;
+  	  left: 1.5em;
+  	  padding: 0.25em 0.5em;
+    }
   }
 }
 
 .label {
 	position: absolute;
-  top: 1.2em;
+  top: calc(50% - .6em); // fix on input center
   left: 1.2em;
 
 	color: @text-grey;
 	background: linear-gradient(to top, @input-background 50%, transparent 0);
-}
-
-.invalid {
-	.input {
-		border-color: @red;
-	}
-	.label {
-		color: @red;
-	}
-}
-
-.round {
-  border-radius: 25px;
 }
 
 </style>
