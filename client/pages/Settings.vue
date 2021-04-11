@@ -50,7 +50,7 @@ import AppInput from '~/components/common/AppInput'
 import AppButton from '~/components/common/AppButton'
 
 export default {
-	name: 'Settings',
+	name: 'settings',
 	components: {
 		AppInput,
 		AppButton

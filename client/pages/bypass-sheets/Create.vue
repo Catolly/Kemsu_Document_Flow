@@ -30,7 +30,7 @@ import AppSelect from '~/components/common/AppSelect'
 import AppDocumentUpload from '~/components/bypass-sheets/AppDocumentUpload'
 
 export default {
-	name: 'Create',
+	name: 'create',
 	components: {
 		AppButton,
 		AppSelect,

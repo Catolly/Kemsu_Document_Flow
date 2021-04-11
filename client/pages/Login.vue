@@ -22,7 +22,7 @@ import AppFormLogin from '~/components/auth-forms/AppFormLogin'
 
 export default {
 	layout: 'empty',
-	name: 'Login',
+	name: 'login',
   components: {
     AppButton,
     AppFormLogin,
