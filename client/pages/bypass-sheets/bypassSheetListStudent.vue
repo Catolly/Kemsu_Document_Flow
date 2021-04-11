@@ -1,16 +1,8 @@
 <template>
 	<div class="container">
 		<h1 class="header">Обходной лист</h1>
-<<<<<<< Updated upstream
-		<v-button 
-		@click.native="openAddStatementForm"
-||||||| constructed merge base
-		<v-button 
-		@click="openAddStatementForm"
-=======
 		<app-button
 		@click="openAddStatementForm"
->>>>>>> Stashed changes
 		class="btn-open-add-statement-form blue filled">
 			Добавить заявление
 		</app-button>
@@ -76,18 +68,6 @@ export default {
 
 .bypass-sheet-list {
 	margin-top: 32px;
-<<<<<<< Updated upstream
-
-	* {
-		margin-top: 12px;
-	}
-||||||| constructed merge base
-
-	& > * {
-		margin-top: 12px;
-	}
-=======
->>>>>>> Stashed changes
 }
 
 .bypass-sheet-title {
