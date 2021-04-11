@@ -1,31 +1,31 @@
 <template>
   <div class="container">
     <div class="content">
-      <form-login />
-      <NuxtLink 
+      <app-form-login />
+      <NuxtLink
       to="/signup"
       tabindex="-1"
       class="signup-link">
-        <v-button
+        <app-button
         tabindex="0"
         class="signup-btn blue big fluid">
           Зарегистрироваться
-        </v-button>
+        </app-button>
       </NuxtLink>
     </div>
   </div>
 </template>
 
 <script>
-import VButton from '~/components/common/VButton'
-import FormLogin from '~/components/common/FormLogin'
+import AppButton from '~/components/common/AppButton'
+import AppFormLogin from '~/components/auth-forms/AppFormLogin'
 
 export default {
 	layout: 'empty',
 	name: 'Login',
   components: {
-    VButton,
-    FormLogin,
+    AppButton,
+    AppFormLogin,
   },
 }
 </script>

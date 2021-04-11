@@ -1,6 +1,6 @@
 <template>
-	<div class="select-wrapper">
-		<div 
+	<div class="app-wrapper">
+		<div
 		@focusin="changeFocus"
 		@focusout="changeFocus"
 		:id="id"
@@ -14,14 +14,14 @@
 			{{selected}}
 				<div class="arrow" />
 			</span>
-			<label 
+			<label
 			:class="{
 				'small': selected
 			}"
 			class="label">
 				{{placeholder}}
 			</label>
-			<div 
+			<div
 			v-show="isOpen"
 			class="option-wrapper">
 				<div
@@ -30,7 +30,7 @@
 				@click="select(option)"
 				class="option">
 					{{option.value}}
-				</div> 
+				</div>
 			</div>
 		</div>
 	</div>
@@ -38,7 +38,7 @@
 
 <script>
 	export default {
-		name: 'VSelect',
+		name: 'AppSelect',
 		data() {
 			return {
 				selected: null,
@@ -84,7 +84,7 @@
 @select-background: #FDFDFD;
 @select-border: #F3F3F3;
 
-.select-wrapper {
+.app-select {
 	width: 500px;
 	position: relative;
 }
@@ -92,7 +92,7 @@
 .select,
 .option {
 	position: relative;
-	width: 100%;	
+	width: 100%;
 
 	font-size: @fz-large;
 }
@@ -107,16 +107,16 @@
 		border-color: @blue;
 		border-radius: 10px 10px 0 0;
 	}
-	
+
 	&:focus .label {
 		color: @blue;
 	}
 	&:focus .label,
 	.label.small {
-		font-size: @fz-small; 
+		font-size: @fz-small;
 		top: -0.875em;
 		left: 1.5em;
-		padding: 0.25em 0.5em; 
+		padding: 0.25em 0.5em;
 	}
 
 	&:focus .arrow {
@@ -167,14 +167,14 @@
 	&:hover {
 		background: #F2F2F2;
 		border: 1px solid #D2D2D2;
-	}	
+	}
 }
 
 .label {
 	position: absolute;
 	top: 1.2em;
 	left: 1.2em;
-	
+
 	color: @text-grey;
 	background: linear-gradient(to top, @select-background 50%, transparent 0);
 }

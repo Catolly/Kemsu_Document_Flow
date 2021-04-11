@@ -1,13 +1,13 @@
 <template>
-	<v-list-item-base
+	<app-list-item
 	@click="toggle"
-	:class="{ 
+	:class="{
 		'green': status === 'signed',
 		'red': status === 'rejected',
 		'disabled': status === 'submitted',
 		'is-open' : isOpen
 	}"
-	class="v-list-item-point">
+	class="app-list-item-point">
 		<div
 		class="point-header">
 			<h3 class="point-title">
@@ -21,16 +21,16 @@
 			</span>
 			<div class="arrow" />
 		</div>
-		<div 
+		<div
 		@click.stop=""
 		v-show="isOpen"
 		class="point-inner">
-			<div class="required-documents-wrapper">	
+			<div class="required-documents-wrapper">
 				<span class="required-document-header">
 					Необходимые документы
 				</span>
 				<div class="required-documents">
-					<img 
+					<img
 					v-for="doc in requiredDocuments"
 					:key="doc.id"
 					:src="doc.src"
@@ -44,51 +44,51 @@
 				</span>
 			</div>
 			<form
-			v-if="['rejected', 'not sent'].includes(status)" 
+			v-if="['rejected', 'not sent'].includes(status)"
 			class="send-document-form">
 				<h2>Отправить документы</h2>
-				<div class="document-upload-section">
-					<div 
+				<div class="app-document-upload-section">
+					<div
 					v-for="doc in requiredDocuments"
 					:key="doc.id"
-					class="document-upload-wrapper">
+					class="app-document-upload-wrapper">
 						<span class="document-title">
 							{{doc.title}}
 						</span>
-						<div class="document-upload">
-							<v-image-upload 
+						<div class="app-document-upload">
+							<app-image-upload
 							class="document-image-upload" />
 							<img class="document-image-uploaded">
 						</div>
 					</div>
 				</div>
-				<v-button id="submit" class="blue filled">
+				<app-button id="submit" class="blue filled">
 					Отправить
-				</v-button>
+				</app-button>
 			</form>
-			<div 
+			<div
 			v-else
 			class="document-sent">
 				<p>
-					Ваши документы на проверке, вы можете 
+					Ваши документы на проверке, вы можете
 					<NuxtLink class="document-cancel-link" to="#">отменить отправку</NuxtLink>
 				</p>
 			</div>
 		</div>
-	</v-list-item-base>
+	</app-list-item>
 </template>
 
 <script>
-import VListItemBase from '~/components/common/VListItemBase'
-import VImageUpload from '~/components/bypass-sheets/VImageUpload'
-import VButton from '~/components/common/VButton'
+import AppListItem from '~/components/common/AppListItem'
+import AppImageUpload from '~/components/bypass-sheets/AppImageUpload'
+import AppButton from '~/components/common/AppButton'
 
 export default {
-	name: 'BypassSheetPoint',
+	name: 'AppBypassSheetPoint',
 	components: {
-		VListItemBase,
-		VImageUpload,
-		VButton,
+		AppListItem,
+		AppImageUpload,
+		AppButton,
 	},
 	data() {
 		return {
@@ -165,7 +165,7 @@ export default {
 
 .point-header,
 .point-inner {
-	z-index: 1;	
+	z-index: 1;
 }
 
 .point-header {
@@ -182,7 +182,7 @@ export default {
 
 	width: 0;
 	height: 0;
- 
+
 	border-top: @size solid #262626;
 	border-left: .5*@size solid transparent;
 	border-right: .5*@size solid transparent;
@@ -228,15 +228,15 @@ export default {
 		padding-top: 8px;
 		padding-left: 64px;
 
-		.document-upload-section {
+		.app-document-upload-section {
 			margin-top: 24px;
 			.flex(flex-start);
 
-			.document-upload-wrapper {
+			.app-document-upload-wrapper {
 				margin-right: 32px;
 			}
 
-			.document-upload {
+			.app-document-upload {
 				margin-top: 12px;
 				.flex(flex-start, normal);
 			}

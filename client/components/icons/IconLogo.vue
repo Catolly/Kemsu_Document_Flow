@@ -1,9 +1,9 @@
-<template> 
-	<div class="logo">
+<template>
+	<div class="icon-logo">
     <icon-base
-    :height="height" 
+    :height="height"
     :width="width"
-    class="logo-img">
+    class="icon-logo-img">
       <g :transform="`translate(0.000000,${height}) scale(${0.1 * width/202},-${0.1 * height/202})`"
       fill="#000000" stroke="none">
         <path d="M400 1980 c0 -22 -9 -69 -21 -103 -51 -154 -168 -252 -329 -273 l-50
@@ -27,7 +27,7 @@
 import IconBase from '~/components/icons/IconBase'
 
 export default {
-  name: 'Logo',
+  name: 'IconLogo',
   components: {
     IconBase
   },
@@ -42,7 +42,7 @@ export default {
 
 <style lang="less" scoped>
 
-.logo {
+.icon-logo {
 	height: 66px;
   width: 42px;
 
@@ -56,7 +56,7 @@ export default {
   }
 }
 
-.logo-img {
+.icon-logo-img {
   height: 100%;
   width: 100%;
 }

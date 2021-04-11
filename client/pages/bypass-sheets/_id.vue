@@ -3,8 +3,8 @@
 		<h1 class="header">
 			Обходной лист - {{title}}
 		</h1>
-		<div class="point-list">
-			<bypass-sheet-point
+		<app-list	class="point-list">
+			<app-bypass-sheet-point
 				v-for="point in points"
 				:key="point.id"
 				@click="toggle(point)"
@@ -16,16 +16,18 @@
 				:worker="point.worker"
 				:phone="point.phone"
 				class="point" />
-		</div>	
+		</app-list>
 	</div>
 </template>
 
 <script>
-import BypassSheetPoint from '~/components/bypass-sheets/BypassSheetPoint'
+import AppList from '~/components/common/AppList'
+import AppBypassSheetPoint from '~/components/bypass-sheets/AppBypassSheetPoint'
 
 export default {
 	components: {
-		BypassSheetPoint,
+		AppList,
+    AppBypassSheetPoint,
 	},
 	data() {
 		return {
@@ -123,10 +125,6 @@ export default {
 
 .point-list {
 	margin-top: 48px;
-
-	* {
-		margin-top: 12px;
-	}
 }
 
 </style>

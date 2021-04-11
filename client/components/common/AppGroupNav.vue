@@ -1,11 +1,11 @@
 <template>
-	<nav class="v-group-nav">
-		<NuxtLink 
+	<nav class="app-group-nav">
+		<NuxtLink
 		to="#"
 		class="back-link">
 			<icon-arrow-back class="active"/>
 		</NuxtLink>
-		<NuxtLink 
+		<NuxtLink
 		to="#"
 		class="next-link">
 			<icon-arrow-next/>
@@ -21,7 +21,7 @@ import IconArrowBack from '~/components/icons/IconArrowBack'
 import IconArrowNext from '~/components/icons/IconArrowNext'
 
 export default {
-	name: "VGroupNav",
+	name: "AppGroupNav",
 	components: {
 		IconArrowBack,
 		IconArrowNext,
@@ -47,6 +47,7 @@ export default {
 .group-path {
 	color: @text-grey;
 	font-size: @fz-small;
+  font-weight: @fw-normal;
 }
 
 .group-name {

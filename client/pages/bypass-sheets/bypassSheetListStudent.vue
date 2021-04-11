@@ -1,13 +1,13 @@
 <template>
 	<div class="container">
 		<h1 class="header">Обходной лист</h1>
-		<v-button 
-		@click.native="openAddStatementForm"
+		<app-button
+		@click="openAddStatementForm"
 		class="btn-open-add-statement-form blue filled">
 			Добавить заявление
-		</v-button>
-		<div class="bypass-sheet-list">
-			<v-list-item-base
+		</app-button>
+		<app-list	class="bypass-sheet-list">
+			<app-list-item
 			v-for="bypassSheet in bypassSheets"
 			:key="bypassSheet.id"
 			@click="openBypassSheet(bypassSheet)"
@@ -15,19 +15,21 @@
 				<div class="bypass-sheet-title">
 					{{ bypassSheet.title }}
 				</div>
-			</v-list-item-base>
-		</div>
+			</app-list-item>
+		</app-list>
 	</div>
 </template>
 
 <script>
-import VButton from '~/components/common/VButton'
-import VListItemBase from '~/components/common/VListItemBase'
+import AppButton from '~/components/common/AppButton'
+import AppList from '~/components/common/AppList'
+import AppListItem from '~/components/common/AppListItem'
 
 export default {
 	components: {
-		VButton,
-		VListItemBase,
+		AppButton,
+		AppList,
+    AppListItem,
 	},
 	methods: {
 		openBypassSheet(bypassSheet) {
@@ -66,10 +68,6 @@ export default {
 
 .bypass-sheet-list {
 	margin-top: 32px;
-
-	* {
-		margin-top: 12px;
-	}
 }
 
 .bypass-sheet-title {

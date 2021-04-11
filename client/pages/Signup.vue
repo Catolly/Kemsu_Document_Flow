@@ -1,24 +1,24 @@
 <template>
   <div class="container">
     <div class="content">
-      <form-signup-staff v-if="$route.query.staff"/>
-      <form-signup-student v-else/>
+      <app-form-signup-staff v-if="$route.query.staff"/>
+      <app-form-signup-student v-else/>
     </div>
   </div>
 </template>
 
 <script>
-import VButton from '~/components/common/VButton'
-import FormSignupStaff from '~/components/common/FormSignupStaff'
-import FormSignupStudent from '~/components/common/FormSignupStudent'
+import AppButton from '~/components/common/AppButton'
+import AppFormSignupStaff from '~/components/auth-forms/AppFormSignupStaff'
+import AppFormSignupStudent from '~/components/auth-forms/AppFormSignupStudent'
 
 export default {
 	layout: 'empty',
 	name: 'Signup',
   components: {
-    VButton,
-    FormSignupStaff,
-    FormSignupStudent,
+    AppButton,
+    AppFormSignupStaff,
+    AppFormSignupStudent,
   }
 }
 </script>

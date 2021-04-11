@@ -1,6 +1,6 @@
 <template>
 	<div class="input-wrapper">
-		<input 
+		<input
 		:id="id"
 		:value="value"
 		@input="updateValue($event.target.value)"
@@ -9,16 +9,22 @@
 		:disabled="disabled"
 		class="input"
 		placeholder=" ">
-		<label 
+		<label
 		class="label">
 			{{placeholder}}
 		</label>
+    <icon-search class="icon-search" />
 	</div>
 </template>
 
 <script>
+import IconSearch from '~/components/icons/IconSearch'
+
 export default {
-	name: 'VInput',
+	name: 'AppInput',
+  components: {
+    IconSearch
+  },
 	props: {
 		value: String,
 		id: {
@@ -26,9 +32,9 @@ export default {
 			required: true
 		},
 		placeholder: String,
-		type: { 
+		type: {
 			type: String,
-			default: 'text' 
+			default: 'text'
 		},
 		required: {
 			type: Boolean,
@@ -48,11 +54,29 @@ export default {
 </script>
 
 <style lang="less" scoped>
-
 @input-background: #FDFDFD;
+
 .input-wrapper {
 	margin-top: 18px;
 	position: relative;
+
+  height: 70px;
+  width: 100%;
+
+  &.round .input {
+    border-radius: 100px;
+  }
+  .icon-search {
+    display: none;
+  }
+  &.search .icon-search{
+    .absolute();
+    top: calc(50% - 12px);
+    right: 18px;
+
+    height: 24px;
+    width: 24px;
+  }
 }
 
 .label,
@@ -61,14 +85,16 @@ export default {
 }
 
 .input {
-	height: 70px;
-  width: 100%;
+  position: relative;
+
+  height: inherit;
+  width: inherit;
   padding-left: 24px;
 
   background: @input-background;
   border: 1px solid #F3F3F3;
   border-radius: 10px;
-  
+
   &:focus {
   	border-color: @blue;
   }
@@ -77,10 +103,10 @@ export default {
   }
   &:focus + .label,
   &:not(:placeholder-shown) + .label {
-	  font-size: @fz-small; 
+	  font-size: @fz-small;
 	  top: -0.875em;
 	  left: 1.5em;
-	  padding: 0.25em 0.5em; 
+	  padding: 0.25em 0.5em;
   }
 }
 
@@ -88,18 +114,22 @@ export default {
 	position: absolute;
   top: 1.2em;
   left: 1.2em;
-	
+
 	color: @text-grey;
 	background: linear-gradient(to top, @input-background 50%, transparent 0);
 }
 
-.is-invalid {
+.invalid {
 	.input {
 		border-color: @red;
 	}
 	.label {
 		color: @red;
 	}
+}
+
+.round {
+  border-radius: 25px;
 }
 
 </style>

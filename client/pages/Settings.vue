@@ -2,22 +2,22 @@
 	<div class="container">
 		<h1 class="header">Личные данные</h1>
 		<div class="personal-data">
-			<v-input
+			<app-input
 			:value="lastName"
 			placeholder="Фамилия"
-			id="last-name" 
-			class="v-input" />
-			<v-input
+			id="last-name"
+			class="app-input" />
+			<app-input
 			:value="firstName"
 			placeholder="Имя"
-			id="first-name" 
-			class="v-input" />
-			<v-input
+			id="first-name"
+			class="app-input" />
+			<app-input
 			:value="middleName"
 			placeholder="Отчество"
-			id="middleName" 
-			class="v-input" />
-			<div 
+			id="middleName"
+			class="app-input" />
+			<div
 			v-for="departmentsItem in departments"
 			:key="departmentsItem.title"
 			class="departments-field">
@@ -32,12 +32,12 @@
 				</NuxtLink>
 			</span>
 			<div class="btns-wrapper">
-				<v-button class="btn btn-cancel red">
+				<app-button class="btn btn-cancel red">
 					Отмена
-				</v-button>
-				<v-button class="btn btn-submit blue filled">
+				</app-button>
+				<app-button class="btn btn-submit blue filled">
 					Отправить
-				</v-button>
+				</app-button>
 			</div>
 		</div>
 	</div>
@@ -46,14 +46,14 @@
 <script>
 import { mapActions } from 'vuex'
 
-import VInput from '~/components/common/VInput'
-import VButton from '~/components/common/VButton'
+import AppInput from '~/components/common/AppInput'
+import AppButton from '~/components/common/AppButton'
 
 export default {
 	name: 'Settings',
 	components: {
-		VInput,
-		VButton
+		AppInput,
+		AppButton
 	},
 	data() {
 		return {
@@ -132,7 +132,7 @@ export default {
 
 	margin-top: 48px;
 
-	.v-input {
+	.app-input {
 		width: 360px;
 	}
 

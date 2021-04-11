@@ -1,39 +1,39 @@
 <template>
-	<button 
+	<button
 	tabindex="0"
-	class="v-button">
+	@click="$emit('click')"
+	@keydown.enter="$emit('enter')"
+	class="app-button">
 		<slot />
 	</button>
 </template>
 
 <script>
 export default {
-	name: 'VButton',
+	name: 'AppButton',
 }
 </script>
 
 <style lang="less" scoped>
 
-.v-button {
-  padding: 16px 48px;
-  
+.app-button {
+  color: @text-grey;
   font-size: @fz-normal;
-  font-weight: @fw-medium;
+  font-weight: @fw-normal;
 
-  border-radius: 10px;
-	border: 1px solid #000;
+  height: 50px;
+  padding: 0;
+	border: none;
 	background: transparent;
 
 	&:hover {
-		background: rgba(0, 0, 0, .025);
+		color: #000;
+    cursor: pointer;
 	}
 }
 
 .big {
-	padding-top: 19px;
-	padding-bottom: 19px;
-
-	font-size: @fz-large;
+	height: 70px;
 }
 
 .fluid {
@@ -43,9 +43,10 @@ export default {
 .red,
 .green,
 .blue {
-	&:hover {
-		cursor: pointer;
-	}
+  padding: 12px 48px;
+  border-radius: 10px;
+  font-weight: @fw-medium;
+
 	&.filled {
 		border: none;
 		color: #fff;
@@ -80,7 +81,7 @@ export default {
 		background-color: @green;
 	}
 	&.filled {
-		background: @green-hover;
+		background: @green;
 	}
 	&.filled:focus,
 	&.filled:hover {

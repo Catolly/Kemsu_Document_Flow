@@ -2,39 +2,39 @@
 	<div class="container">
 		<form id="form">
 			<h1 class="header">Обходной лист</h1>
-			<v-select 
+			<app-select
 			placeholder="Причина"
 			:options="reasonOptions"
 			id="reason"
 			class="reason"
 			required />
-			<document-upload 
+			<app-document-upload
 			:documentExampleSrc="documentExampleSrc"
 			:title="'Необходимые документы'	"
-			class="document-upload" />
+			class="app-document-upload" />
 			<div class="btns-wrapper">
-				<v-button class="btn btn-cancel red">
+				<app-button class="btn btn-cancel red">
 					Отмена
-				</v-button>
-				<v-button class="btn btn-submit blue filled">
+				</app-button>
+				<app-button class="btn btn-submit blue filled">
 					Отправить
-				</v-button>
+				</app-button>
 			</div>
 		</form>
 	</div>
 </template>
 
 <script>
-import VButton from '~/components/common/VButton'
-import VSelect from '~/components/common/VSelect'
-import DocumentUpload from '~/components/bypass-sheets/DocumentUpload'
+import AppButton from '~/components/common/AppButton'
+import AppSelect from '~/components/common/AppSelect'
+import AppDocumentUpload from '~/components/bypass-sheets/AppDocumentUpload'
 
 export default {
 	name: 'Create',
 	components: {
-		VButton,
-		VSelect,
-		DocumentUpload,
+		AppButton,
+		AppSelect,
+		AppDocumentUpload,
 	},
 	methods: {
 	},
@@ -70,7 +70,7 @@ export default {
 	padding-top: 40px;
 }
 
-.document-upload {
+.app-document-upload {
 	padding-top: 48px;
 }
 

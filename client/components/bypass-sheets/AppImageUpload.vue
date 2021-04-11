@@ -1,11 +1,11 @@
 <template>
-	<div class="v-image-upload">
-		<div class="v-image-upload-inner">
-			<img 
+	<div class="app-image-upload">
+		<div class="app-image-upload-inner">
+			<img
 			v-if="previewImageURL"
 			:src="previewImageURL"
 			class="preview-img">
-			<img 
+			<img
 			v-if="previewIconURL"
 			:src="previewIconURL"
 			class="preview-icon">
@@ -17,7 +17,7 @@
 			accept="image/*,image/jpeg,application/pdf,application/pdf,application/msworld, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
 			class="input">
 		</div>
-		<div 
+		<div
 		:title="previewName"
 		class="preview-name">
 			{{previewName}}
@@ -27,7 +27,7 @@
 
 <script>
 export default {
-	name: 'VImageUpload',
+	name: 'AppImageUpload',
 	data() {
 		return {
 			previewName: null,
@@ -45,15 +45,15 @@ export default {
 			}
 			if(file) {
 				this.previewName = file.name
-				
+
 				if(file.type.includes('image')) {
 					reader.readAsDataURL(file)
 				}
 				else if(file.name.toLowerCase().includes('doc', 'docx')) {
-					this.setPreviewIcon(require('~/assets/icons/VImageUpload/doc.svg'))
+					this.setPreviewIcon(require('~/assets/icons/AppImageUpload/doc.svg'))
 				}
 				else if(file.name.toLowerCase().includes('pdf')) {
-					this.setPreviewIcon(require('~/assets/icons/VImageUpload/pdf.svg'))
+					this.setPreviewIcon(require('~/assets/icons/AppImageUpload/pdf.svg'))
 				}
 			}
 		},
@@ -71,12 +71,12 @@ export default {
 
 <style lang="less" scoped>
 
-.v-image-upload {
+.app-image-upload {
 	position: relative;
 
 }
 
-.v-image-upload-inner {
+.app-image-upload-inner {
 	position: relative;
 
 	height: 100%;
@@ -111,7 +111,7 @@ export default {
 	position: absolute;
 	top: 0;
 	left: 0;
-	
+
 	height: 100%;
 	width: 100%;
 
@@ -124,7 +124,7 @@ export default {
 	bottom: 10%;
 	left: 10%;
 	right: 10%;
-	
+
 	height: 80%;
 	width: 80%;
 

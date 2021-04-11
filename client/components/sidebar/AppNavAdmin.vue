@@ -1,16 +1,22 @@
 <template>
   <nav class="nav">
-    <NuxtLink 
+    <NuxtLink
     to="/"
     exact
+    class="nav-link">Обходной лист</NuxtLink>
+    <NuxtLink
+    to="/users"
+    class="nav-link">Пользователи</NuxtLink>
+    <NuxtLink
+    to="/signs"
     class="nav-link">Подписи</NuxtLink>
-    <NuxtLink 
+    <NuxtLink
     to="/history"
     class="nav-link">История</NuxtLink>
-    <NuxtLink 
+    <NuxtLink
     to="/settings"
     class="nav-link">Настройки</NuxtLink>
-    <NuxtLink 
+    <NuxtLink
     to="/contacts"
     class="nav-link">Контакты</NuxtLink>
   </nav>
@@ -18,7 +24,7 @@
 
 <script>
 export default {
-  name: 'NavStaff'
+  name: 'AppNavAdmin'
 }
 </script>
 
