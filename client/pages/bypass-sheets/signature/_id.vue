@@ -1,12 +1,17 @@
 <template>
   <div class="container">
     <h1 class="header">{{title}}</h1>
-    <app-group-nav class="app-group-nav mt-4" />
+    <app-group-nav class="app-group-nav" />
+
     <div class="topbar">
       <app-button class="btn green filled">Подписать (3)</app-button>
       <app-button class="btn">Выбрать всех</app-button>
       <app-button class="btn">Снять выбор</app-button>
-      <app-input id="input" class="input round search" />
+      <app-search
+        v-model="searchText"
+        round
+        class="search"
+      />
     </div>
     <app-list	class="student-list">
       <app-list-item>
@@ -18,23 +23,25 @@
 <script>
 import AppGroupNav from '~/components/common/AppGroupNav'
 import AppButton from '~/components/common/AppButton'
-import AppInput from '~/components/common/AppInput'
+import AppSearch from '~/components/common/AppSearch'
 import AppList from '~/components/common/AppList'
 import AppListItem from '~/components/common/AppListItem'
 
 export default {
+
   components: {
     AppGroupNav,
     AppButton,
-    AppInput,
+    AppSearch,
     AppList,
     AppListItem,
   },
-  data() {
-    return {
-      title: 'Скидка на столовую',
-    }
-  },
+
+  data:() => ({
+    title: 'Скидка на столовую',
+
+    searchText: '',
+  }),
 }
 </script>
 
@@ -44,9 +51,9 @@ export default {
   margin-top: 48px;
 }
 
-// .app-group-nav {
-//   margin-top: 16px;
-// }
+.app-group-nav {
+  margin-top: 16px;
+}
 
 .topbar {
   margin-top: 48px;
@@ -62,7 +69,7 @@ export default {
     }
   }
 
-  .input {
+  .search {
     width: 340px;
     height: 50px;
 
