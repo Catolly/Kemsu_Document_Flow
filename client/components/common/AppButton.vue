@@ -1,17 +1,9 @@
 <template>
 	<button
 	tabindex="0"
-<<<<<<< Updated upstream:client/components/common/VButton.vue
-	class="v-button">
-||||||| constructed merge base:client/components/common/VButton.vue
-	@click="$emit('click')"
-	@keydown.enter="$emit('enter')"
-	class="v-button">
-=======
 	@click="$emit('click')"
 	@keydown.enter="$emit('enter')"
 	class="app-button">
->>>>>>> Stashed changes:client/components/common/AppButton.vue
 		<slot />
 	</button>
 </template>
