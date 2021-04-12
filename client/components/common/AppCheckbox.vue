@@ -62,7 +62,7 @@ export default {
     border: none;
     background: @green;
 
-    &:hover: {
+    &:hover {
       background: @green-hover;
     }
   }
