@@ -15,6 +15,9 @@
     </div>
     <app-list	class="student-list">
       <app-list-item>
+        <app-checkbox
+          v-model="checked"
+        />
       </app-list-item>
     </app-list>
   </div>
@@ -26,6 +29,7 @@ import AppButton from '~/components/common/AppButton'
 import AppSearch from '~/components/common/AppSearch'
 import AppList from '~/components/common/AppList'
 import AppListItem from '~/components/common/AppListItem'
+import AppCheckbox from '~/components/common/AppCheckbox'
 
 export default {
 
@@ -35,13 +39,24 @@ export default {
     AppSearch,
     AppList,
     AppListItem,
+    AppCheckbox,
   },
 
   data:() => ({
     title: 'Скидка на столовую',
 
     searchText: '',
+
+    // user signature component
+    checked: false,
+    //
   }),
+
+  methods: {
+    test(checked) {
+      this.checked = checked
+    }
+  }
 }
 </script>
 
