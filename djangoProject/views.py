@@ -20,7 +20,8 @@ from Kemsu_Document.serializers import (
     LogoutSerializer, RefreshTokenSerializer, PostByPassSheetsSerializer, LoginSerializer,
 )
 
-from .permissions import IsAdmin, IsStudent, IsStaff, StudentListViewPermission, BypassSheetsViewPermission
+from .permissions import (IsAdmin, IsStudent, IsStaff,
+                          StudentListViewPermission, PatchUserDataPermission, BypassSheetsViewPermission, )
 
 
 class RegistrationStudentAPIView(APIView):
@@ -102,14 +103,15 @@ class RegistrationStaffAPIView(APIView):
         )
 
 class StudentList(APIView):
-    permission_classes = (StudentListViewPermission,)
 
     def get(self, request, pk):
+        self.permission_classes = [StudentListViewPermission]
         student = Student.objects.get(user=pk)
         serializer = StudentSerializer(student)
         return Response(serializer.data)
 
     def patch(self, request, pk):
+        self.permission_classes = [PatchUserDataPermission]
         user = User.objects.get(id=pk)
         serializer = UpdateUserSerializer(user, data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -118,15 +120,20 @@ class StudentList(APIView):
 
 class BypassSheetsView(APIView):
 
-    permission_classes = (BypassSheetsViewPermission,)
+    #permission_classes = [BypassSheetsViewPermission]
 
     def get(self, request):
-        modules = Module.objects.filter(student_id=request.user.id)
+        self.permission_classes = [IsAuthenticated]
+        if request.user.status == "Студент":
+            modules = Module.objects.filter(student_id=request.user.id)
+        else:
+            modules = Module.objects.all()
         serializer = BypassSheetsSerializer(modules, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
+        self.permission_classes = [BypassSheetsViewPermission]
         serializer = PostByPassSheetsSerializer(data=request.data, context={"request" : request})
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -136,7 +143,17 @@ class BypassSheetView(APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
     def get(self, request, pk):
-        module = Module.objects.get(id=pk)
+        if request.user.status == "Студент":
+            module = Module.objects.filter(id=pk, student_id=request.user.id).first()
+        elif request.user.status == "Работник" or request.user.status == "Администратор":
+            module = Module.objects.filter(id=pk).first()
+        else:
+            return Response(
+                {
+                    "message": "You don't have permissions to perform this action"
+                },
+                status=status.HTTP_409_CONFLICT)
+
         serializer = BypassSheetsSerializer(module)
 
         return Response(serializer.data, status=status.HTTP_200_OK)

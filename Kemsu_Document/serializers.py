@@ -38,10 +38,6 @@ class RegistrationStaffSerializer(serializers.ModelSerializer):
         user_data.setdefault('email', validated_data.pop('email'))
         user_data.setdefault('password', validated_data.pop('password'))
 
-        fullnameIsExist = User.objects.filter(fullname=user_data['fullname'])
-
-        if len(fullnameIsExist) != 0:
-            raise ThisUserIsAlreadyExistException
         try:
             department = Department.objects.get(title=validated_data['department'])
         except Exception:
@@ -105,6 +101,12 @@ class RegistrationStudentSerializer(serializers.ModelSerializer):
         if len(fullnameIsExist) != 0 and recordBookNumber == "":
             raise ThisUserIsAlreadyExistException
 
+        if recordBookNumber != "":
+
+            checkNumberOfRecordBooks = Student.objects.filter(recordBookNumber=recordBookNumber)
+
+            if len(checkNumberOfRecordBooks) != 0:
+                raise ValidationError("This record book number is already exist")
         try:
             group = Group.objects.get(title=validated_data['group'])
         except Exception:
