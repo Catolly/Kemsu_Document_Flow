@@ -30,7 +30,8 @@ class Group(models.Model):
 
 class Department(models.Model):
     title = models.CharField("Название отдела", default=None, max_length=100)
-
+    institute = models.ForeignKey(Institute, verbose_name= "Институт", on_delete=models.CASCADE,null=True, related_name=
+                                  "departments",blank=True)
     address = models.CharField("Адрес", default=None, max_length=50, null=True, blank=True)
 
     class Meta:
@@ -194,3 +195,4 @@ class RequiredDocuments(models.Model):
 
     def __str__(self):
         return self.title
+
