@@ -13,18 +13,28 @@
       @search="search"
     />
 
+    <app-sign-point-list
+      :pointList="pointList"
+      @check="check"
+      @uncheck="uncheck"
+      @sign="sign"
+      @reject="reject"
+    />
+
   </div>
 </template>
 
 <script>
 import AppGroupNav from '~/components/common/AppGroupNav'
 import AppSignTopbar from '~/components/bypass-sheets/signature/AppSignTopbar'
+import AppSignPointList from '~/components/bypass-sheets/signature/AppSignPointList'
 
 export default {
 
   components: {
     AppGroupNav,
     AppSignTopbar,
+    AppSignPointList,
   },
 
   data:() => ({
@@ -82,6 +92,19 @@ export default {
   },
 
   methods: {
+    // Методы AppSignPointList
+    check(point) {
+      point.checked = true
+    },
+    uncheck(point) {
+      point.checked = false
+    },
+    sign(point) {
+      point.status = 'signed'
+    },
+    reject(point) {
+      point.status = 'rejected'
+    },
 
     // Методы app-sign-topbar
     signChecked() {
@@ -110,7 +133,4 @@ export default {
   margin-top: 16px;
 }
 
-.student-list {
-  margin-top: 32px;
-}
 </style>
