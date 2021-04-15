@@ -1,45 +1,30 @@
 <template>
   <div class="container">
+
     <h1 class="header">{{title}}</h1>
+
     <app-group-nav class="app-group-nav" />
 
-    <div class="topbar">
-      <app-button class="btn green filled">Подписать (3)</app-button>
-      <app-button class="btn">Выбрать всех</app-button>
-      <app-button class="btn">Снять выбор</app-button>
-      <app-search
-        v-model="searchText"
-        round
-        class="search"
-      />
-    </div>
-    <app-list	class="student-list">
-      <app-list-item>
-        <app-checkbox
-          v-model="checked"
-        />
-      </app-list-item>
-    </app-list>
+    <app-sign-topbar
+      :checkedPointsCount="checkedPointList.length"
+      @signChecked="signChecked"
+      @checkAll="checkAll"
+      @uncheckAll="uncheckAll"
+      @search="search"
+    />
+
   </div>
 </template>
 
 <script>
 import AppGroupNav from '~/components/common/AppGroupNav'
-import AppButton from '~/components/common/AppButton'
-import AppSearch from '~/components/common/AppSearch'
-import AppList from '~/components/common/AppList'
-import AppListItem from '~/components/common/AppListItem'
-import AppCheckbox from '~/components/common/AppCheckbox'
+import AppSignTopbar from '~/components/bypass-sheets/signature/AppSignTopbar'
 
 export default {
 
   components: {
     AppGroupNav,
-    AppButton,
-    AppSearch,
-    AppList,
-    AppListItem,
-    AppCheckbox,
+    AppSignTopbar,
   },
 
   data:() => ({
@@ -47,16 +32,71 @@ export default {
 
     searchText: '',
 
-    // user signature component
-    checked: false,
-    //
+    pointList: [
+      {
+        id: 1893,
+        checked: false,
+        status: 'reviewing',
+        owner: {
+          id: 10342,
+          fullName: 'Люкшин Михаил Сергеевич',
+          status: 'Бюджет, учится',
+        },
+        signer: {
+          fullName: 'Иванов И.И.',
+        },
+      },
+      {
+        id: 1894,
+        checked: false,
+        status: 'signed',
+        owner: {
+          id: 10343,
+          fullName: 'Сергиенко Анатолий Николаевич',
+          status: 'Бюджет, учится',
+        },
+        signer: {
+          fullName: 'Иванов И.И.',
+        },
+      },
+      {
+        id: 1894,
+        checked: false,
+        status: 'rejected',
+        owner: {
+          id: 10343,
+          fullName: 'Панчук Роман Олегович',
+          status: 'Бюджет, учится',
+        },
+        signer: {
+          fullName: 'Иванов И.И.',
+        },
+      },
+    ],
   }),
 
+  computed: {
+    checkedPointList: function() {
+      return this.pointList.filter(point => point.checked)
+    },
+  },
+
   methods: {
-    test(checked) {
-      this.checked = checked
-    }
-  }
+
+    // Методы app-sign-topbar
+    signChecked() {
+      this.checkedPointList.forEach(this.sign)
+    },
+    checkAll() {
+      this.pointList.forEach(this.check)
+    },
+    uncheckAll() {
+      this.pointList.forEach(this.uncheck)
+    },
+    search(searchText) {
+      this.searchText = searchText
+    },
+  },
 }
 </script>
 
@@ -70,32 +110,7 @@ export default {
   margin-top: 16px;
 }
 
-.topbar {
-  margin-top: 48px;
-
-  display: flex;
-
-  .btn {
-    margin-right: 18px;
-
-    &:first-child {
-      margin-right: 24px;
-
-    }
-  }
-
-  .search {
-    width: 340px;
-    height: 50px;
-
-    padding: 0;
-    margin: 0;
-    margin-left: auto;
-  }
-}
-
 .student-list {
   margin-top: 32px;
 }
-
 </style>
