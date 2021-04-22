@@ -4,7 +4,7 @@
 	:class="{
 		'green': status === 'signed',
 		'red': status === 'rejected',
-		'disabled': status === 'submitted',
+		'disabled': status === 'reviewing',
 		'is-open' : isOpen
 	}"
 	class="app-list-item-point">
@@ -62,7 +62,7 @@
 						</div>
 					</div>
 				</div>
-				<app-button id="submit" class="blue filled">
+				<app-button class="blue filled submit">
 					Отправить
 				</app-button>
 			</form>
@@ -123,6 +123,7 @@ export default {
 
 <style lang="less" scoped>
 
+// move to AppListItem
 .green {
 	color: @green;
 	border-color: @green;
@@ -137,10 +138,11 @@ export default {
 	color: @text-grey;
 	border-color: #F3F3F3;
 }
+//
 
 .point {
-	position: relative;
 	.flex(space-between, normal, column);
+	position: relative;
 
 	&.is-open .arrow {
 		transform: rotate(180deg);
@@ -260,7 +262,7 @@ export default {
 			}
 		}
 
-		#submit {
+		.submit {
 			margin-top: 24px;
 		}
 	}
