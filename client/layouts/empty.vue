@@ -1,6 +1,6 @@
 <template>
 	<div class="container">
-		<icon-logo class="big" />
+		<icon-logo class="logo big" />
 		<Nuxt />
 	</div>
 </template>
@@ -28,5 +28,11 @@ export default {
 </script>
 
 <style lang="less" scoped>
+
+.logo {
+  position: fixed;
+  top: 25px;
+  left: 60px;
+}
 
 </style>

@@ -1,6 +1,12 @@
 <template>
   <div class="container">
-    <icon-logo />
+    <!-- Перенаправляет на главную страницу роли пользователя -->
+    <div
+      class="logo"
+      @click="$router.push('/')"
+    >
+      <icon-logo />
+    </div>
     <!-- Определяем, какие права у юзера -->
     <div class="nav">
       <!-- <app-nav-student /> -->
@@ -28,6 +34,15 @@ export default {
 </script>
 
 <style scoped>
+
+.logo {
+  z-index: 1;
+  cursor: pointer;
+
+  position: fixed;
+  top: 25px;
+  left: 60px;
+}
 
 .nav {
   position: fixed;
