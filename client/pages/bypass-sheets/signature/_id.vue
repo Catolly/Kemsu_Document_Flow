@@ -1,40 +1,72 @@
 <template>
   <div class="container">
 
-    <h1 class="header">{{title}}</h1>
+    <!-- Завернуть все в компонент app-sign-main-->
+    <div class="sign-main">
 
-    <app-group-nav class="app-group-nav" />
+      <h1 class="header">{{title}}</h1>
 
-    <app-sign-topbar
-      :checkedPointsCount="checkedPointList.length"
-      @signChecked="signChecked"
-      @checkAll="checkAll"
-      @uncheckAll="uncheckAll"
-      @search="search"
-    />
+      <app-filter-nav
+        :filterNames="selectedFilterNames"
+      />
 
-    <app-sign-point-list
-      :pointList="pointList"
-      @check="check"
-      @uncheck="uncheck"
-      @sign="sign"
-      @reject="reject"
+      <app-sign-topbar
+        :checkedPointsCount="checkedStudentList.length"
+        @signChecked="signChecked"
+        @checkAll="checkAll"
+        @uncheckAll="uncheckAll"
+
+        :searchText="searchText"
+        @search="search"
+      />
+
+      <app-student-list
+        :studentList="searchingStudentList"
+        @check="check"
+        @uncheck="uncheck"
+        @sign="sign"
+        @reject="openRejectForm"
+      />
+
+      <app-modal
+        v-if="rejectForm.isOpen"
+      >
+        <app-reject-form
+          @close="closeRejectForm"
+          @reject="reject"
+        />
+      </app-modal>
+
+    </div>
+    <!--  -->
+
+    <app-filter
+      class="filter"
+      :filterList="filterList"
+      @select="select"
+      @clear="clear"
     />
 
   </div>
 </template>
 
 <script>
-import AppGroupNav from '~/components/common/AppGroupNav'
+import AppFilter from '~/components/common/AppFilter'
+import AppFilterNav from '~/components/common/AppFilterNav'
 import AppSignTopbar from '~/components/bypass-sheets/signature/AppSignTopbar'
-import AppSignPointList from '~/components/bypass-sheets/signature/AppSignPointList'
+import AppStudentList from '~/components/bypass-sheets/signature/AppStudentList'
+import AppModal from '~/components/common/AppModal'
+import AppRejectForm from '~/components/bypass-sheets/signature/AppRejectForm'
 
 export default {
 
   components: {
-    AppGroupNav,
+    AppFilter,
+    AppFilterNav,
     AppSignTopbar,
-    AppSignPointList,
+    AppStudentList,
+    AppModal,
+    AppRejectForm,
   },
 
   data:() => ({
@@ -42,82 +74,218 @@ export default {
 
     searchText: '',
 
-    pointList: [
+    rejectForm: {
+      // добавить текст отказа
+      isOpen: false,
+      student: null,
+    },
+
+    // Изменить структуру - студент наверху, в себе содержит обходные листы, инфу о группах/институтах
+    studentList: [
+    {
+      "id": 1,
+      "fullName": "Козырева Татьяна Андреевна",
+      "email": "example1@gmail.com",
+      "educationForm": "Бюджет",
+      "status": "Учится",
+      "checked": false,
+      "courseNumber": 3,
+      "group": {
+         "name": "M-174",
+         "institute": "Институт Фундаментальных Наук",
+      },
+      "point": {
+        "name": "Библиотека",
+        "status": "reviewing", // или "rejected" или "signed"
+        "rejectReason": "Необходимо сдать ключ от комнаты", // если status="rejected"
+        "staffName": "Иванов И.И.",
+        "documentList": [
+          {
+            name: "Фото/скан паспорта",
+            url: "http://mydoc.kemsu/...",
+          },
+          {
+            name: "Заполненный документ",
+            url: "http://mydoc.kemsu/...",
+          },
+        ],
+      },
+    },
+    {
+      "id": 2,
+      "fullName": "Сергиенко Анатолий Николаевич",
+      "email": "exmaple2@gmail.com",
+      "educationForm": "Бюджет",
+      "status": "Учится",
+      "checked": false,
+      "courseNumber": 3,
+      "group": {
+        "name": "M-174",
+        "institute": "Институт Фундаментальных Наук",
+      },
+     "point": {
+        "name": "Библиотека",
+        "status": "reviewing", // или "rejected" или "signed"
+        "rejectReason": "Необходимо сдать ключ от комнаты", // если status="rejected"
+        "staffName": "Иванов И.И.",
+        "documentList": [
+          {
+            name: "Фото/скан паспорта",
+            url: "http://mydoc.kemsu/...",
+          },
+          {
+            name: "Заполненный документ",
+            url: "http://mydoc.kemsu/...",
+          },
+        ],
+      },
+    },
+    {
+      "id": 3,
+      "fullName": "Люкшин Михаил Сергеевич",
+      "email": "example3@gmail.com",
+      "educationForm": "Бюджет",
+      "status": "В академ. отпуске",
+      "checked": false,
+      "courseNumber": 2,
+      "group": {
+        "name": "Ц-184",
+        "institute": "Институт Цифры",
+      },
+      "point": {
+        "name": "Библиотека",
+        "status": "rejected", // или "rejected" или "signed"
+        "rejectReason": "Необходимо сдать ключ от комнаты", // если status="rejected"
+        "staffName": "Иванов И.И.",
+        "documentList": [
+          {
+            name: "Фото/скан паспорта",
+            url: "http://mydoc.kemsu/...",
+          },
+          {
+            name: "Заполненный документ",
+            url: "http://mydoc.kemsu/...",
+          },
+        ],
+      },
+    },
+    ],
+
+    // app-filter
+    filterList: [
       {
-        id: 1893,
-        checked: false,
-        status: 'reviewing',
-        owner: {
-          id: 10342,
-          fullName: 'Люкшин Михаил Сергеевич',
-          status: 'Бюджет, учится',
-        },
-        signer: {
-          fullName: 'Иванов И.И.',
-        },
+        name: 'institute',
+        selected: '',
+
+        placeholder: 'Институт',
+        options: [
+          'Институт Фундаментальных Наук',
+          'Институт Цифры',
+          'Институт Образования',
+        ],
       },
       {
-        id: 1894,
-        checked: false,
-        status: 'signed',
-        owner: {
-          id: 10343,
-          fullName: 'Сергиенко Анатолий Николаевич',
-          status: 'Бюджет, учится',
-        },
-        signer: {
-          fullName: 'Иванов И.И.',
-        },
+        name: 'courseNumber',
+        selected: '',
+
+        placeholder: 'Курс',
+        options: [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+        ],
       },
       {
-        id: 1894,
-        checked: false,
-        status: 'rejected',
-        owner: {
-          id: 10343,
-          fullName: 'Панчук Роман Олегович',
-          status: 'Бюджет, учится',
-        },
-        signer: {
-          fullName: 'Иванов И.И.',
-        },
+        name: 'group',
+        selected: '',
+
+        placeholder: 'Группа',
+        options: [
+          'М-174',
+          'М-175',
+          'М-240',
+        ],
       },
     ],
   }),
 
   computed: {
-    checkedPointList: function() {
-      return this.pointList.filter(point => point.checked)
+    checkedStudentList() {
+      return this.searchingStudentList.filter(student => student.checked)
+    },
+
+    searchingStudentList() {
+      if (this.searchText === '') return this.filteredStudentList
+
+      return this.filteredStudentList.filter(student =>
+        student.fullName.toLowerCase().includes(this.searchText.toLowerCase())
+      )
+    },
+
+    filteredStudentList() {
+      if (this.filterList.every(filter => filter.selected === ''))
+        return this.studentList
+
+      return this.studentList.filter(student =>
+             this.filterList.filter(filter => filter.selected != '')
+                            .every(filter => student[filter.name] === filter.selected))
+    },
+
+    selectedFilterNames() {
+      return this.filterList.map(filter => filter.selected)
     },
   },
 
   methods: {
-    // Методы AppSignPointList
-    check(point) {
-      point.checked = true
+    // Методы AppSignStudentList
+    check(student) {
+      student.checked = true
     },
-    uncheck(point) {
-      point.checked = false
+    uncheck(student) {
+      student.checked = false
     },
-    sign(point) {
-      point.status = 'signed'
+    sign(student) {
+      student.point.status = 'signed'
+      this.uncheck(student)
     },
-    reject(point) {
-      point.status = 'rejected'
+    reject(student) {
+      // student.point.status = 'rejected'
+      // this.uncheck(student)
+      this.closeRejectForm()
     },
 
     // Методы app-sign-topbar
     signChecked() {
-      this.checkedPointList.forEach(this.sign)
+      this.checkedStudentList.forEach(this.sign)
     },
     checkAll() {
-      this.pointList.forEach(this.check)
+      this.searchingStudentList.forEach(this.check)
     },
     uncheckAll() {
-      this.pointList.forEach(this.uncheck)
+      this.checkedStudentList.forEach(this.uncheck)
     },
     search(searchText) {
       this.searchText = searchText
+    },
+
+    // Методы app-filter
+    select(selected, filter) {
+      filter.selected = selected
+    },
+    clear() {
+      this.filterList.forEach(filter => filter.selected = '')
+    },
+
+    // Принимает на вход student
+    openRejectForm() {
+      // this.rejectModal.student = student
+      this.rejectForm.isOpen = true
+    },
+    closeRejectForm() {
+      this.rejectForm.isOpen = false
     },
   },
 }
@@ -125,12 +293,24 @@ export default {
 
 <style lang="less" scoped>
 
-.header {
-  margin-top: 48px;
+.container {
+  // Настроить grid
+  display: grid;
+  grid-template-columns: 1fr 35%;
+  grid-column-gap: 64px;
+
+  .sign-main {
+    padding-top: 48px;
+  }
 }
 
-.app-group-nav {
-  margin-top: 16px;
+
+@media all and (max-width: 1800px) {
+
+  .container {
+    grid-column-gap: 32px;
+  }
+
 }
 
 </style>
