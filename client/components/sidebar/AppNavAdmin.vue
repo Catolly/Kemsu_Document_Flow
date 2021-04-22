@@ -1,8 +1,7 @@
 <template>
-  <nav class="nav">
+  <nav class="app-nav-admin">
     <NuxtLink
-    to="/"
-    exact
+    to="/bypass-sheets"
     class="nav-link">Обходной лист</NuxtLink>
     <NuxtLink
     to="/users"
@@ -30,7 +29,7 @@ export default {
 
 <style lang="less" scoped>
 
-.nav {
+.app-nav-admin {
   margin-top: 250px;
   margin-left: 50px;
 

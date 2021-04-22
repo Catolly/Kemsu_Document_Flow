@@ -10,9 +10,19 @@ import IconLogo from '~/components/icons/IconLogo'
 
 export default {
 	name: 'empty',
+
+  head () {
+    return {
+      bodyAttrs: {
+        class: 'body-reset'
+      }
+    }
+  },
+
 	components: {
 		IconLogo,
 	},
+
 	// middleware: 'checkUserIsLoggedOut',
 }
 </script>

@@ -23,6 +23,7 @@ export default {
   font-weight: @fw-normal;
 
   height: 50px;
+  width: fit-content;
   padding: 0;
 	border: none;
 	background: transparent;
@@ -32,14 +33,45 @@ export default {
 		color: #000;
     cursor: pointer;
 	}
+
+  &.big {
+    height: 70px;
+  }
+
+  &.fluid {
+    width: 100%;
+  }
+
+  &.icon {
+    height: fit-content;
+    width: fit-content;
+  }
 }
 
-.big {
-	height: 70px;
+.plain,
+.icon {
+  &.red,
+  &.green,
+  &.blue,
+  &.cancel {
+    padding: 0;
+    background: none;
+    border: none;
+
+    font-size: @fz-normal;
+    font-weight: @fw-normal;
+
+    &:hover,
+    &:focus-visible,
+    &:active, {
+      background: none;
+      border: none;
+    }
+  }
 }
 
-.fluid {
-	width: 100%;
+.underlined {
+  text-decoration: underline;
 }
 
 .red,
@@ -78,7 +110,6 @@ export default {
 	&:hover {
 		background: @red;
 	}
-
   &:active {
     background: @red-active;
   }
@@ -90,9 +121,20 @@ export default {
   	&:hover {
   		background: @red-hover;
   	}
-
     &:active {
       background: @red-active;
+    }
+  }
+
+  &.plain {
+    color: @red;
+
+    &:focus-visible,
+    &:hover {
+      color: @red-hover;
+    }
+    &:active {
+      color: @red-active;
     }
   }
 }
@@ -105,7 +147,6 @@ export default {
 	&:hover {
 		background: @green;
 	}
-
   &:active {
     background: @green-active;
   }
@@ -117,9 +158,20 @@ export default {
     &:hover {
       background: @green-hover;
     }
-
     &:active {
       background: @green-active;
+    }
+  }
+
+  &.plain {
+    color: @green;
+
+    &:focus-visible,
+    &:hover {
+      color: @green-hover;
+    }
+    &:active {
+      color: @green-active;
     }
   }
 }
@@ -132,7 +184,6 @@ export default {
   &:hover {
     background: @blue;
   }
-
   &:active {
     background: @blue-active;
   }
@@ -144,9 +195,20 @@ export default {
     &:hover {
       background: @blue-hover;
     }
-
     &:active {
       background: @blue-active;
+    }
+  }
+
+  &.plain {
+    color: @blue;
+
+    &:focus-visible,
+    &:hover {
+      color: @blue-hover;
+    }
+    &:active {
+      color: @blue-active;
     }
   }
 }
@@ -160,7 +222,6 @@ export default {
     color: @red;
     border-color: @red;
   }
-
   &:active {
     color: @red-active;
     border-color: @red-active;

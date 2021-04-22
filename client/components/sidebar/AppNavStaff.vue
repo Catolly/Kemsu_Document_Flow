@@ -1,8 +1,7 @@
 <template>
-  <nav class="nav">
+  <nav class="app-nav-staff">
     <NuxtLink
-    to="/"
-    exact
+    to="/bypass-sheets"
     class="nav-link">Подписи</NuxtLink>
     <NuxtLink
     to="/history"
@@ -24,7 +23,7 @@ export default {
 
 <style lang="less" scoped>
 
-.nav {
+.app-nav-staff {
   margin-top: 250px;
   margin-left: 50px;
 

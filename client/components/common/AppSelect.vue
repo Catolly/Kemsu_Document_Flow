@@ -6,24 +6,25 @@
 		:id="id"
 		:disabled="disabled"
 		ref="select"
-		class="select"
 		tabindex=0>
 			<span
 			:required="required"
 			class="selected">
 			{{selected}}
+  		class="app-select"
 				<div class="arrow" />
 			</span>
 			<label
-			:class="{
-				'small': selected
-			}"
-			class="label">
+  			:class="{'small': selected}"
+  			class="label"
+      >
 				{{placeholder}}
 			</label>
+
 			<div
-			v-show="isOpen"
-			class="option-wrapper">
+			 v-show="isOpen"
+			 class="option-wrapper"
+      >
 				<div
 				v-for="option in options"
 				:key="option.id"
@@ -85,24 +86,20 @@
 @select-border: #F3F3F3;
 
 .app-select {
-	width: 500px;
 	position: relative;
+  font-size: @fz-large;
 }
 
-.select,
 .option {
-	position: relative;
-	width: 100%;
-
-	font-size: @fz-large;
+  width: inherit;
 }
 
-.select,
+.app-select,
 .label {
 	cursor: pointer;
 }
 
-.select {
+.app-select {
 	&:focus .selected {
 		border-color: @blue;
 		border-radius: 10px 10px 0 0;
@@ -131,14 +128,20 @@
 
 .selected,
 .option {
-	.flex(center, normal, column);
-	height: 70px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+	min-height: 70px;
 	width: 100%;
-	padding-left: 24px;
+	padding: 24px;
+  padding-right: 48px;
 }
 
 .selected {
 	position: relative;
+
+  user-select: none;
 
 	background: @select-background;
 	border: 1px solid @select-border;
@@ -148,8 +151,8 @@
 .option-wrapper {
 	position: absolute;
 	top: calc(100% - 1px);
-	height: 100%;
-	width: 100%;
+	height: inherit;
+  width: 100%;
 
 	z-index: 1;
 
@@ -161,6 +164,8 @@
 }
 
 .option {
+  user-select: none;
+
 	background: @select-background;
 	border: 1px solid @select-border;
 
@@ -177,15 +182,6 @@
 
 	color: @text-grey;
 	background: linear-gradient(to top, @select-background 50%, transparent 0);
-}
-
-.is-invalid {
-	.selected {
-		border-color: @red;
-	}
-	.label {
-		color: @red;
-	}
 }
 
 .arrow {

@@ -2,7 +2,7 @@
   <div class="container">
     <icon-logo />
     <!-- Определяем, какие права у юзера -->
-    <div class="app-nav">
+    <div class="nav">
       <!-- <app-nav-student /> -->
       <app-nav-staff />
       <!-- <app-nav-admin /> -->
@@ -29,7 +29,7 @@ export default {
 
 <style scoped>
 
-.app-nav {
+.nav {
   position: fixed;
   left: 0;
   top: 0;

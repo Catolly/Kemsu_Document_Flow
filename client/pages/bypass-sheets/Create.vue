@@ -1,6 +1,6 @@
 <template>
 	<div class="container">
-		<form id="form">
+		<form class="form">
 			<h1 class="header">Обходной лист</h1>
 			<app-select
 			placeholder="Причина"
@@ -58,16 +58,17 @@ export default {
 
 <style lang="less" scoped>
 
-#form {
-	position: relative;
+.container {
+  padding-top: 48px;
 }
 
-.header {
-	padding-top: 48px;
+.form {
+	position: relative;
 }
 
 .reason {
 	padding-top: 40px;
+  width: 450px;
 }
 
 .app-document-upload {
