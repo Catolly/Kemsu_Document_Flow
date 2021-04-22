@@ -1,135 +1,126 @@
 <template>
-	<div class="input-wrapper">
+	<div class="app-input-wrapper">
 		<input
-		:id="id"
-		:value="value"
-		@input="updateValue($event.target.value)"
-		:type="type"
-		:required="required"
-		:disabled="disabled"
-		class="input"
-		placeholder=" ">
+  		:value="value"
+  		@input="updateValue($event.target.value)"
+  		:type="type"
+  		:required="required"
+  		:disabled="disabled"
+  		class="app-input"
+  		placeholder=" "
+      ref="appInput"
+    >
 		<label
-		class="label">
-			{{placeholder}}
-		</label>
-    <icon-search class="icon-search" />
+      class="label"
+      @click="focus"
+    >
+      {{placeholder}}
+    </label>
 	</div>
 </template>
 
 <script>
-import IconSearch from '~/components/icons/IconSearch'
-
 export default {
 	name: 'AppInput',
-  components: {
-    IconSearch
-  },
+
 	props: {
 		value: String,
-		id: {
-			type: String,
-			required: true
-		},
+
 		placeholder: String,
-		type: {
+
+    type: {
 			type: String,
-			default: 'text'
+			default: 'text',
 		},
-		required: {
+
+    required: {
 			type: Boolean,
-			default: false
+			default: false,
 		},
-		disabled: {
+
+    disabled: {
 			type: Boolean,
-			default: false
-		}
+			default: false,
+		},
 	},
+
 	methods: {
 		updateValue(value) {
-			this.$emit('input', value)
-		}
-	}
+      this.$emit('input', value.trim())
+		},
+
+    focus() {
+      this.$refs.appInput.focus()
+    },
+	},
 }
 </script>
 
 <style lang="less" scoped>
 @input-background: #FDFDFD;
 
-.input-wrapper {
-	margin-top: 18px;
+.app-input-wrapper {
 	position: relative;
 
   height: 70px;
   width: 100%;
 
-  &.round .input {
+  border: 1px solid #F3F3F3;
+
+  &.round,
+  &.round .app-input {
     border-radius: 100px;
   }
-  .icon-search {
-    display: none;
+
+  &,
+  .app-input {
+    border-radius: 10px;
   }
-  &.search .icon-search{
-    .absolute();
-    top: calc(50% - 12px);
-    right: 18px;
 
-    height: 24px;
-    width: 24px;
+  .label,
+  .app-input {
+    transition: .2s ease all;
   }
-}
 
-.label,
-.input {
-	transition: .2s ease all;
-}
+  .app-input {
+    position: relative;
 
-.input {
-  position: relative;
+    min-height: 100%;
+    min-width: 100%;
+    padding-left: 24px;
 
-  height: inherit;
-  width: inherit;
-  padding-left: 24px;
+    border: 1px solid transparent;
+    background: @input-background;
 
-  background: @input-background;
-  border: 1px solid #F3F3F3;
-  border-radius: 10px;
+    &:focus {
+      border-color: @blue;
+      & + .label {
+        color: @blue;
+      }
+    }
 
-  &:focus {
-  	border-color: @blue;
+    // Фиксирует плейсхолдер на верхней левой границе при фокусе
+    &:focus,
+    &:not(:placeholder-shown) {
+      & + .label {
+        font-size: @fz-small;
+        top: -0.875em;
+        left: 1.5em;
+        padding: 0.25em 0.5em;
+      }
+    }
   }
-  &:focus + .label {
-  	color: @blue;
+
+  .label {
+    position: absolute;
+    top: calc(50% - .6em); // Фиксирует label по центру input'а
+    left: 1.2em;
+
+    color: @text-grey;
+    background: linear-gradient(to top, @input-background 50%, transparent 0);
+
+    user-select: none;
   }
-  &:focus + .label,
-  &:not(:placeholder-shown) + .label {
-	  font-size: @fz-small;
-	  top: -0.875em;
-	  left: 1.5em;
-	  padding: 0.25em 0.5em;
-  }
-}
-
-.label {
-	position: absolute;
-  top: 1.2em;
-  left: 1.2em;
-
-	color: @text-grey;
-	background: linear-gradient(to top, @input-background 50%, transparent 0);
-}
-
-.invalid {
-	.input {
-		border-color: @red;
-	}
-	.label {
-		color: @red;
-	}
-}
-
-.round {
-  border-radius: 25px;
 }
 
 </style>

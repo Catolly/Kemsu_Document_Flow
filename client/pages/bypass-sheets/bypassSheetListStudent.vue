@@ -58,12 +58,8 @@ export default {
 
 <style lang="less" scoped>
 
-.header {
-	padding-top: 48px;
-}
-
-.btn-open-add-statement-form {
-	margin-top: 48px;
+.container {
+  padding-top: 48px;
 }
 
 .bypass-sheet-list {

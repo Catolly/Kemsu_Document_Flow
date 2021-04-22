@@ -3,6 +3,7 @@
 		<h1 class="header">
 			Обходной лист - {{title}}
 		</h1>
+    <!-- to app-send-point-list instead of app-list + app-bypass-sheet-point -->
 		<app-list	class="point-list">
 			<app-bypass-sheet-point
 				v-for="point in points"
@@ -119,11 +120,7 @@ export default {
 
 <style lang="less" scoped>
 
-.header {
-	margin-top: 48px;
-}
-
-.point-list {
+.point-list { //to app-send-point-list instead of app-list + app-bypass-sheet-point
 	margin-top: 48px;
 }
 

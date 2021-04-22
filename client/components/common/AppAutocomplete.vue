@@ -5,7 +5,7 @@
 	@keydown.tab="onTab"
 	@keydown.up="onArrowUp"
 	@keydown.enter="onEnter"
-	class="input-wrapper">
+	class="app-input-wrapper">
 		<input
 		:id="id"
 		@input="updateValue($event.target.value)"
@@ -16,7 +16,7 @@
 		:autocomplete="autocomplete"
 		:class="{'open': isOpen && filteredOptions.length }"
 		ref="input"
-		class="input"
+		class="app-input"
 		placeholder=" ">
 		<label
 		:for="id"
@@ -26,7 +26,7 @@
 		<div
 		v-show="isOpen"
 		v-if="filteredOptions.length"
-		class="autocomplete">
+		class="app-autocomplete">
 			<div
 			v-for="(option, i) in filteredOptions"
 			:key="option.id"
@@ -156,21 +156,23 @@ export default {
 @input-background: #FDFDFD;
 @input-border: #F3F3F3;
 
-.input-wrapper {
+.app-input-wrapper {
 	margin-top: 18px;
-	position: relative;
-}
-
-.label,
-.input {
-	transition: .2s ease all;
-}
-
-.input {
 	position: relative;
 	height: 70px;
   width: 100%;
+}
+
+.label,
+.app-input {
+	transition: .2s ease all;
+}
+
+.app-input {
+	position: relative;
   padding-left: 24px;
+  height: 70px;
+  width: 100%;
 
   background: @input-background;
   border: 1px solid @input-border;
@@ -203,12 +205,12 @@ export default {
 	background: linear-gradient(to top, @input-background 50%, transparent 0);
 }
 
-.autocomplete {
+.app-autocomplete {
 	position: absolute;
 	top: calc(100% - 1px);
 	z-index: 1;
-	height: 100%;
-	width: 100%;
+	height: inherit;
+	width: inherit;
 
 	cursor: pointer;
 
@@ -243,15 +245,6 @@ export default {
 
 	.option:last-child {
 		border-radius: 0 0 10px 10px;
-	}
-}
-
-.is-invalid {
-	.input {
-		border-color: @red;
-	}
-	.label {
-		color: @red;
 	}
 }
 

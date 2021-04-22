@@ -1,9 +1,10 @@
 <template>
 	<button
-	tabindex="0"
-	@click="$emit('click')"
-	@keydown.enter="$emit('enter')"
-	class="app-button">
+  	tabindex="0"
+  	class="app-button"
+  	@click="$emit('click')"
+  	@keydown.enter="$emit('click')"
+  >
 		<slot />
 	</button>
 </template>
@@ -22,33 +23,78 @@ export default {
   font-weight: @fw-normal;
 
   height: 50px;
+  width: fit-content;
   padding: 0;
 	border: none;
 	background: transparent;
 
+  &:focus-visible,
 	&:hover {
 		color: #000;
     cursor: pointer;
 	}
+
+  &.big {
+    height: 70px;
+  }
+
+  &.fluid {
+    width: 100%;
+  }
+
+  &.icon {
+    height: fit-content;
+    width: fit-content;
+  }
 }
 
-.big {
-	height: 70px;
+.plain,
+.icon {
+  &.red,
+  &.green,
+  &.blue,
+  &.cancel {
+    padding: 0;
+    background: none;
+    border: none;
+
+    font-size: @fz-normal;
+    font-weight: @fw-normal;
+
+    &:hover,
+    &:focus-visible,
+    &:active, {
+      background: none;
+      border: none;
+    }
+  }
 }
 
-.fluid {
-	width: 100%;
+.underlined {
+  text-decoration: underline;
+}
+
+.red,
+.green,
+.blue,
+.cancel {
+  padding: 12px 48px;
+  border-radius: 10px;
+  font-weight: @fw-medium;
 }
 
 .red,
 .green,
 .blue {
-  padding: 12px 48px;
-  border-radius: 10px;
-  font-weight: @fw-medium;
+  &:focus-visible,
+  &:hover,
+  &:active:not(:focus-visible),
+  &:active:not(:hover) {
+    color: #fff;
+  }
 
 	&.filled {
-		border: none;
+		border: 1px solid transparent;
 		color: #fff;
 	}
 	&.filled:hover {
@@ -59,50 +105,127 @@ export default {
 .red {
 	color: @red;
 	border: 1px solid @red;
-	&:focus,
+
+	&:focus-visible,
 	&:hover {
-		color: #fff;
-		background-color: @red-hover;
-	}
-	&.filled {
 		background: @red;
 	}
-	&.filled:focus,
-	&.filled:hover {
-		background: @red-hover;
-	}
+  &:active {
+    background: @red-active;
+  }
+
+	&.filled {
+		background: @red;
+
+  	&:focus-visible,
+  	&:hover {
+  		background: @red-hover;
+  	}
+    &:active {
+      background: @red-active;
+    }
+  }
+
+  &.plain {
+    color: @red;
+
+    &:focus-visible,
+    &:hover {
+      color: @red-hover;
+    }
+    &:active {
+      color: @red-active;
+    }
+  }
 }
+
 .green {
 	color: @green;
 	border: 1px solid @green;
-	&:focus,
+
+	&:focus-visible,
 	&:hover {
-		color: #fff;
-		background-color: @green;
-	}
-	&.filled {
 		background: @green;
 	}
-	&.filled:focus,
-	&.filled:hover {
-		background: @green-hover;
-	}
+  &:active {
+    background: @green-active;
+  }
+
+  &.filled {
+		background: @green;
+
+    &:focus-visible,
+    &:hover {
+      background: @green-hover;
+    }
+    &:active {
+      background: @green-active;
+    }
+  }
+
+  &.plain {
+    color: @green;
+
+    &:focus-visible,
+    &:hover {
+      color: @green-hover;
+    }
+    &:active {
+      color: @green-active;
+    }
+  }
 }
+
 .blue {
-	color: @blue;
-	border: 1px solid @blue;
-	&:focus,
-	&:hover {
-		color: #fff;
-		background-color: @blue-hover;
-	}
-	&.filled {
-		background: @blue;
-	}
-	&.filled:focus,
-	&.filled:hover {
-		background: @blue-hover;
-	}
+  color: @blue;
+  border: 1px solid @blue;
+
+  &:focus-visible,
+  &:hover {
+    background: @blue;
+  }
+  &:active {
+    background: @blue-active;
+  }
+
+  &.filled {
+    background: @blue;
+
+    &:focus-visible,
+    &:hover {
+      background: @blue-hover;
+    }
+    &:active {
+      background: @blue-active;
+    }
+  }
+
+  &.plain {
+    color: @blue;
+
+    &:focus-visible,
+    &:hover {
+      color: @blue-hover;
+    }
+    &:active {
+      color: @blue-active;
+    }
+  }
+}
+
+.cancel {
+  color: @text-grey;
+  border: 1px solid #E0E0E0;
+
+  &:focus-visible,
+  &:hover {
+    color: @red;
+    border-color: @red;
+  }
+  &:active {
+    color: @red-active;
+    border-color: @red-active;
+  }
 }
 
 </style>

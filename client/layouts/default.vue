@@ -12,9 +12,19 @@ import AppSidebar from '~/components/sidebar/AppSidebar'
 
 export default {
 	name: 'default',
+
+  head () {
+    return {
+      bodyAttrs: {
+        class: 'body-reset'
+      }
+    }
+  },
+
 	components: {
 		AppSidebar,
 	},
+
 	// middleware: 'checkUserIsLoggedIn'
 }
 </script>
@@ -23,14 +33,17 @@ export default {
 @app-sidebar-width: 250px;
 
 .app-sidebar {
-  width: @app-sidebar-width; //Переделать через Vuetify v-col
+  width: @app-sidebar-width;
 }
 
 .content-wrapper {
 	margin-left: @app-sidebar-width;
-	padding: 0 110px;
+  padding-left: 104px;
+  padding-right: 48px;
+
 	height: 100vh;
-	background: @background;
+
+	background: @white;
 }
 
 </style>

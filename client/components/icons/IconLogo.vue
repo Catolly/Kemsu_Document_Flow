@@ -46,10 +46,6 @@ export default {
 	height: 66px;
   width: 42px;
 
-  position: fixed;
-  top: 25px;
-  left: 60px;
-
   &.big {
   	height: 86px;
   	width: 54px;

@@ -5,18 +5,15 @@
 			<app-input
 			:value="lastName"
 			placeholder="Фамилия"
-			id="last-name"
-			class="app-input" />
+			class="input" />
 			<app-input
 			:value="firstName"
 			placeholder="Имя"
-			id="first-name"
-			class="app-input" />
+			class="input" />
 			<app-input
 			:value="middleName"
 			placeholder="Отчество"
-			id="middleName"
-			class="app-input" />
+			class="input" />
 			<div
 			v-for="departmentsItem in departments"
 			:key="departmentsItem.title"
@@ -50,7 +47,7 @@ import AppInput from '~/components/common/AppInput'
 import AppButton from '~/components/common/AppButton'
 
 export default {
-	name: 'Settings',
+	name: 'settings',
 	components: {
 		AppInput,
 		AppButton
@@ -119,8 +116,8 @@ export default {
 <style scoped lang="less">
 
 .container {
-	padding-top: 48px;
-	height: 100vh;
+  padding-top: 48px;
+	height: inherit;
 }
 
 .personal-data {
@@ -132,7 +129,7 @@ export default {
 
 	margin-top: 48px;
 
-	.app-input {
+	.input {
 		width: 360px;
 	}
 

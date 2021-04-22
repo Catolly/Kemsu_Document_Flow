@@ -1,82 +1,98 @@
 <template>
 	<div class="app-wrapper">
+
 		<div
-		@focusin="changeFocus"
-		@focusout="changeFocus"
-		:id="id"
-		:disabled="disabled"
-		ref="select"
-		class="select"
-		tabindex=0>
-			<span
-			:required="required"
-			class="selected">
-			{{selected}}
+  		@focusin="open"
+  		@focusout="close"
+  		:disabled="disabled"
+  		ref="appSelect"
+  		tabindex=0
+  		class="app-select"
+    >
+
+			<span class="selected">
+  			{{selected}}
 				<div class="arrow" />
 			</span>
+
 			<label
-			:class="{
-				'small': selected
-			}"
-			class="label">
+  			:class="{'small': selected}"
+  			class="label"
+      >
 				{{placeholder}}
 			</label>
+
 			<div
-			v-show="isOpen"
-			class="option-wrapper">
+			 v-show="isOpen"
+			 class="option-wrapper"
+      >
 				<div
-				v-for="option in options"
-				:key="option.id"
-				@click="select(option)"
-				class="option">
-					{{option.value}}
+				  v-for="option in options"
+				  :key="option"
+				  @click="select(option)"
+				  class="option"
+        >
+					{{option}}
 				</div>
 			</div>
+
 		</div>
+
 	</div>
 </template>
 
 <script>
-	export default {
-		name: 'AppSelect',
-		data() {
-			return {
-				selected: null,
-				isOpen: false,
-			}
+export default {
+	name: 'AppSelect',
+
+	data() {
+		return {
+			isOpen: false,
+		}
+	},
+
+	props: {
+		selected: {
+      type: String,
+      default: '',
+    },
+
+		placeholder: String,
+
+		options: {
+			type: Array,
+			required: true,
 		},
-		props: {
-			id: {
-				type: String,
-				required: true
-			},
-			placeholder: String,
-			options: {
-				type: Array,
-				required: true
-			},
-			required: {
-				type: Boolean,
-				default: false
-			},
-			disabled: {
-				type: Boolean,
-				default: false
-			},
+
+		disabled: {
+			type: Boolean,
+			default: false
 		},
-		methods: {
-			close() {
-				this.$refs.select.blur()
-			},
-			changeFocus() {
-				this.isOpen = !this.isOpen
-			},
-			select(option) {
-				this.selected = option.value
-				this.close()
-			},
+	},
+
+	methods: {
+		unfocus() {
+			this.$refs.appSelect.blur()
 		},
-	}
+
+		close() {
+			this.isOpen = false
+		},
+
+    open() {
+      this.isOpen = true
+    },
+
+		select(option) {
+			this.$emit('select', option)
+			this.unfocus()
+		},
+
+    focus() {
+      this.$refs.appSelect.focus()
+    },
+	},
+}
 </script>
 
 <style lang="less" scoped>
@@ -85,24 +101,20 @@
 @select-border: #F3F3F3;
 
 .app-select {
-	width: 500px;
 	position: relative;
+  font-size: @fz-large;
 }
 
-.select,
 .option {
-	position: relative;
-	width: 100%;
-
-	font-size: @fz-large;
+  width: inherit;
 }
 
-.select,
+.app-select,
 .label {
 	cursor: pointer;
 }
 
-.select {
+.app-select {
 	&:focus .selected {
 		border-color: @blue;
 		border-radius: 10px 10px 0 0;
@@ -131,14 +143,20 @@
 
 .selected,
 .option {
-	.flex(center, normal, column);
-	height: 70px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+	min-height: 70px;
 	width: 100%;
-	padding-left: 24px;
+	padding: 24px;
+  padding-right: 48px;
 }
 
 .selected {
 	position: relative;
+
+  user-select: none;
 
 	background: @select-background;
 	border: 1px solid @select-border;
@@ -148,8 +166,8 @@
 .option-wrapper {
 	position: absolute;
 	top: calc(100% - 1px);
-	height: 100%;
-	width: 100%;
+	height: inherit;
+  width: 100%;
 
 	z-index: 1;
 
@@ -161,6 +179,8 @@
 }
 
 .option {
+  user-select: none;
+
 	background: @select-background;
 	border: 1px solid @select-border;
 
@@ -177,15 +197,6 @@
 
 	color: @text-grey;
 	background: linear-gradient(to top, @select-background 50%, transparent 0);
-}
-
-.is-invalid {
-	.selected {
-		border-color: @red;
-	}
-	.label {
-		color: @red;
-	}
 }
 
 .arrow {

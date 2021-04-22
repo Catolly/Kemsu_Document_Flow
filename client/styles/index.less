@@ -12,13 +12,13 @@ html {
   box-sizing: border-box;
 }
 
-body {
+.body-reset {
   position: relative;
   overflow-x: hidden;
   min-width: 320px;
   font-size: @fz-normal;
   color: #000;
-  background: @background;
+  background: @white;
   padding: 0;
   margin: 0;
 }
@@ -77,12 +77,12 @@ a::after {
   .absolute();
   bottom: 0;
   left: 0;
-  
+
   width: 100%;
   border-bottom: 1px solid @blue;
 }
 
-a:hover, 
+a:hover,
 a:hover::after {
   color: @blue-hover;
 }

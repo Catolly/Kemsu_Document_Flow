@@ -14,7 +14,7 @@ import AppFormSignupStudent from '~/components/auth-forms/AppFormSignupStudent'
 
 export default {
 	layout: 'empty',
-	name: 'Signup',
+	name: 'signup',
   components: {
     AppButton,
     AppFormSignupStaff,
