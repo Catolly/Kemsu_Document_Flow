@@ -1,19 +1,20 @@
 <template>
 	<div class="app-wrapper">
+
 		<div
-		@focusin="changeFocus"
-		@focusout="changeFocus"
-		:id="id"
-		:disabled="disabled"
-		ref="select"
-		tabindex=0>
-			<span
-			:required="required"
-			class="selected">
-			{{selected}}
+  		@focusin="open"
+  		@focusout="close"
+  		:disabled="disabled"
+  		ref="appSelect"
+  		tabindex=0
   		class="app-select"
+    >
+
+			<span class="selected">
+  			{{selected}}
 				<div class="arrow" />
 			</span>
+
 			<label
   			:class="{'small': selected}"
   			class="label"
@@ -26,58 +27,72 @@
 			 class="option-wrapper"
       >
 				<div
-				v-for="option in options"
-				:key="option.id"
-				@click="select(option)"
-				class="option">
-					{{option.value}}
+				  v-for="option in options"
+				  :key="option"
+				  @click="select(option)"
+				  class="option"
+        >
+					{{option}}
 				</div>
 			</div>
+
 		</div>
+
 	</div>
 </template>
 
 <script>
-	export default {
-		name: 'AppSelect',
-		data() {
-			return {
-				selected: null,
-				isOpen: false,
-			}
+export default {
+	name: 'AppSelect',
+
+	data() {
+		return {
+			isOpen: false,
+		}
+	},
+
+	props: {
+		selected: {
+      type: String,
+      default: '',
+    },
+
+		placeholder: String,
+
+		options: {
+			type: Array,
+			required: true,
 		},
-		props: {
-			id: {
-				type: String,
-				required: true
-			},
-			placeholder: String,
-			options: {
-				type: Array,
-				required: true
-			},
-			required: {
-				type: Boolean,
-				default: false
-			},
-			disabled: {
-				type: Boolean,
-				default: false
-			},
+
+		disabled: {
+			type: Boolean,
+			default: false
 		},
-		methods: {
-			close() {
-				this.$refs.select.blur()
-			},
-			changeFocus() {
-				this.isOpen = !this.isOpen
-			},
-			select(option) {
-				this.selected = option.value
-				this.close()
-			},
+	},
+
+	methods: {
+		unfocus() {
+			this.$refs.appSelect.blur()
 		},
-	}
+
+		close() {
+			this.isOpen = false
+		},
+
+    open() {
+      this.isOpen = true
+    },
+
+		select(option) {
+			this.$emit('select', option)
+			this.unfocus()
+		},
+
+    focus() {
+      this.$refs.appSelect.focus()
+    },
+	},
+}
 </script>
 
 <style lang="less" scoped>
