@@ -1,50 +1,53 @@
 <template>
-  <app-list class="app-sign-point-list">
+  <app-list class="app-student-list">
 
     <app-list-item
-      v-for="(point, index) in pointList"
+      v-for="(student, index) in studentList"
       :key="index"
-      class="point simple"
+      class="student simple"
     >
       <!-- emit check -->
       <app-checkbox
-        v-model="point.checked"
+        v-model="student.checked"
       />
-      <div class="owner-info">
-        <span class="owner-fullname">
-          {{point.owner.fullName}}
+      <div class="student-info">
+        <span class="student-fullname">
+          {{student.fullName}}
         </span>
-        <span class="owner-status">
-          {{point.owner.status}}
+        <span class="student-status">
+          {{student.group.name}},
+          {{student.courseNumber}} курс.
+          {{student.educationForm}}.
+          {{student.status}}
         </span>
       </div>
 
       <div class="sign-btns">
         <div
-          v-if="point.status != 'reviewing'"
-          class="signer-fullname"
+          v-if="student.point.status != 'reviewing'"
+          class="staff"
         >
           <span>
-            {{point.status === 'signed' ? 'Подписал' : 'Отказал'}}
+            {{student.point.status === 'signed' ? 'Подписал' : 'Отказал'}}
             <br>
-            {{point.signer.fullName}}
+            {{student.point.staffName}}
           </span>
         </div>
 
         <app-button
-          v-if="point.status != 'signed'"
+          v-if="student.point.status != 'signed'"
           class="btn sign green"
-          @click="$emit('sign', point)"
+          @click="$emit('sign', student)"
         >
           Подписать
         </app-button>
 
 
         <app-button
-          v-if="point.status != 'rejected'"
-          :class="point.status === 'reviewing' ? 'red' : 'cancel'"
+          v-if="student.point.status != 'rejected'"
+          :class="student.point.status === 'reviewing' ? 'red' : 'cancel'"
           class="btn reject"
-          @click="$emit('reject', point)"
+          @click="$emit('reject', student)"
         >
           Отказать
         </app-button>
@@ -72,7 +75,7 @@ export default {
   },
 
   props: {
-    pointList: {
+    studentList: {
       type: Array,
       default: () => [],
     },
@@ -81,15 +84,15 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.app-sign-point-list {
+.app-student-list {
   margin-top: 32px;
 
-  .point {
+  .student {
     display: flex;
     justify-content: flex-end;
     align-items: center;
 
-    .owner-info {
+    .student-info {
       display: flex;
       flex-direction: column;
       justify-content: flex-start;
@@ -108,8 +111,8 @@ export default {
       }
     }
 
-    .owner-status,
-    .signer-fullname {
+    .student-status,
+    .staff {
       color: @text-grey;
     }
 
