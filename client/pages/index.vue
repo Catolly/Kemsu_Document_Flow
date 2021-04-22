@@ -1,27 +1,13 @@
 <template>
-	<div class="container">
-    <!-- Вместо вставки компонент здесь будет редирект на компоненты как на страницы -->
-
-		<!-- student -->
-		<bypass-sheets />
-    <!-- staff -->
-
-    <!-- admin -->
-
-  </div>
+	<div></div>
 </template>
 
 <script>
-import BypassSheets from '~/pages/bypass-sheets/index'
-
 export default {
   name: 'index',
-  components: {
-    BypassSheets,
+
+  beforeCreate() {
+    this.$router.push('/bypass-sheets/')
   },
 }
 </script>
-
-<style>
-
-</style>
