@@ -3,7 +3,7 @@
   	tabindex="0"
   	class="app-button"
   	@click="$emit('click')"
-  	@keydown.enter="$emit('enter')"
+  	@keydown.enter="$emit('click')"
   >
 		<slot />
 	</button>
