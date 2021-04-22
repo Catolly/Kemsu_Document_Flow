@@ -10,7 +10,12 @@
   		placeholder=" "
       ref="appInput"
     >
-		<label @click="focus" class="label">{{placeholder}}</label>
+		<label
+      class="label"
+      @click="focus"
+    >
+      {{placeholder}}
+    </label>
 	</div>
 </template>
 
@@ -20,28 +25,33 @@ export default {
 
 	props: {
 		value: String,
+
 		placeholder: String,
-		type: {
+
+    type: {
 			type: String,
-			default: 'text'
+			default: 'text',
 		},
-		required: {
+
+    required: {
 			type: Boolean,
-			default: false
+			default: false,
 		},
-		disabled: {
+
+    disabled: {
 			type: Boolean,
-			default: false
-		}
+			default: false,
+		},
 	},
 
 	methods: {
 		updateValue(value) {
-      this.$emit('input', value)
+      this.$emit('input', value.trim())
 		},
+
     focus() {
       this.$refs.appInput.focus()
-    }
+    },
 	},
 }
 </script>
