@@ -1,7 +1,8 @@
+// import { API_URL } from '@/services/config.js'
+
 module.exports = {
-  /*
-  ** Headers of the page
-  */
+
+  //Headers of the page
   head: {
     title: 'kemsu-documents',
     meta: [
@@ -13,17 +14,13 @@ module.exports = {
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
     ],
   },
-  /*
-  ** Customize the progress bar color
-  */
+
+  // Customize the progress bar color
   loading: { color: '#4A5CFF' },
-  /*
-  ** Build configuration
-  */
+
+  // Build configuration
   build: {
-    /*
-    ** Run ESLint on save
-    */
+    // Run ESLint on save
     extend (config, { isDev, isClient }) {
       if (isDev && isClient) {
         config.module.rules.push({
@@ -36,44 +33,49 @@ module.exports = {
     }
   },
 
-  /*
-  ** Modules configuration
-  */
+  // Modules configuration
   modules: [
     '@nuxtjs/style-resources',
+    '@nuxtjs/axios'
   ],
 
-  /*
-  ** Style resources configuration
-  */
+  axios: {
+    baseURL: 'http://mydoc.kemsu.ru/',
+  },
+
+  publicRuntimeConfig: {
+    axios: {
+      browserBaseURL: process.env.BROSER_BASE_URL
+    },
+  },
+
+  privateRuntimeConfig: {
+    axios: {
+      baseURL: process.env.BASE_URL
+    },
+  },
+
+  // Style resources configuration
   styleResources: {
     less: ['./styles/index.less'],
   },
 
-  /*
-  ** CSS configuration
-  */
+  // CSS configuration
   css: [
     {src: '~/styles/index.less', lang: 'less'}
   ],
 
-  /*
-  ** Plugins configuration
-  */
+  // Plugins configuration
   plugins: [
-    {src: '~/plugins/Vuelidate', lang: 'less'}
+    '~/plugins/Vuelidate'
   ],
 
-  /*
-  ** Router configuration
-  */
+  // Router configuration
   router: {
 
   },
 
-  /*
-  ** Server configuration
-  */
+  // Server configuration
   server: {
     port: 3000,
     host: '0.0.0.0',
