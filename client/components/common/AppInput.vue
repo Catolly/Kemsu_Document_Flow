@@ -58,6 +58,15 @@ export default {
 
 <style lang="less" scoped>
 
+// mixins
+.input-label-colors(@color) {
+  border-color: @color;
+  & + .label {
+    color: @color;
+  }
+}
+//
+
 .app-input-wrapper {
   position: relative;
 
@@ -65,6 +74,12 @@ export default {
   width: 100%;
 
   border: 1px solid @grey-light;
+
+  &.error {
+    .app-input:focus {
+      .input-label-colors(@red)
+    }
+  }
 
   &.round,
   &.round .app-input {
@@ -92,10 +107,7 @@ export default {
     background: @grey-bright;
 
     &:focus {
-      border-color: @blue;
-      & + .label {
-        color: @blue;
-      }
+      .input-label-colors(@blue)
     }
 
     // Фиксирует плейсхолдер на верхней левой границе при фокусе
@@ -125,5 +137,8 @@ export default {
     cursor: text;
   }
 }
+
+
+
 
 </style>
