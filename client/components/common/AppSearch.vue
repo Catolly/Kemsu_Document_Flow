@@ -2,7 +2,7 @@
   <div class="app-search-wrapper">
     <app-input
       :value="value"
-      @input="updateValue"
+      @input="updateValue($event)"
       :type="type"
       :required="required"
       :disabled="disabled"
