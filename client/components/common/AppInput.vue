@@ -70,10 +70,9 @@ export default {
 .app-input-wrapper {
   position: relative;
 
-  height: 70px;
+  height: fit-content;
   width: 100%;
 
-  border: 1px solid @grey-light;
 
   &.error {
     .app-input:focus {
@@ -99,11 +98,11 @@ export default {
   .app-input {
     position: relative;
 
-    min-height: 100%;
+    height: 70px;
     min-width: 100%;
     padding-left: 24px;
 
-    border: 1px solid transparent;
+    border: 1px solid @grey-light;
     background: @grey-bright;
 
     &:focus {
@@ -131,7 +130,7 @@ export default {
     color: @grey-darkset;
 
     // 51%, а не 50%, чтобы закрыть border-top родителя
-    background: linear-gradient(to top, @grey-bright 51%, transparent 0);
+    background: linear-gradient(to top, @grey-bright 50%, transparent 0);
 
     user-select: none;
     cursor: text;
