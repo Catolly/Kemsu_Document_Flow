@@ -26,12 +26,15 @@
 
       <div class="btns">
   			<app-button
-  			class="login-btn blue big filled fluid">
+          class="login-btn blue big filled fluid"
+         >
   				Войти
   			</app-button>
 
         <app-button
-        class="to-register-btn blue big fluid">
+          class="to-register-btn blue big fluid"
+          @click="toSignup"
+        >
           Зарегистрироваться
         </app-button>
       </div>
@@ -85,6 +88,10 @@ export default {
       // this.updateTokens(tokens)
 
       this.$router.push('/')
+    },
+
+    toSignup() {
+      router.push('/signup')
     },
   },
 }
