@@ -200,18 +200,7 @@ export default {
 }
 
 .arrow {
-	.absolute();
-	@size: 8px;
-
-	top: 50% - .5*@size;
-	right: 32px;
-
-	width: 0;
-	height: 0;
-
-	border-top: @size solid #262626;
-	border-left: .5*@size solid transparent;
-	border-right: .5*@size solid transparent;
+	.arrow();
 }
 
 </style>
