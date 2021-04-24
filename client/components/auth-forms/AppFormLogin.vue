@@ -29,6 +29,11 @@
   			class="login-btn blue big filled fluid">
   				Войти
   			</app-button>
+
+        <app-button
+        class="to-register-btn blue big fluid">
+          Зарегистрироваться
+        </app-button>
       </div>
 		</div>
 

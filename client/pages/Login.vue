@@ -2,16 +2,6 @@
   <div class="container">
     <div class="content">
       <app-form-login />
-      <NuxtLink
-      to="/signup"
-      tabindex="-1"
-      class="signup-link">
-        <app-button
-        tabindex="0"
-        class="signup-btn blue big fluid">
-          Зарегистрироваться
-        </app-button>
-      </NuxtLink>
     </div>
   </div>
 </template>
@@ -22,7 +12,9 @@ import AppFormLogin from '~/components/auth-forms/AppFormLogin'
 
 export default {
 	layout: 'empty',
+
 	name: 'login',
+
   components: {
     AppButton,
     AppFormLogin,
@@ -30,23 +22,18 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style scoped>
 
 .container {
   height: 100vh;
-  .flex(center, center, column);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .content {
   width: 516px;
-}
-
-.signup-btn {
-  margin-top: 10px;
-}
-
-.signup-link:after {
-  display: none;
 }
 
 </style>
