@@ -18,6 +18,10 @@
       :class="{'open': isOpen && filteredOptions.length}"
     />
 
+    <div
+      :class="{'rotate': isOpen && filteredOptions.length}"
+      class="arrow"
+    />
 
 		<div
 		v-show="isOpen"
@@ -167,7 +171,13 @@ export default {
 	height: fit-content;
   width: 100%;
 
+  .arrow {
+    .arrow();
 
+    &.rotate {
+      transform: rotate(180deg);
+    }
+  }
 
   .option-list {
     position: absolute;
