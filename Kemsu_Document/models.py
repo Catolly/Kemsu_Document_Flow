@@ -187,11 +187,12 @@ class Module(models.Model):
 
 class Statement(models.Model):
     title = models.CharField("Название заявления", default=None, max_length=50)
-    img = models.ImageField("Файл", upload_to="Kemsu_Document/media/statement_documents", blank=True)
+    img = models.ImageField("Изображение", upload_to="Kemsu_Document/media/statement_images", blank=True)
     module = models.ForeignKey(Module, verbose_name="Обходной лист", on_delete=models.CASCADE, null=False, related_name="statements")
-
+    file = models.FileField("Документ", upload_to="media/",blank=True )
     def __str__(self):
         return self.title
+
 
 class Point(models.Model):
     #title = models.ForeignKey(Department, verbose_name='Название пункта', on_delete=models.CASCADE, null=False)

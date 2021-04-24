@@ -8,6 +8,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from djangoProject import settings
 from django.utils.text import gettext_lazy as _
 
+from rest_framework.serializers import Serializer, FileField
 from .exceptions import GroupNotFoundError, ThisUserIsAlreadyExistException, ThisEmailIsAlreadyExistError
 from .models import (
     User, Department, Group, Institute,
@@ -344,3 +345,8 @@ class DepartmentsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Department
         fields = ('title','address','institute')
+
+class FileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Statement
+        fields = ("file", "title",)

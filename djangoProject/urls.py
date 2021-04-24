@@ -17,12 +17,18 @@ from django.contrib import admin
 from django.urls import path
 from django.contrib.auth.views import LoginView
 from django.urls import re_path, include
+from django.conf.urls.static import static
+from django.conf import settings
+
+from django.urls import include
+from rest_framework import routers
 
 from .views import (
     RegistrationStudentAPIView, RegistrationStaffAPIView,
     GroupList, InstituteList, ModuleList,
     PointList, BypassSheetsView, PostByPassSheetsView,
     GetByPassSheetsDetailView, TokenEmailPairView, TokenUsernamePairView, StudentList, LogoutView, DepartmentsView,
+    FileView
 )
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -36,6 +42,9 @@ from djangoProject.views import HomeView, ContactsView, LoginView'''
     path('admin/', admin.site.urls),
     path('accounts/register/employee', RegisterEmployee.as_view(), name="register_employee"),
     path('accounts/register/student', RegisterStudent.as_view(), name="register_student")'''
+
+#router = routers.DefaultRouter()
+#router.register(r'upload', UploadViewSet, basename="upload")
 
 urlpatterns = [
     path('api/signup/student', RegistrationStudentAPIView.as_view(), name='user_registration'),
@@ -61,4 +70,8 @@ urlpatterns = [
     # path('api/bypassshets/<int:pk>/detail', GetByPassSheetsDetailView.as_view(), name="get_bypass_sheets_detail")
     path('api/departments/', DepartmentsView.as_view(),name="departments_view"),
     path('api/departments/<str:institute>/', DepartmentsView.as_view(),name="departments_view/institute"),
-]
+    path('api/upload/', FileView.as_view(), name='file-upload'),
+
+     ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+

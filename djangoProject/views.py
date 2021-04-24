@@ -1,31 +1,33 @@
-import base64
-
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.shortcuts import redirect, render
 from rest_framework import status, permissions
 from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
-
 from Kemsu_Document.exceptions import GroupNotFoundError, ThisUserIsAlreadyExistException, ThisEmailIsAlreadyExistError
+from rest_framework.parsers import MultiPartParser, FormParser
+
+from rest_framework.viewsets import ViewSet             #for upload
+from rest_framework.response import Response            #
+from Kemsu_Document.serializers import FileSerializer #
+
 from Kemsu_Document.models import (
     User, Department, Group, Institute,
-    Module, Point, Student,
+    Module, Point, Student,Statement
 )
+from django.conf import settings
+from djangoProject.forms import DocumentForm
 
 from Kemsu_Document.serializers import (
     RegistrationStudentSerializer, RegistrationStaffSerializer,
-    DepartmentSerializer, GroupSerializer,
+    GroupSerializer,
     InstituteSerializer, ModuleSerializer,
-    PointSerializer, UserSerializer,
-    BypassSheetsSerializer, PostByPassSheetsSerializer,
+    PointSerializer, BypassSheetsSerializer, PostByPassSheetsSerializer,
     GetByPassSheetsDetailSerializer, TokenEmailPairSerializer,
     TokenUsernamePairSerializer, UpdateUserSerializer, StudentSerializer,
-    RefreshTokenSerializer, DepartmentsSerializer,
-)
+    RefreshTokenSerializer, DepartmentsSerializer, )
 from . import settings
 
 
@@ -64,12 +66,13 @@ class RegistrationStudentAPIView(APIView):
             )
         return Response(
             {
-                'accessToken' : str(tokena),
+                'accessToken': str(tokena),
                 'refreshToken': str(tokenr),
-                'expiresIn' : settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].seconds
+                'expiresIn': settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].seconds
             },
             status=status.HTTP_201_CREATED,
         )
+
 
 class RegistrationStaffAPIView(APIView):
     permission_classes = [AllowAny]
@@ -93,6 +96,7 @@ class RegistrationStaffAPIView(APIView):
             status=status.HTTP_201_CREATED,
         )
 
+
 class GroupList(APIView):
     permission_classes = [AllowAny]
 
@@ -102,6 +106,7 @@ class GroupList(APIView):
 
         return Response(serializer.data)
 
+
 class InstituteList(APIView):
     permission_classes = [AllowAny]
 
@@ -110,6 +115,7 @@ class InstituteList(APIView):
         serializer = InstituteSerializer(institute, many=True)
 
         return Response(serializer.data)
+
 
 class ModuleList(APIView):
     permission_classes = [AllowAny]
@@ -132,7 +138,7 @@ class PointList(APIView):
 
 
 class StudentList(APIView):
-    #permission_classes = [IsAdminUser]
+    # permission_classes = [IsAdminUser]
     permission_classes = [IsAuthenticated]
 
     def get(self, request, pk):
@@ -152,8 +158,8 @@ class StudentList(APIView):
     #     obj = self.get_object()
     #     return obj == self.request.user
 
-class BypassSheetsView(APIView):
 
+class BypassSheetsView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
@@ -161,6 +167,7 @@ class BypassSheetsView(APIView):
         serializer = BypassSheetsSerializer(module, many=True)
 
         return Response(serializer.data)
+
 
 class PostByPassSheetsView(APIView):
     permission_classes = [IsAuthenticated]
@@ -178,14 +185,14 @@ class PostByPassSheetsView(APIView):
         point5 = Point()
         point5.create_module('Отдел5', 'Описание5', module)
 
-
     def post(self, request, pk):
-        request.data.update({"student_id" : pk})
+        request.data.update({"student_id": pk})
         serializer = PostByPassSheetsSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         self.create_points(serializer.data["id"])
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 
 class GetByPassSheetsDetailView(APIView):
     permission_classes = [IsAuthenticated]
@@ -196,15 +203,18 @@ class GetByPassSheetsDetailView(APIView):
 
         return Response(serializer.data)
 
+
 class TokenEmailPairView(TokenObtainPairView):
     serializer_class = TokenEmailPairSerializer
+
 
 class TokenUsernamePairView(TokenObtainPairView):
     serializer_class = TokenUsernamePairSerializer
 
+
 class LogoutView(GenericAPIView):
     serializer_class = RefreshTokenSerializer
-    permission_classes = (permissions.IsAuthenticated, )
+    permission_classes = (permissions.IsAuthenticated,)
 
     def post(self, request, *args):
         sz = self.get_serializer(data=request.data)
@@ -212,16 +222,30 @@ class LogoutView(GenericAPIView):
         sz.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
 class DepartmentsView(APIView):
     permission_classes = [AllowAny]
-    def get(self,request):
-        departments = Department.objects.all()
-        serializer_class = DepartmentsSerializer(departments,many=True)
-        return Response(serializer_class.data,status=status.HTTP_200_OK)
 
-    def get(self,request,institute):
+    def get(self, request):
+        departments = Department.objects.all()
+        serializer_class = DepartmentsSerializer(departments, many=True)
+        return Response(serializer_class.data, status=status.HTTP_200_OK)
+
+    def get(self, request, institute):
         institute = Institute.objects.get(title=institute)
-        departments = Department.objects.filter(institute=institute.id )
+        departments = Department.objects.filter(institute=institute.id)
         departments |= Department.objects.filter(institute=None)
         serializer_class = DepartmentsSerializer(departments, many=True)
         return Response(serializer_class.data, status=status.HTTP_200_OK)
+
+
+class FileView (APIView):
+    parser_classes = (MultiPartParser, FormParser)
+
+    def post (self, request, *args, **kwargs):
+        file_serializer = FileSerializer (data=request.data)
+        if file_serializer.is_valid():
+            file_serializer.save()
+            return Response(file_serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
