@@ -73,7 +73,6 @@ export default {
   height: fit-content;
   width: 100%;
 
-
   &.error {
     .app-input:focus {
       .input-label-colors(@red)
@@ -83,6 +82,10 @@ export default {
   &.round,
   &.round .app-input {
     border-radius: 100px;
+  }
+
+  &.open .app-input { // Для поддержки AppAutocomplete
+    border-radius: 10px 10px 0 0;
   }
 
   &,
@@ -136,8 +139,5 @@ export default {
     cursor: text;
   }
 }
-
-
-
 
 </style>
