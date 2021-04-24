@@ -7,7 +7,9 @@
       :required="required"
       :disabled="disabled"
       :placeholder="placeholder"
-      :class="{'round': round}"
+      :error-messages="errorMessages"
+      :messages="messages"
+      :round="round"
       class="app-search"
     />
 
@@ -53,6 +55,16 @@ export default {
     round: {
       type: Boolean,
       default: false,
+    },
+
+    errorMessages: {
+      type: Array,
+      default:() => [],
+    },
+
+    messages: {
+      type: Array,
+      default:() => [],
     },
   },
 
