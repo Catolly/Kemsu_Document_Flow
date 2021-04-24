@@ -70,7 +70,7 @@ export default {
 .app-input-wrapper {
   position: relative;
 
-  height: fit-content;
+  height: 70px;
   width: 100%;
 
   &.error {
@@ -101,8 +101,8 @@ export default {
   .app-input {
     position: relative;
 
-    height: 70px;
-    min-width: 100%;
+    height: inherit;
+    width: inherit;
     padding-left: 24px;
     padding-right: 48px;
 
