@@ -118,9 +118,11 @@ export default {
 
     color: @grey-darkset;
 
-    background: linear-gradient(to top, @grey-bright 50%, transparent 0);
+    // 51%, а не 50%, чтобы закрыть border-top родителя
+    background: linear-gradient(to top, @grey-bright 51%, transparent 0);
 
     user-select: none;
+    cursor: text;
   }
 }
 
