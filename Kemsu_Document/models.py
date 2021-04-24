@@ -129,14 +129,18 @@ class Staff(models.Model):
 class Student(models.Model):
     user = models.OneToOneField(User, verbose_name="Пользователь", on_delete=models.CASCADE, primary_key=True, related_name="student")
     group = models.ForeignKey(Group, verbose_name="Группа", on_delete=models.SET_NULL, null=True, blank=True, related_name="group")
-    recordBookNumber = models.CharField("Номер зачётной книжки", max_length=50, null=True, blank=True)
 
     def __str__(self):
         return self.user.fullname
 
+class ModuleTemplate(models.Model):
+    title = models.CharField("Название модуля", max_length=50)
+    points = models.TextField("Список пунктов")
+
 class Module(models.Model):
     title = models.CharField("Название модуля", default=None, max_length=50)
     student_id = models.ForeignKey(Student, verbose_name="Студент", on_delete=models.CASCADE, null=False)
+    module_template = models.ForeignKey(ModuleTemplate, verbose_name="Шаблон", on_delete=models.SET_NULL, null=True)
 
     class Meta:
         verbose_name = "Модуль"
@@ -149,6 +153,14 @@ class Statement(models.Model):
     title = models.CharField("Название заявления", default=None, max_length=50)
     img = models.ImageField("Файл", upload_to="Kemsu_Document/media/statement_documents", blank=True)
     module = models.ForeignKey(Module, verbose_name="Обходной лист", on_delete=models.CASCADE, null=False, related_name="statements")
+
+    STATUS = (
+        ('На рассмотрении', 'На рассмотрении'),
+        ('Одобренно', 'Одобренно'),
+        ('Отказанно', 'Отказанно')
+    )
+
+    status = models.CharField(max_length=20, choices=STATUS, blank=True, default='На рассмотрении', help_text='Статус заявления')
 
     def __str__(self):
         return self.title
@@ -165,7 +177,7 @@ class Point(models.Model):
         ('Отказанно', 'о'),
         ('Подписанно', 'п'),
     )
-    status = models.CharField(max_length=20, choices=STATUS, blank=True, default='Не отправленно', help_text='Статус документа')
+    status = models.CharField(max_length=20, choices=STATUS, blank=True, default='Не отправленно', help_text='Статус пункта')
 
     def create_module(self, name, description, module):
         self.name = name

@@ -1,12 +1,4 @@
-from django.contrib.auth.models import AnonymousUser
 from rest_framework import permissions
-
-''' для памятки
-        STATUS = (
-        ('Работник', 'работник'),
-        ('Студент', 'студент'),
-        ('Администратор', 'администратор'),
-'''
 
 class PermissionIsStudent(permissions.BasePermission):
 
@@ -38,17 +30,19 @@ class IsStudent(permissions.BasePermission):
     def has_permission(self, request, view):
         return bool(request.user and request.user.status == "Студент" and request.user.id == view.kwargs['pk'])
 
-class StudentListViewPermission(permissions.BasePermission):
+class StudentViewPermission(permissions.BasePermission):
 
     def has_permission(self, request, view):
-        return bool(request.user.is_authenticated and (request.user and request.user.status == "Студент" and request.user.id == view.kwargs['pk'])
-                    or (request.user and request.user.status == "Администратор")
-                    or (request.user and request.user.status == "Работник"))
-
-class PatchUserDataPermission(permissions.BasePermission):
-    def has_permission(self, request, view):
-        return bool((request.user and request.user.status == "Студент" and request.user.id == view.kwargs['pk'])
-                    or (request.user and request.user.status == "Администратор"))
+        if request.user.is_authenticated:
+            if request.method == "GET":
+                return bool((request.user and request.user.status == "Студент" and request.user.id == view.kwargs['pk'])
+                            or (request.user and request.user.status == "Администратор")
+                            or (request.user and request.user.status == "Работник"))
+            elif request.method == "PATCH":
+                return bool((request.user and request.user.status == "Студент" and request.user.id == view.kwargs['pk'])
+                            or (request.user and request.user.status == "Администратор"))
+            return False
+        return False
 
 class BypassSheetsViewPermission(permissions.BasePermission):
 

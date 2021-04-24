@@ -19,9 +19,9 @@ from django.urls import re_path, include
 
 from .views import (
     RegistrationStudentAPIView, RegistrationStaffAPIView,
-    BypassSheetsView, StudentList,
+    BypassSheetsView, UserList,
     LogoutView, RefreshTokenView,
-    LoginView, BypassSheetView
+    LoginView, BypassSheetView, DepartmentsView, DepartmentInstituteView
 )
 from rest_framework_simplejwt.views import TokenRefreshView
 
@@ -31,8 +31,10 @@ urlpatterns = [
     path('api/logout/', LogoutView.as_view(), name='auth_logout'),
     path('api/token/refresh/', RefreshTokenView.as_view(), name='token_refresh'),
     path('admin/', admin.site.urls),
-    path('api/users/<int:pk>/', StudentList.as_view(), name='student_list'),
+    path('api/users/<int:pk>/', UserList.as_view(), name='student_list'),
     path('api/bypass_sheets/', BypassSheetsView.as_view(), name="bypass_sheets"),
     path('api/bypass_sheets/<int:pk>/', BypassSheetView.as_view(), name="bypass_sheet"),
-    path('api/login/', LoginView.as_view(), name="login")
+    path('api/login/', LoginView.as_view(), name="login"),
+    path('api/departments/', DepartmentsView.as_view(), name="departments_view"),
+    path('api/departments/<str:institute>/', DepartmentInstituteView.as_view(), name="departments_view/institute"),
 ]
