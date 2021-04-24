@@ -41,45 +41,48 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
+// import { mapMutations } from 'vuex'
 
 import AppButton from '~/components/common/AppButton'
 import AppInput from '~/components/common/AppInput'
 
 export default {
   name: 'AppFormLogin',
+
   components: {
     AppButton,
     AppInput,
   },
-  data() {
-    return {
-      form: {
-        username: '',
-        password: '',
-      }
-    }
-  },
+
+  data:() => ({
+    form: {
+      email: '',
+      password: '',
+    },
+  }),
+
   methods: {
-    ...mapMutations([
-      'updateTokens'
-    ]),
+    // ...mapMutations([
+    //   'updateTokens'
+    // ]),
+
     checkForm() {
       // Проверка данных формы
       // ...
       this.login()
     },
+
     async login() {
       // // Валидация данных на сервере
       // // ...
-      const tokens = await new Promise((res, rej) => {
-        setTimeout(() => res({
-          accessToken: 'logged',
-          refreshToken: 'logged',
-          expiresIn: Date.now() + 1800e3,
-        }), 500)
-      })
-      this.updateTokens(tokens)
+      // const tokens = await new Promise((res, rej) => {
+      //   setTimeout(() => res({
+      //     accessToken: 'logged',
+      //     refreshToken: 'logged',
+      //     expiresIn: Date.now() + 1800e3,
+      //   }), 500)
+      // })
+      // this.updateTokens(tokens)
 
       this.$router.push('/')
     },
