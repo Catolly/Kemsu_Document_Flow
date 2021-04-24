@@ -10,62 +10,61 @@
   		placeholder=" "
       ref="appInput"
     >
-		<label
+    <label
       class="label"
       @click="focus"
     >
       {{placeholder}}
     </label>
-	</div>
+  </div>
 </template>
 
 <script>
 export default {
-	name: 'AppInput',
+  name: 'AppInput',
 
-	props: {
-		value: String,
+  props: {
+    value: String,
 
-		placeholder: String,
+    placeholder: String,
 
     type: {
-			type: String,
-			default: 'text',
-		},
+      type: String,
+      default: 'text',
+    },
 
     required: {
-			type: Boolean,
-			default: false,
-		},
+      type: Boolean,
+      default: false,
+    },
 
     disabled: {
-			type: Boolean,
-			default: false,
-		},
-	},
+      type: Boolean,
+      default: false,
+    },
+  },
 
-	methods: {
-		updateValue(value) {
+  methods: {
+    updateValue(value) {
       this.$emit('input', value.trim())
-		},
+    },
 
     focus() {
       this.$refs.appInput.focus()
     },
-	},
+  },
 }
 </script>
 
 <style lang="less" scoped>
-@input-background: #FDFDFD;
 
 .app-input-wrapper {
-	position: relative;
+  position: relative;
 
   height: 70px;
   width: 100%;
 
-  border: 1px solid #F3F3F3;
+  border: 1px solid @grey-light;
 
   &.round,
   &.round .app-input {
@@ -90,7 +89,7 @@ export default {
     padding-left: 24px;
 
     border: 1px solid transparent;
-    background: @input-background;
+    background: @grey-bright;
 
     &:focus {
       border-color: @blue;
@@ -115,9 +114,11 @@ export default {
     position: absolute;
     top: calc(50% - .6em); // Фиксирует label по центру input'а
     left: 1.2em;
+    z-index: 1;
 
-    color: @text-grey;
-    background: linear-gradient(to top, @input-background 50%, transparent 0);
+    color: @grey-darkset;
+
+    background: linear-gradient(to top, @grey-bright 50%, transparent 0);
 
     user-select: none;
   }
