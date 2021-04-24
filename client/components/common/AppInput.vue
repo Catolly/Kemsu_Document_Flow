@@ -104,6 +104,7 @@ export default {
     height: 70px;
     min-width: 100%;
     padding-left: 24px;
+    padding-right: 48px;
 
     border: 1px solid @grey-light;
     background: @grey-bright;
