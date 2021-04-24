@@ -1,28 +1,37 @@
 <template>
-	<form @submit.prevent="checkForm" id="form">
-		<h1 id="form-header">Вход</h1>
-		<div id="form-inner">
-			<app-input
-			v-model.trim="form.username"
-			placeholder="Ф.И.О. / Email"
-			id="username"
-      class="username"
-			required />
-			<app-input
-			v-model.trim="form.password"
-			placeholder="Пароль"
-			id="password"
-			type="password"
-			required />
+	<form @submit.prevent="checkForm" class="form">
+
+		<h1 class="header">Вход</h1>
+
+		<div class="body">
+      <div class="inputs">
+  			<app-input
+    			v-model.trim="form.email"
+    			placeholder="Email"
+          type="email"
+    			required
+        />
+
+  			<app-input
+    			v-model.trim="form.password"
+    			placeholder="Пароль"
+    			type="password"
+    			required
+        />
+      </div>
+
 			<p class="forgot-password">
 				<NuxtLink to="#">Не помню пароль</NuxtLink>
 			</p>
-			<app-button
-			id="login"
-			class="login-btn blue big filled fluid">
-				Войти
-			</app-button>
+
+      <div class="btns">
+  			<app-button
+  			class="login-btn blue big filled fluid">
+  				Войти
+  			</app-button>
+      </div>
 		</div>
+
 	</form>
 </template>
 
@@ -74,29 +83,33 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import '~/styles/index.less';
 
-#form {
-	width: 516px;
-}
-
-#form-header {
-  text-align: center;
-}
-
-#form-inner {
-  margin-top: 48px;
-
-  .username {
-    width: 100%;
+.form {
+  .header {
+    text-align: center;
   }
 
-  .forgot-password {
-    margin-top: 8px;
-  }
+  .body {
+    margin-top: 48px;
 
-  .login-btn {
-    margin-top: 32px;
+    .inputs,
+    .btns {
+      display: grid;
+    }
+
+    .inputs {
+      grid-row-gap: 16px;
+    }
+
+    .forgot-password {
+      margin-top: 8px;
+    }
+
+    .btns {
+      margin-top: 32px;
+
+      grid-row-gap: 8px;
+    }
   }
 }
 
