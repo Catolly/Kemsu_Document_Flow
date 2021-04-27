@@ -15,8 +15,8 @@
           {{student.fullName}}
         </span>
         <span class="student-status">
-          {{student.group.name}},
-          {{student.courseNumber}} курс.
+          {{student.groupName}},
+          {{student.courseNumber}}.
           {{student.educationForm}}.
           {{student.status}}
         </span>

@@ -89,11 +89,9 @@ export default {
       "educationForm": "Бюджет",
       "status": "Учится",
       "checked": false,
-      "courseNumber": 3,
-      "group": {
-         "name": "M-174",
-         "institute": "Институт Фундаментальных Наук",
-      },
+      "courseNumber": '3 курс',
+      "groupName": "М-174",
+      "instituteName": "Институт Фундаментальных Наук",
       "point": {
         "name": "Библиотека",
         "status": "reviewing", // или "rejected" или "signed"
@@ -118,12 +116,10 @@ export default {
       "educationForm": "Бюджет",
       "status": "Учится",
       "checked": false,
-      "courseNumber": 3,
-      "group": {
-        "name": "M-174",
-        "institute": "Институт Фундаментальных Наук",
-      },
-     "point": {
+      "courseNumber": '3 курс',
+      "groupName": "М-174",
+      "instituteName": "Институт Фундаментальных Наук",
+      "point": {
         "name": "Библиотека",
         "status": "reviewing", // или "rejected" или "signed"
         "rejectReason": "Необходимо сдать ключ от комнаты", // если status="rejected"
@@ -147,11 +143,9 @@ export default {
       "educationForm": "Бюджет",
       "status": "В академ. отпуске",
       "checked": false,
-      "courseNumber": 2,
-      "group": {
-        "name": "Ц-184",
-        "institute": "Институт Цифры",
-      },
+      "courseNumber": '2 курс',
+      "groupName": "Ц-184",
+      "instituteName": "Институт Цифры",
       "point": {
         "name": "Библиотека",
         "status": "rejected", // или "rejected" или "signed"
@@ -174,7 +168,7 @@ export default {
     // app-filter
     filterList: [
       {
-        name: 'institute',
+        name: 'instituteName',
         selected: '',
 
         placeholder: 'Институт',
@@ -190,23 +184,18 @@ export default {
 
         placeholder: 'Курс',
         options: [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
+          '2 курс',
+          '3 курс',
         ],
       },
       {
-        name: 'group',
+        name: 'groupName',
         selected: '',
 
         placeholder: 'Группа',
         options: [
           'М-174',
-          'М-175',
-          'М-240',
+          'Ц-184',
         ],
       },
     ],
