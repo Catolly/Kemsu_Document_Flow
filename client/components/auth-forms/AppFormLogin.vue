@@ -1,23 +1,36 @@
 <template>
-	<form @submit.prevent="checkForm" class="form">
+	<form @submit.prevent="submit" class="form">
 
 		<h1 class="header">Вход</h1>
 
 		<div class="body">
       <div class="inputs">
   			<app-input
-    			v-model.trim="form.email"
+    			v-model.trim="$v.email.$model"
     			placeholder="Email"
-          type="email"
-    			required
+          :errorMessages="[
+            ... $v.email.$dirty
+                && !$v.email.required
+                ? ['Поле должно быть заполнено']
+                : [],
+          ]"
         />
-
-          <!-- :error-messages="['Ошибка 1', 'Ошибка 2']" -->
   			<app-input
-    			v-model.trim="form.password"
+    			v-model.trim="$v.password.$model"
     			placeholder="Пароль"
     			type="password"
-    			required
+          :errorMessages="[
+            ... $v.password.$dirty
+                && !$v.password.required
+                ? ['Поле должно быть заполнено']
+                : [],
+            ... $v.password.$dirty &&
+                $v.password.required
+                && !$v.password.minLength
+                ? ['Пароль должен содержать 7 и более символов']
+                : [],
+          ]"
+          @input="checkField($v.password)"
         />
       </div>
 
@@ -27,7 +40,8 @@
 
       <div class="btns">
   			<app-button
-          class="login-btn blue big filled fluid" disabled
+          class="login-btn blue big filled fluid"
+          :disabled="$v.$invalid"
         >
   				Войти
   			</app-button>
@@ -44,6 +58,9 @@
 </template>
 
 <script>
+import { required, minLength, email } from "vuelidate/lib/validators"
+import _ from 'lodash'
+
 import AppButton from '~/components/common/AppButton'
 import AppInput from '~/components/common/AppInput'
 
@@ -56,16 +73,38 @@ export default {
   },
 
   data:() => ({
-    form: {
-      email: '',
-      password: '',
+    email: '',
+    password: '',
+  }),
+
+  validations:() => ({
+    email: {
+      required,
+      email,
+    },
+    password: {
+      required,
+      minLength: minLength(7),
     },
   }),
 
   methods: {
-    checkForm() {
-      // Проверка данных формы
-      // ...
+    checkField($v) {
+      if (!$v.required) return
+
+      $v.$reset()
+      this.delayTouch($v)
+    },
+
+    delayTouch: _.debounce($v => {
+      $v.$touch()
+    }, 2e3),
+
+    submit() {
+      this.$v.$touch()
+
+      if (this.$v.$invalid) return
+
       this.login()
     },
 
@@ -73,7 +112,7 @@ export default {
       // Отправка данных на сервер
       // ...
 
-      this.$router.push('/')
+      // this.$router.push('/')
     },
   },
 }
