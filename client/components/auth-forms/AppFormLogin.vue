@@ -12,6 +12,7 @@
     			required
         />
 
+          <!-- :error-messages="['Ошибка 1', 'Ошибка 2']" -->
   			<app-input
     			v-model.trim="form.password"
     			placeholder="Пароль"
@@ -31,12 +32,11 @@
   				Войти
   			</app-button>
 
-        <app-button
-          class="to-register-btn blue big fluid"
-          @click="toSignup"
-        >
-          Зарегистрироваться
-        </app-button>
+        <NuxtLink to="/signup" tabindex="-1" class="clear">
+          <app-button class="to-register-btn blue big fluid">
+            Зарегистрироваться
+          </app-button>
+        </NuxtLink>
       </div>
 		</div>
 
@@ -44,8 +44,6 @@
 </template>
 
 <script>
-// import { mapMutations } from 'vuex'
-
 import AppButton from '~/components/common/AppButton'
 import AppInput from '~/components/common/AppInput'
 
@@ -65,10 +63,6 @@ export default {
   }),
 
   methods: {
-    // ...mapMutations([
-    //   'updateTokens'
-    // ]),
-
     checkForm() {
       // Проверка данных формы
       // ...
@@ -76,22 +70,10 @@ export default {
     },
 
     async login() {
-      // // Валидация данных на сервере
-      // // ...
-      // const tokens = await new Promise((res, rej) => {
-      //   setTimeout(() => res({
-      //     accessToken: 'logged',
-      //     refreshToken: 'logged',
-      //     expiresIn: Date.now() + 1800e3,
-      //   }), 500)
-      // })
-      // this.updateTokens(tokens)
+      // Отправка данных на сервер
+      // ...
 
       this.$router.push('/')
-    },
-
-    toSignup() {
-      router.push('/signup')
     },
   },
 }
