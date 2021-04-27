@@ -2,6 +2,8 @@
 	<button
   	tabindex="0"
   	class="app-button"
+    :class="{ 'disabled': disabled }"
+    :disabled="disabled"
   	@click="$emit('click')"
   	@keydown.enter="$emit('click')"
   >
@@ -12,6 +14,13 @@
 <script>
 export default {
 	name: 'AppButton',
+
+  props: {
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
+  },
 }
 </script>
 
@@ -70,8 +79,11 @@ export default {
   border: none;
 }
 
+.disabled {
+  cursor: auto;
 
-
+  .setColor(@grey-darkset, @grey-darkset, @grey-darkset);
+}
 
 .filled {
   color: #fff;

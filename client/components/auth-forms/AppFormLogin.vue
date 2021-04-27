@@ -27,8 +27,8 @@
 
       <div class="btns">
   			<app-button
-          class="login-btn blue big filled fluid"
-         >
+          class="login-btn blue big filled fluid" disabled
+        >
   				Войти
   			</app-button>
 
