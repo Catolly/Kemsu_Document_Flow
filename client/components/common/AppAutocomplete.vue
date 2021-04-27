@@ -33,7 +33,7 @@
 			<div
 			v-for="(option, i) in filteredOptions"
 			:key="option.id"
-			@click="onOptionClick(option)"
+			@click="selectOption(option)"
 			:class="{'active': arrowPosition === i}"
 			class="option"
 			tabindex="0">
@@ -117,9 +117,8 @@ export default {
 				this.arrowPosition = this.filteredOptions.length - 1
 		},
 
-		onOptionClick(option) {
+		selectOption(option) {
 			this.updateValue(option.value)
-			this.isOpen = false
 			this.$refs.input.focus()
 		},
 
@@ -128,7 +127,6 @@ export default {
 				event.preventDefault()
 				this.updateValue(this.filteredOptions[this.arrowPosition].value)
 				this.arrowPosition = -1
-				this.isOpen = false
 			}
 		},
 
