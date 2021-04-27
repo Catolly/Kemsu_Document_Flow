@@ -13,7 +13,9 @@
   position: absolute;
   display: block;
   content: '';
-}.arrow(@size: 8px) {
+}
+
+.arrow(@size: 8px) {
   .absolute();
 
   top: 50% - .5*@size;
@@ -25,4 +27,11 @@
   border-top: @size solid #262626;
   border-left: .5*@size solid transparent;
   border-right: .5*@size solid transparent;
+}
+
+.focused(@color) {
+  border-color: @color;
+  & + .label {
+    color: @color;
+  }
 }
