@@ -41,16 +41,16 @@
           Зарегистрироваться
         </app-button>
 
-        <app-button
-          class="to-login-btn blue big fluid"
-          @click="toLogin"
-        >
-          Войти
-        </app-button>
+        <NuxtLink to="/login" tabindex="-1" class="clear">
+          <app-button class="to-login-btn blue big fluid">
+            Войти
+          </app-button>
+        </NuxtLink>
       </div>
 
       <p class="signup-problem">
-        Кто-то зарегистрировался под вашим именем? Обратитесь к <NuxtLink to="#">администрации</NuxtLink>
+        Кто-то зарегистрировался под вашим именем? Обратитесь к
+        <NuxtLink to="#">администрации</NuxtLink>
       </p>
     </div>
 
@@ -154,10 +154,6 @@ export default {
       // ...
 
       this.$router.push('/')
-    },
-
-    toLogin() {
-      this.$router.push('/login')
     },
   },
 }
