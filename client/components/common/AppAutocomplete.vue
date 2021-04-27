@@ -8,20 +8,23 @@
   	class="app-autocomplete"
   >
 
-    <app-input
-      @input="updateValue($event)"
-      :value="value"
-      :placeholder="placeholder"
-      autocomplete="off"
-      required
-      ref="input"
-      :class="{'open': isOpen && filteredOptions.length}"
-    />
+    <label>
+      <app-input
+        @input="updateValue($event)"
+        :value="value"
+        :placeholder="placeholder"
+        autocomplete="off"
+        required
+        ref="input"
+        :class="{'open': isOpen && filteredOptions.length}"
+      />
 
-    <div
-      :class="{'rotate': isOpen && filteredOptions.length}"
-      class="arrow"
-    />
+      <div
+        :class="{'rotate': isOpen && filteredOptions.length}"
+        class="arrow"
+        @click="focusIn($event)"
+      />
+    </label>
 
 		<div
 		v-show="isOpen"
