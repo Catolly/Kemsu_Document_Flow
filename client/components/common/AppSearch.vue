@@ -7,8 +7,6 @@
       :required="required"
       :disabled="disabled"
       :placeholder="placeholder"
-      :error-messages="errorMessages"
-      :messages="messages"
       :round="round"
       :small="small"
       class="app-search"
@@ -58,14 +56,6 @@ export default {
       default: false,
     },
 
-    errorMessages: {
-      type: Array,
-      default:() => [],
-    },
-
-    messages: {
-      type: Array,
-      default:() => [],
     small: {
       type: Boolean,
       default: false,
