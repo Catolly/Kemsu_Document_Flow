@@ -98,7 +98,7 @@ export default {
 
 		handleClickOutside(event) {
 			if (!this.$el.contains(event.target)) {
-				this.isOpen = false
+				this.focusOut()
 				this.arrowPosition = -1
 			}
 		},
@@ -137,7 +137,7 @@ export default {
 			}
 			else {
 				this.arrowPosition = 0
-				this.isOpen = false
+				this.focusOut()
 			}
 		},
 	},
