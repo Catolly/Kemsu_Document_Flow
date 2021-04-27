@@ -8,14 +8,14 @@
     </app-button>
 
     <app-button
-      class="btn"
+      class="btn plain"
       @click="$emit('checkAll')"
     >
       Выбрать всех
     </app-button>
 
     <app-button
-      class="btn"
+      class="btn plain"
       @click="$emit('uncheckAll')"
     >
       Снять выбор
@@ -60,21 +60,15 @@ export default {
   margin-top: 48px;
 
   display: flex;
+  align-items: center;
+  gap: 18px;
 
-  .btn {
-    margin-right: 18px;
-
-    &:first-child {
-      margin-right: 24px;
-
-    }
+  .btn:first-child {
+    margin-right: 6px;
   }
 
   .search {
     width: 340px;
-
-    padding: 0;
-    margin: 0;
     margin-left: auto;
   }
 }

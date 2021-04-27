@@ -45,8 +45,7 @@
 
         <app-button
           v-if="student.point.status != 'rejected'"
-          :class="student.point.status === 'reviewing' ? 'red' : 'cancel'"
-          class="btn reject"
+          class="btn reject red"
           @click="$emit('reject', student)"
         >
           Отказать
