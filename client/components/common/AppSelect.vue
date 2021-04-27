@@ -245,6 +245,8 @@ export default {
 
   .arrow {
     .arrow();
+
+    cursor: pointer;
   }
 }
 

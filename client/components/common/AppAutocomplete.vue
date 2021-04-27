@@ -177,6 +177,8 @@ export default {
   .arrow {
     .arrow();
 
+    cursor: text;
+
     &.rotate {
       transform: rotate(180deg);
     }
