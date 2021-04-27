@@ -23,8 +23,9 @@
 
     <app-search
       :value="searchText"
-      @input="$emit('search', searchText)"
+      @input="$emit('search', $event)"
       round
+      small
       class="search"
     />
   </div>
@@ -71,7 +72,6 @@ export default {
 
   .search {
     width: 340px;
-    height: 50px;
 
     padding: 0;
     margin: 0;
