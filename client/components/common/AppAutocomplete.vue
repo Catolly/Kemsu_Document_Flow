@@ -189,6 +189,8 @@ export default {
     top: calc(100% - 1px);
     z-index: 2; // z-index label'а = 1 и перекрывает при z-index = 1
 
+    width: 100%;
+
     cursor: pointer;
 
     box-shadow: 2px 2px 10px rgba(0, 0, 0, .05);
