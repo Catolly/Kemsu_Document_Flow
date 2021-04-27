@@ -8,8 +8,6 @@
         <app-autocomplete
           v-model.trim="form.fullName"
           :options="relevantUsersOptions"
-          autocomplete="off"
-          type="text"
           placeholder="Ф.И.О."
           required
         />
@@ -24,8 +22,6 @@
         <app-autocomplete
           v-model.trim="form.department"
           :options="departmentsOptions"
-          autocomplete="off"
-          type="text"
           placeholder="Отдел, в котором работаете"
           required
         />
