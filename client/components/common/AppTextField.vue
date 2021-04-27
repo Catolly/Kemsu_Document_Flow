@@ -1,21 +1,59 @@
 <template>
   <div
+    :class="classObj"
     class="app-text-field-wrapper"
   >
     <textarea
       class="app-text-field"
       :rows="rows"
     />
+
+    <app-message-list
+      :error-messages="errorMessages"
+      :messages="messages"
+      class="message-list"
+      ref="AppMessageList"
+    />
   </div>
 </template>
 
 <script>
+import AppMessageList from '~/components/common/AppMessageList'
+
 export default {
   name: 'AppTextField',
+
+  components: {
+    AppMessageList
+  },
+
   props: {
     rows: {
       type: Number,
       default: 7,
+    },
+
+    error: {
+      type: Boolean,
+      default: false,
+    },
+
+    errorMessages: {
+      type: Array,
+      default:() => [],
+    },
+
+    messages: {
+      type: Array,
+      default:() => [],
+    },
+  },
+
+  computed: {
+    classObj() {
+      return {
+        'error': !!this.errorMessages.length,
+      }
     },
   },
 }

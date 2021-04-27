@@ -1,15 +1,15 @@
 <template>
-	<div class="app-wrapper">
-
+	<div
+    class="app-select-wrapper"
+    :class="classObj"
+  >
 		<div
   		@focusin="open"
   		@focusout="close"
-  		:disabled="disabled"
-  		ref="appSelect"
-  		tabindex=0
+      ref="appSelect"
+      tabindex=0
   		class="app-select"
     >
-
 			<span class="selected">
   			{{selected}}
 				<div class="arrow" />
@@ -38,12 +38,24 @@
 
 		</div>
 
+    <app-message-list
+      :error-messages="errorMessages"
+      :messages="messages"
+      class="message-list"
+      ref="AppMessageList"
+    />
 	</div>
 </template>
 
 <script>
+import AppMessageList from '~/components/common/AppMessageList'
+
 export default {
 	name: 'AppSelect',
+
+  components: {
+    AppMessageList
+  },
 
 	data() {
 		return {
@@ -53,7 +65,7 @@ export default {
 
 	props: {
 		selected: {
-      type: String,
+      type: [String, Number],
       default: '',
     },
 
@@ -68,7 +80,30 @@ export default {
 			type: Boolean,
 			default: false
 		},
+
+    error: {
+      type: Boolean,
+      default: false
+    },
+
+    errorMessages: {
+      type: Array,
+      default:() => [],
+    },
+
+    messages: {
+      type: Array,
+      default:() => [],
+    },
 	},
+
+  computed: {
+    classObj() {
+      return {
+        'error': !!this.errorMessages.length,
+      }
+    },
+  },
 
 	methods: {
 		unfocus() {

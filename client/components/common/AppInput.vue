@@ -11,8 +11,6 @@
     		:type="type"
     		:required="required"
     		:disabled="disabled"
-        :error-messages="errorMessages"
-        :messages="messages"
     		class="app-input"
     		placeholder=" "
         ref="appInput"
@@ -26,31 +24,27 @@
       </label>
     </div>
 
-    <div class="messages">
-      <span
-        v-for="message of errorMessages"
-        :key="message"
-        class="error-message"
-      >
-        {{message}}
-      </span>
+    <template v-if="errorMessages.length">
+      <app-message-list
+        :error-messages="errorMessages"
+        :messages="messages"
+        class="message-list"
+        ref="AppMessageList"
+      />
+    </template>
 
-      <template v-if="!errorMessages.length">
-        <span
-          v-for="message of messages"
-          :key="message"
-          class="message"
-        >
-          {{message}}
-        </span>
-      </template>
-    </div>
   </div>
 </template>
 
 <script>
+import AppMessageList from '~/components/common/AppMessageList'
+
 export default {
   name: 'AppInput',
+
+  components: {
+    AppMessageList
+  },
 
   props: {
     value: String,
