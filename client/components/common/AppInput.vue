@@ -1,8 +1,8 @@
 <template>
-  <!-- class="error" -->
 	<div
     :class="classObj"
     class="app-input-wrapper"
+    ref="appInputWrapper"
   >
     <div class="app-input-field">
   		<input
@@ -72,6 +72,21 @@ export default {
       default: false,
     },
 
+    round: {
+      type: Boolean,
+      default: false,
+    },
+
+    small: {
+      type: Boolean,
+      default: false,
+    },
+
+    error: {
+      type: Boolean,
+      default: false,
+    },
+
     errorMessages: {
       type: Array,
       default:() => [],
@@ -87,6 +102,7 @@ export default {
     classObj() {
       return {
         'round': this.round,
+        'small': this.small,
         'error': !!this.errorMessages.length,
       }
     },
@@ -106,27 +122,20 @@ export default {
 
 <style lang="less" scoped>
 
-// mixins
-.input-label-colors(@color) {
-  border-color: @color;
-  & + .label {
-    color: @color;
-  }
-}
-//
-
 .app-input-wrapper {
   position: relative;
 
+  height: fit-content;
   width: 100%;
 
-  &.error {
-    .app-input {
-      .input-label-colors(@red);
+  &.small .app-input-field {
+    height: 50px;
+  }
 
-      &:focus {
-        .input-label-colors(@red);
-      }
+  &.error {
+    .app-input,
+    .app-input:focus {
+      .focused(@red);
     }
   }
 
@@ -168,7 +177,7 @@ export default {
     background: @grey-bright;
 
     &:focus {
-      .input-label-colors(@blue);
+      .focused(@blue);
     }
 
     // Фиксирует плейсхолдер на верхней левой границе при фокусе
@@ -191,23 +200,10 @@ export default {
 
     color: @grey-darkset;
 
-    // 51%, а не 50%, чтобы закрыть border-top родителя
     background: linear-gradient(to top, @grey-bright 50%, transparent 0);
 
     user-select: none;
     cursor: text;
-  }
-
-  .messages {
-    margin-top: 8px;
-    padding-left: 24px;
-
-    display: grid;
-    grid-row-gap: 8px;
-
-    .error-message {
-      color: @red;
-    }
   }
 }
 

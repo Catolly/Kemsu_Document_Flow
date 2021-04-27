@@ -10,6 +10,7 @@
       :error-messages="errorMessages"
       :messages="messages"
       :round="round"
+      :small="small"
       class="app-search"
     />
 
@@ -65,6 +66,9 @@ export default {
     messages: {
       type: Array,
       default:() => [],
+    small: {
+      type: Boolean,
+      default: false,
     },
   },
 
@@ -81,8 +85,12 @@ export default {
 .app-search-wrapper {
   position: relative;
 
-  height: 70px;
+  height: fit-content;
   width: 100%;
+
+  .app-search {
+    position: relative;
+  }
 
   .icon-search {
     .absolute();
@@ -95,13 +103,6 @@ export default {
     fill: @grey-darkset;
 
     cursor: text;
-  }
-
-  .app-search {
-    position: relative;
-
-    height: inherit;
-    width: inherit;
   }
 }
 
