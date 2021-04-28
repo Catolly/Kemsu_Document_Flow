@@ -123,7 +123,7 @@ export default {
   width: 100%;
 
   &.small .app-input-field {
-    height: 50px;
+    height: @app-small-input-height;
   }
 
   &.error {
@@ -135,7 +135,7 @@ export default {
 
   &.round,
   &.round .app-input {
-    border-radius: 100px;
+    border-radius: @app-input-height;
   }
 
   &.open .app-input { // Для поддержки AppAutocomplete
@@ -155,7 +155,7 @@ export default {
   .app-input-field {
     position: relative;
 
-    height: 70px;
+    height: @app-input-height;
     width: inherit;
   }
 

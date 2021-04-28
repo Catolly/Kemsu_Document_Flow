@@ -25,10 +25,7 @@
       />
 
       <div
-        :class="{
-          'rotate': isOpen && filteredOptions.length,
-          'small': small,
-        }"
+        :class="{'rotate': isOpen && filteredOptions.length,}"
         class="arrow"
         @click="focusIn($event)"
       />
@@ -201,9 +198,9 @@ export default {
   width: 100%;
 
   .arrow {
-    .arrow(70px); // AppInput height
-    &.small {
-      .arrow(50px); // AppInput height
+    .arrow(@app-input-height);
+    .app-autocomplete.small {
+      .arrow(@app-small-input-height);
     }
 
     cursor: text;
