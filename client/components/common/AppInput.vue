@@ -97,7 +97,7 @@ export default {
       return {
         'round': this.round,
         'small': this.small,
-        'error': !!this.errorMessages.length,
+        'error': this.error || !!this.errorMessages.length,
       }
     },
   },
