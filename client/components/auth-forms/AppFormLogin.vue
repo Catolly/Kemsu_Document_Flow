@@ -23,7 +23,7 @@
           @change="checkField($v.email)"
         />
   			<app-input
-    			v-model.trim="$v.password.$model"
+    			v-model="$v.password.$model"
     			placeholder="Пароль"
     			type="password"
           :errorMessages="[
