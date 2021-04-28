@@ -113,7 +113,7 @@ export default {
       // Отправка данных на сервер
       // ...
 
-      // this.$router.push('/')
+      this.$router.push('/')
     },
   },
 }
