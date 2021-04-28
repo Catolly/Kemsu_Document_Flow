@@ -13,10 +13,14 @@
         @input="updateValue($event)"
         :value="value"
         :placeholder="placeholder"
-        autocomplete="off"
-        required
-        ref="input"
         :class="{'open': isOpen && filteredOptions.length}"
+        :type="type"
+        :required="required"
+        :disabled="disabled"
+        :error-messages="errorMessages"
+        :messages="messages"
+        autocomplete="off"
+        ref="input"
       />
 
       <div
@@ -69,6 +73,11 @@ export default {
       default: () => [],
     },
 
+    type: {
+      type: String,
+      default: 'text',
+    },
+
 		required: {
 			type: Boolean,
 			default: false
@@ -78,6 +87,16 @@ export default {
 			type: Boolean,
 			default: false
 		},
+
+    errorMessages: {
+      type: Array,
+      default:() => [],
+    },
+
+    messages: {
+      type: Array,
+      default:() => [],
+    },
 	},
 
 	methods: {
