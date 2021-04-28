@@ -13,8 +13,14 @@
                 && !$v.email.required
                 ? ['Поле должно быть заполнено']
                 : [],
+            ... $v.email.$dirty
+                && $v.email.required
+                && !$v.email.email
+                ? ['Введите email']
+                : [],
           ]"
-          @input="checkField($v.email)"
+          @input="reset($v.email)"
+          @change="checkField($v.email)"
         />
   			<app-input
     			v-model.trim="$v.password.$model"
@@ -31,7 +37,8 @@
                 ? ['Пароль должен содержать 7 и более символов']
                 : [],
           ]"
-          @input="checkField($v.password)"
+          @input="reset($v.password)"
+          @change="checkField($v.password)"
         />
       </div>
 
@@ -60,7 +67,6 @@
 
 <script>
 import { required, minLength, email } from "vuelidate/lib/validators"
-import _ from 'lodash'
 
 import AppButton from '~/components/common/AppButton'
 import AppInput from '~/components/common/AppInput'
@@ -90,16 +96,17 @@ export default {
   }),
 
   methods: {
-    checkField($v) {
+    reset($v) {
       if (!$v.required) return
 
       $v.$reset()
-      this.delayTouch($v)
     },
 
-    delayTouch: _.debounce($v => {
+    checkField($v) {
+      if (!$v.required) return
+
       $v.$touch()
-    }, 2e3),
+    },
 
     submit() {
       this.$v.$touch()
