@@ -7,7 +7,8 @@
     <div class="app-input-field">
   		<input
     		:value="value"
-    		@input="updateValue($event.target.value)"
+    		@input="$emit('input', $event.target.value)"
+        @change="$emit('change', $event.target.value)"
     		:type="type"
     		:required="required"
     		:disabled="disabled"
@@ -103,9 +104,9 @@ export default {
   },
 
   methods: {
-    updateValue(value) {
-      this.$emit('input', value.trim())
-    },
+    // inputValue(value) {
+    //   this.$emit('input', value)
+    // },
 
     focus() {
       this.$refs.appInput.focus()
