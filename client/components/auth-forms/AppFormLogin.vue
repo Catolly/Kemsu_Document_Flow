@@ -14,6 +14,7 @@
                 ? ['Поле должно быть заполнено']
                 : [],
           ]"
+          @input="checkField($v.email)"
         />
   			<app-input
     			v-model.trim="$v.password.$model"
