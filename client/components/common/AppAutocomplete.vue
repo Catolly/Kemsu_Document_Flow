@@ -212,7 +212,12 @@ export default {
 
   .option-list {
     position: absolute;
-    top: calc(100% - 1px);
+
+    top: calc(@app-input-height - 1px);
+    .app-autocomplete.small {
+      top: calc(@app-small-input-height - 1px);
+    }
+
     z-index: 2; // z-index label'а = 1 и перекрывает при z-index = 1
 
     width: 100%;
