@@ -1,6 +1,6 @@
 .flex(
-      @justify-content: center, 
-      @align-items: normal, 
+      @justify-content: center,
+      @align-items: normal,
       @flex-direction: row
       ) {
   display: flex;
@@ -15,10 +15,10 @@
   content: '';
 }
 
-.arrow(@size: 8px) {
+.arrow(@top: 100%, @size: 8px) {
   .absolute();
 
-  top: 50% - .5*@size;
+  top: .5*(@top - @size);
   right: 32px;
 
   width: 0;

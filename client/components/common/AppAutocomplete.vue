@@ -16,6 +16,7 @@
         :class="{'open': isOpen && filteredOptions.length}"
         :type="type"
         :required="required"
+        :small="small"
         :disabled="disabled"
         :error-messages="errorMessages"
         :messages="messages"
@@ -24,7 +25,10 @@
       />
 
       <div
-        :class="{'rotate': isOpen && filteredOptions.length}"
+        :class="{
+          'rotate': isOpen && filteredOptions.length,
+          'small': small,
+        }"
         class="arrow"
         @click="focusIn($event)"
       />
@@ -82,6 +86,11 @@ export default {
 			type: Boolean,
 			default: false
 		},
+
+    small: {
+      type: Boolean,
+      default: false
+    },
 
 		disabled: {
 			type: Boolean,
@@ -192,7 +201,10 @@ export default {
   width: 100%;
 
   .arrow {
-    .arrow();
+    .arrow(70px); // AppInput height
+    &.small {
+      .arrow(50px); // AppInput height
+    }
 
     cursor: text;
 
