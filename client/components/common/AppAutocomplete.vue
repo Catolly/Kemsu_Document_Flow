@@ -10,7 +10,8 @@
 
     <label>
       <app-input
-        @input="updateValue($event)"
+        @input="$emit('input', $event)"
+        @change="$emit('change', $event)"
         :value="value"
         :placeholder="placeholder"
         :class="{'open': isOpen && filteredOptions.length}"
@@ -105,9 +106,16 @@ export default {
     },
 	},
 
+  // watch: {
+  //   value() {
+  //     this.arrowPosition = -1
+  //   },
+  // },
+
 	methods: {
 		updateValue(value) {
-			this.$emit('input', value)
+			this.$emit('input')
+      this.$emit('change')
 
 			//Сбрасываем позицию option'ов
 			this.arrowPosition = -1
