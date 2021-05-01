@@ -191,7 +191,7 @@ export default {
     flex-direction: column;
     justify-content: center;
 
-    height: 70px;
+    min-height: @app-input-height;
     width: 100%;
     padding: 24px;
     padding-right: 48px;
