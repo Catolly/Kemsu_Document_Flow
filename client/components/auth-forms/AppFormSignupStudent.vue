@@ -89,14 +89,11 @@
 
 <script>
 import { required, minLength, email } from "vuelidate/lib/validators"
+import { optionExist } from "~/vuelidate/validators"
 
 import AppButton from '~/components/common/AppButton'
 import AppInput from '~/components/common/AppInput'
 import AppAutocomplete from '~/components/common/AppAutocomplete'
-
-const optionExist = (value, vm) => {
-  return !!vm.relevantUsersOptionList.filter(option => option.value === value).length
-}
 
 export default {
   name: 'FormSingupStudent',

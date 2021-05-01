@@ -100,15 +100,16 @@
 
 <script>
 import { required, minLength, email, helpers } from "vuelidate/lib/validators"
+import { twoOrThreeWordsReg } from '~/vuelidate/validators'
 
 import AppButton from '~/components/common/AppButton'
 import AppInput from '~/components/common/AppInput'
 import AppSelect from '~/components/common/AppSelect'
 
-const twoOrThreeWordsReg = helpers.regex('twoOrThreeWordsReg',
-  /^[а-яА-Я]+\s[а-яА-Я]+\s?[а-яА-Я]*$/) // От 2 до 3 слов
+const isTwoOrThreeWords = helpers.regex('isTwoOrThreeWords',
+  twoOrThreeWordsReg) // От 2 до 3 слов
 
-const twoOrThreeWords = (value) => twoOrThreeWordsReg(value)
+const twoOrThreeWords = (value) => isTwoOrThreeWords(value)
 
 export default {
   name: 'FormSingupStaff',
