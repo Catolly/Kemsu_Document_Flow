@@ -1,42 +1,83 @@
 <template>
-	<form @submit.prevent="checkForm" class="form">
+	<form @submit.prevent="submit" class="form">
 
     <h1 class="header">Регистрация</h1>
 
     <div class="body">
       <div class="inputs">
-        <app-autocomplete
-          v-model.trim="form.fullName"
-          :options="relevantUsersOptions"
+        <app-input
+          v-model="$v.fullName.$model"
           placeholder="Ф.И.О."
-          required
+          :errorMessages="[
+            ... $v.fullName.$dirty
+                && !$v.fullName.required
+                ? ['Поле должно быть заполнено']
+                : [],
+            ... $v.fullName.$dirty
+                && $v.fullName.required
+                && !$v.fullName.twoOrThreeWords
+                ? ['Поле должно содержать хотя бы имя и фамилию']
+                : [],
+          ]"
+          @input="reset($v.fullName)"
+          @change="checkField($v.fullName)"
         />
 
         <app-input
-          v-model.trim="form.email"
-          type="email"
+          v-model.trim="$v.email.$model"
           placeholder="Email"
-          required
+          :errorMessages="[
+            ... $v.email.$dirty
+                && !$v.email.required
+                ? ['Поле должно быть заполнено']
+                : [],
+            ... $v.email.$dirty
+                && $v.email.required
+                && !$v.email.email
+                ? ['Введите email']
+                : [],
+          ]"
+          @input="reset($v.email)"
+          @change="checkField($v.email)"
         />
 
-        <app-autocomplete
-          v-model.trim="form.department"
-          :options="departmentsOptions"
+        <app-select
+          v-model="$v.department.$model"
+          :options="departmentList"
           placeholder="Отдел, в котором работаете"
-          required
+          :errorMessages="[
+            ... $v.department.$dirty
+                && !$v.department.required
+                ? ['Поле должно быть заполнено']
+                : [],
+          ]"
         />
 
         <app-input
-          v-model.trim="form.password"
+          v-model="$v.password.$model"
           type="password"
           placeholder="Пароль"
-          required
+          :messages="['Пароль должен содержать 7 и более символов']"
+          :errorMessages="[
+            ... $v.password.$dirty
+                && !$v.password.required
+                ? ['Поле должно быть заполнено']
+                : [],
+            ... $v.password.$dirty
+                && $v.password.required
+                && !$v.password.minLength
+                ? ['Пароль должен содержать 7 и более символов']
+                : [],
+          ]"
+          @input="reset($v.password)"
+          @change="checkField($v.password)"
         />
       </div>
 
       <div class="btns">
         <app-button
           class="signup-btn blue big filled fluid"
+          :disabled="$v.$invalid"
         >
           Зарегистрироваться
         </app-button>
@@ -58,9 +99,16 @@
 </template>
 
 <script>
+import { required, minLength, email, helpers } from "vuelidate/lib/validators"
+
 import AppButton from '~/components/common/AppButton'
 import AppInput from '~/components/common/AppInput'
-import AppAutocomplete from '~/components/common/AppAutocomplete'
+import AppSelect from '~/components/common/AppSelect'
+
+const twoOrThreeWordsReg = helpers.regex('twoOrThreeWordsReg',
+  /^[а-яА-Я]+\s[а-яА-Я]+\s?[а-яА-Я]*$/) // От 2 до 3 слов
+
+const twoOrThreeWords = (value) => twoOrThreeWordsReg(value)
 
 export default {
   name: 'FormSingupStaff',
@@ -68,82 +116,64 @@ export default {
   components: {
     AppButton,
     AppInput,
-    AppAutocomplete,
+    AppSelect,
   },
 
-  data:() => ({
-      form: {
-        fullName: '',
-        email: '',
-        department: '',
-        password: '',
-      },
-
-      relevantUsers: [
-        {
-          id: 34,
-          fullName: 'Козырева Татьяна Андреевна',
-          group: "M-174",
-        },
-        {
-          id: 64,
-          fullName: 'Козырева Татьяна Андреевна',
-          group: "M-185",
-        },
-        {
-          id: 18,
-          fullName: 'Сергиенко Анатолий Николаевич',
-          group: "M-174",
-        },
-        {
-          id: 93,
-          fullName: 'Оооооооооооооооооооочень длинное имя',
-          group: "M-174",
-        },
-      ],
-
-      departments: [
-        {
-          id: 34,
-          fullName: 'Козырева Татьяна Андреевна',
-          group: "M-174",
-        },
-        {
-          id: 64,
-          fullName: 'Козырева Татьяна Андреевна',
-          group: "M-185",
-        },
-        {
-          id: 18,
-          fullName: 'Сергиенко Анатолий Николаевич',
-          group: "M-174",
-        },
-        {
-          id: 93,
-          fullName: 'Оооооооооооооооооооочень длинное имя',
-          group: "M-174",
-        },
-      ],
+  validations:() => ({
+    fullName: {
+      required,
+      twoOrThreeWords,
+    },
+    email: {
+      required,
+      email,
+    },
+    department: {
+      required,
+    },
+    password: {
+      required,
+      minLength: minLength(7),
+    },
   }),
 
-  computed: {
-    relevantUsersOptions() {
-      return this.relevantUsers.map(user => ({
-        id: user.id,
-        value: user.fullName + ' - ' + user.group,
-      }))
-    },
+  data:() => ({
+    fullName: '',
+    email: '',
+    department: '',
+    password: '',
 
-    departmentsOptions() {
-      return this.departments.map(department => ({
-          id: department.id,
-          value: department.fullName + ' - ' + department.group,
-      }))
-    },
-  },
+    departmentList: [
+        'Институт биологии, экологии и природных ресурсов',
+        'Институт инженерных технологий',
+        'Институт истории и международных отношений',
+        'Институт образования',
+        'Институт филологии, иностранных языков и медиакоммуникаций',
+        'Технологический институт пищевой промышленности',
+        'Институт цифры',
+        'Институт экономики и управления',
+        'Социально-психологический институт',
+        'Факультет физкультуры и спорта',
+        'Институт фундаментальных наук',
+        'Юридический институт',
+        'Среднетехнический факультет',
+    ],
+  }),
 
   methods: {
-    checkForm() {
+    reset($v) {
+      if (!$v.required) return
+
+      $v.$reset()
+    },
+
+    checkField($v) {
+      if (!$v.required) return
+
+      $v.$touch()
+    },
+
+    submit() {
       // Проверка данных формы
       // ...
       this.signup()
