@@ -52,8 +52,8 @@
                 && !$v.password.required
                 ? ['Поле должно быть заполнено']
                 : [],
-            ... $v.password.$dirty &&
-                $v.password.required
+            ... $v.password.$dirty
+                && $v.password.required
                 && !$v.password.minLength
                 ? ['Пароль должен содержать 7 и более символов']
                 : [],
@@ -166,6 +166,8 @@ export default {
 
     checkField($v) {
       if (!$v.required) return
+
+      $v.$model = $v.$model.trim()
 
       $v.$touch()
     },

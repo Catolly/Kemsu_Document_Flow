@@ -171,6 +171,8 @@ export default {
     checkField($v) {
       if (!$v.required) return
 
+      $v.$model = $v.$model.trim()
+
       $v.$touch()
     },
 
