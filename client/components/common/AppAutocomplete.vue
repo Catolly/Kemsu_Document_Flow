@@ -26,7 +26,7 @@
       />
 
       <div
-        :class="{'rotate': isOpen && filteredOptions.length,}"
+        :class="{'rotate': isOpen && filteredOptions.length}"
         class="arrow"
         @click="focusIn($event)"
       />
@@ -106,19 +106,17 @@ export default {
     },
 	},
 
-  // watch: {
-  //   value() {
-  //     this.arrowPosition = -1
-  //   },
-  // },
+  watch: {
+    value() {
+			//Сбрасываем позицию option'ов
+      this.arrowPosition = -1
+    },
+  },
 
 	methods: {
 		updateValue(value) {
-			this.$emit('input')
-      this.$emit('change')
-
-			//Сбрасываем позицию option'ов
-			this.arrowPosition = -1
+			this.$emit('input', value)
+      this.$emit('change', value)
 		},
 
 		focusOut() {
@@ -230,9 +228,13 @@ export default {
 
     width: 100%;
 
+    max-height: 280px; // 4 default option min
+    overflow-y: auto;
+
     cursor: pointer;
 
     box-shadow: 2px 2px 10px rgba(0, 0, 0, .05);
+    border-radius: 0 0 10px 10px;
 
     .option {
       display: flex;
@@ -241,6 +243,7 @@ export default {
 
       position: relative;
       min-height: 3.5em;
+      width: 100%;
       padding-left: 24px;
 
       font-size: @fz-large;
@@ -250,9 +253,9 @@ export default {
       border-top: none;
       border-bottom: none;
 
-      &:last-child {
-        border-radius: 0 0 10px 10px;
-      }
+      // &:last-child {
+      //   border-radius: 0 0 10px 10px;
+      // }
 
       &:hover {
         background: @grey-medium;
