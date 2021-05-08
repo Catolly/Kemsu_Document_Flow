@@ -47,4 +47,20 @@ class StudentViewPermission(permissions.BasePermission):
 class BypassSheetsViewPermission(permissions.BasePermission):
 
      def has_permission(self, request, view):
-         return bool(request.user and request.user.status == "Студент")
+         if request.user.is_authenticated:
+            return bool((request.user and request.user.status == "Студент")
+                            or (request.user and request.user.status == "Администратор")
+                            or (request.user and request.user.status == "Работник"))
+
+class BypassSheetViewPermission(permissions.BasePermission):
+
+    def has_permission(self, request, view):
+        if request.user.is_authenticated:
+            return bool((request.user and request.user.status == "Студент")
+                        or (request.user and request.user.status == "Администратор")
+                        or (request.user and request.user.status == "Работник"))
+
+class UsersViewPermission(permissions.BasePermission):
+
+    def has_permission(self, request, view):
+        return bool(request.user and request.user.status == "Администратор")

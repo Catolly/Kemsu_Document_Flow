@@ -13,28 +13,37 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
 from django.urls import re_path, include
 
+from . import settings
 from .views import (
     RegistrationStudentAPIView, RegistrationStaffAPIView,
     BypassSheetsView, UserList,
     LogoutView, RefreshTokenView,
-    LoginView, BypassSheetView, DepartmentsView, DepartmentInstituteView
+    LoginView, BypassSheetView, DepartmentsView, DepartmentInstituteView, UsersListView, UserBypassSheetsView,
+    FileApiView, GroupApiView, BypassSheetsTemplateApiView, BypassSheetTemplateApiView
 )
 from rest_framework_simplejwt.views import TokenRefreshView
 
 urlpatterns = [
-    path('api/signup/student', RegistrationStudentAPIView.as_view(), name='user_registration'),
-    path('api/signup/staff', RegistrationStaffAPIView.as_view(), name='staff_registration'),
+    path('api/signup/student/', RegistrationStudentAPIView.as_view(), name='user_registration'),
+    path('api/signup/staff/', RegistrationStaffAPIView.as_view(), name='staff_registration'),
     path('api/logout/', LogoutView.as_view(), name='auth_logout'),
     path('api/token/refresh/', RefreshTokenView.as_view(), name='token_refresh'),
     path('admin/', admin.site.urls),
     path('api/users/<int:pk>/', UserList.as_view(), name='student_list'),
-    path('api/bypass_sheets/', BypassSheetsView.as_view(), name="bypass_sheets"),
-    path('api/bypass_sheets/<int:pk>/', BypassSheetView.as_view(), name="bypass_sheet"),
+    path('api/users/', UsersListView.as_view(), name='students_list_view'),
+    path('api/users/bypass-sheet', UserBypassSheetsView.as_view(), name='user-bypass-sheet'),
+    path('api/bypass-sheets/', BypassSheetsView.as_view(), name="bypass_sheets"),
+    path('api/bypass-sheets/<int:pk>/', BypassSheetView.as_view(), name="bypass_sheet"),
     path('api/login/', LoginView.as_view(), name="login"),
     path('api/departments/', DepartmentsView.as_view(), name="departments_view"),
     path('api/departments/<str:institute>/', DepartmentInstituteView.as_view(), name="departments_view/institute"),
-]
+    path('api/upload/', FileApiView.as_view(), name='file-upload'),
+    path('api/groups/', GroupApiView.as_view(), name='group'),
+    path('api/bypass_sheets_schema/', BypassSheetsTemplateApiView.as_view(), name='bypass-sheets-template'),
+    path('api/bypass_sheets_schema/<int:pk>/', BypassSheetTemplateApiView.as_view(), name='bypass-sheet-template')
+]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

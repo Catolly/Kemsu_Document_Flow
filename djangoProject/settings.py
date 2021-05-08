@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
+import os
 from datetime import timedelta
 from pathlib import Path
 
@@ -41,6 +42,7 @@ INSTALLED_APPS = [
     'Kemsu_Document.apps.KemsuDocumentConfig',
     'corsheaders',
     'rest_framework_simplejwt.token_blacklist',
+    'drf_file_upload',
 ]
 
 MIDDLEWARE = [
@@ -175,3 +177,6 @@ SIMPLE_JWT = {
     # 'SLIDING_TOKEN_LIFETIME': timedelta(minutes=10),
     # 'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'Kemsu_Document/media')
+MEDIA_URL = 'Kemsu_Document/media/'
