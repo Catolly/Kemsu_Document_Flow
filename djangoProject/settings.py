@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 from datetime import timedelta
 from pathlib import Path
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -25,7 +24,7 @@ SECRET_KEY = 'ei2^^94pc5@)y9@b&-()um8s3oyp*u-71k7lmi$$z*x!2#$5jg'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -54,10 +53,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# CORS_ORIGIN_WHITELIST = [
-#     "http://localhost:8080",
-#     "http://127.0.0.1:8000",
-# ]
 
 ROOT_URLCONF = 'djangoProject.urls'
 
@@ -87,7 +82,7 @@ WSGI_APPLICATION = 'djangoProject.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'kemsu_document',
+        'NAME': 'postgres',
         'USER': 'postgres',
         'PASSWORD': 'password',
         'HOST': 'localhost',
@@ -134,6 +129,42 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+CORS_ORIGIN_ALLOW_ALL = True
+
+CORS_ORIGIN_WHITELIST = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://25.75.123.152:3000",
+    #"http://25.46.127.102:8000",
+    #"http://25.46.127.102:3000",
+]
+
+
+
+
+'''CORS_ALLOWED_ORIGINS = [
+    "https://example.com",
+    "http://127.0.0.1:8080",
+    "http://localhost:8080",
+    "http://127.0.0.1:9000"
+]
+'''
+CORS_ALLOW_CREDENTIALS=True
+
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT','DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
+
 AUTH_USER_MODEL = 'Kemsu_Document.User'
 
 REST_FRAMEWORK = {
@@ -147,10 +178,17 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     )
 }
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'nasvayqwerty@gmail.com'
+EMAIL_HOST_PASSWORD = 'ctjkakhgnaepplqb'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1825),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
     # 'UPDATE_LAST_LOGIN': False,

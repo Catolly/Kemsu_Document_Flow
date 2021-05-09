@@ -21,7 +21,7 @@ from .views import (
     RegistrationStudentAPIView, RegistrationStaffAPIView,
     BypassSheetsView, UserList,
     LogoutView, RefreshTokenView,
-    LoginView, BypassSheetView, DepartmentsView, DepartmentInstituteView
+    LoginView, BypassSheetView, DepartmentsView, DepartmentInstituteView, StudentApiView
 )
 from rest_framework_simplejwt.views import TokenRefreshView
 
@@ -32,6 +32,7 @@ urlpatterns = [
     path('api/token/refresh/', RefreshTokenView.as_view(), name='token_refresh'),
     path('admin/', admin.site.urls),
     path('api/users/<int:pk>/', UserList.as_view(), name='student_list'),
+    path('api/users/', StudentApiView.as_view(), name='student'),
     path('api/bypass_sheets/', BypassSheetsView.as_view(), name="bypass_sheets"),
     path('api/bypass_sheets/<int:pk>/', BypassSheetView.as_view(), name="bypass_sheet"),
     path('api/login/', LoginView.as_view(), name="login"),

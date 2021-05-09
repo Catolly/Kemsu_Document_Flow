@@ -5,6 +5,8 @@ from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from django.core.mail import send_mail
+from django.http import HttpResponse
 
 from Kemsu_Document.exceptions import GroupNotFoundError, ThisUserIsAlreadyExistException, ThisEmailIsAlreadyExistError, \
     DepartmentNotFoundException
@@ -198,9 +200,25 @@ class DepartmentInstituteView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request, institute):
-        institute = Institute.objects.get(title=institute)
+        institute = Institute.objects.filter(title=institute).first()
+        if institute is None:
+            return Response({
+                'message':'Departmemts with this institute does not exist'
+            },
+            status=status.HTTP_200_OK)
         departments = Department.objects.filter(institute=institute.id)
         departments |= Department.objects.filter(institute=None)
         serializer_class = DepartmentsSerializer(departments, many=True)
         return Response(serializer_class.data, status=status.HTTP_200_OK)
 
+def SendEmail(requset,emaitto): #Если сообщение отправлено, то в "Em" сохраняется True
+    em = send_mail('Новое заявление','У вас новое заявление на рассмотрении',
+          'nasvayqwerty@gmail.com',[emaitto],)
+
+class StudentApiView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        student = Student.objects.all()
+        serializer = StudentSerializer(student)
+        return Response(serializer.data, status=status.HTTP_200_OK)
