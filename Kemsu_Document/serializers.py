@@ -38,6 +38,11 @@ class RegistrationStaffSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user_data = dict()
+
+        user_email = User.objects.filter(email=validated_data['email']).first()
+        if user_email:
+            raise ThisEmailIsAlreadyExistError
+
         user_data.setdefault('fullname', validated_data.pop('fullname'))
         user_data.setdefault('email', validated_data.pop('email'))
         user_data.setdefault('password', validated_data.pop('password'))
@@ -75,11 +80,9 @@ class RegistrationStudentSerializer(serializers.ModelSerializer):
 
     tokens = serializers.SerializerMethodField()
 
-    institute = serializers.CharField(max_length=50, write_only=True)
-
     class Meta:
         model = Student
-        fields = ('fullname', 'group', 'institute', 'email', 'password', 'tokens')
+        fields = ('fullname', 'group', 'email', 'password', 'tokens')
 
 
     def get_tokens(self, user):
@@ -94,14 +97,6 @@ class RegistrationStudentSerializer(serializers.ModelSerializer):
         return data
 
     def validate(self, attrs):
-        # tokens = RefreshToken.for_user(user)
-        # refresh = text_type(tokens)
-        # access = text_type(tokens.access_token)
-        # attrs["refresh"] = refresh,
-        # attrs["access"] = access,
-        # attrs["expiresIn"] = int(round(time.time() * 1000)) + int(
-        #     round(settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].seconds * 1000))
-        # return data
         return attrs
 
     # def create(self, validated_data):
@@ -148,9 +143,7 @@ class RegistrationStudentSerializer(serializers.ModelSerializer):
     #     return user
 
     def create(self, validated_data):
-        institute = Institute.objects.filter(title=validated_data['institute']).first()
-
-        group = Group.objects.filter(name=validated_data['group'], institute=institute).first()
+        group = Group.objects.filter(name=validated_data['group']).first()
 
         student_data = Student.objects.filter(group=group)
 
@@ -158,6 +151,10 @@ class RegistrationStudentSerializer(serializers.ModelSerializer):
             user = User.objects.filter(fullname=validated_data['fullname'], id=student.user.id).first()
             if user:
                 break
+
+        user_email = User.objects.filter(email=validated_data['email']).first()
+        if user_email:
+            raise ThisEmailIsAlreadyExistError
 
         user.set_password(validated_data.pop('password'))
         user.email = validated_data['email']
