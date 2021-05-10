@@ -89,8 +89,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     email = models.EmailField(
         validators=[validators.validate_email],
-        unique=True,
-        blank=False
+        # unique=True,
+        blank=True
     )
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
@@ -109,7 +109,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     gender = models.CharField(max_length=10, choices=GENDER, blank=True, default='None')
     status = models.CharField(max_length=20, choices=STATUS, blank=True, help_text='Статус пользователя')
-    USERNAME_FIELD = 'email'
+    USERNAME_FIELD = 'id'
     EMAIL_FIELD = 'email'
     REQUIRED_FIELDS = ('fullname',)
 

@@ -20,7 +20,7 @@ from Kemsu_Document.serializers import (
     UpdateUserSerializer, StudentSerializer,
     LogoutSerializer, RefreshTokenSerializer, PostByPassSheetsSerializer, DepartmentsSerializer,
     UserBypassSheetSerializer, FileSerializer, GroupSerializer, BypassSheetTemplateSerializer,
-    PostBypassSheetTemplateSerializer,
+    PostBypassSheetTemplateSerializer, UnregisteredStudentSerializer, CheckAccessSerializer,
 )
 
 from .permissions import (
@@ -33,6 +33,8 @@ class RegistrationStudentAPIView(APIView):
     serializer_class = RegistrationStudentSerializer
 
     def post(self, request):
+
+        data = dict()
 
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -60,8 +62,10 @@ class RegistrationStudentAPIView(APIView):
                 },
                 status=status.HTTP_409_CONFLICT
             )
+        data.update(serializer.data)
+        data.update(serializer.validated_data)
         return Response(
-            serializer.data,
+            data,
             status=status.HTTP_201_CREATED,
         )
 
@@ -247,7 +251,6 @@ class FileApiView(APIView):
     serializer_class = FileSerializer
 
     def post(self, request):
-        print(request.data)
         file_serializer = self.serializer_class(data=request.data)
         if file_serializer.is_valid():
             file_serializer.save()
@@ -299,3 +302,25 @@ class BypassSheetTemplateApiView(APIView):
         serializer = BypassSheetTemplateSerializer(bypass_sheet_template)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class UnregisteredStudentListApiView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        unregistered_student_query_set = User.objects.filter(status='Студент', is_active=False)
+
+        serializer = UnregisteredStudentSerializer(unregistered_student_query_set, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class CheckAccessApiView(GenericAPIView):
+    permission_classes = [AllowAny]
+    serializer_class = CheckAccessSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+
+        return Response(serializer.validated_data, status=status.HTTP_200_OK)

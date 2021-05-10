@@ -24,7 +24,8 @@ from .views import (
     BypassSheetsView, UserList,
     LogoutView, RefreshTokenView,
     LoginView, BypassSheetView, DepartmentsView, DepartmentInstituteView, UsersListView, UserBypassSheetsView,
-    FileApiView, GroupApiView, BypassSheetsTemplateApiView, BypassSheetTemplateApiView
+    FileApiView, GroupApiView, BypassSheetsTemplateApiView, BypassSheetTemplateApiView, UnregisteredStudentListApiView,
+    CheckAccessApiView
 )
 from rest_framework_simplejwt.views import TokenRefreshView
 
@@ -45,5 +46,7 @@ urlpatterns = [
     path('api/upload/', FileApiView.as_view(), name='file-upload'),
     path('api/groups/', GroupApiView.as_view(), name='group'),
     path('api/bypass_sheets_schema/', BypassSheetsTemplateApiView.as_view(), name='bypass-sheets-template'),
-    path('api/bypass_sheets_schema/<int:pk>/', BypassSheetTemplateApiView.as_view(), name='bypass-sheet-template')
+    path('api/bypass_sheets_schema/<int:pk>/', BypassSheetTemplateApiView.as_view(), name='bypass-sheet-template'),
+    path('api/unregistered_students/', UnregisteredStudentListApiView.as_view(), name='unregistered-students'),
+    path('checkAccess', CheckAccessApiView.as_view(), name='check-access')
 ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

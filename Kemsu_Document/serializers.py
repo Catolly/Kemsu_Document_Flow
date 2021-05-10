@@ -1,5 +1,7 @@
 from datetime import time
 import json
+
+import jwt
 from psycopg2.compat import text_type
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
@@ -73,9 +75,12 @@ class RegistrationStudentSerializer(serializers.ModelSerializer):
 
     tokens = serializers.SerializerMethodField()
 
+    institute = serializers.CharField(max_length=50, write_only=True)
+
     class Meta:
         model = Student
-        fields = ('fullname', 'password', 'email', 'group', 'tokens')
+        fields = ('fullname', 'group', 'institute', 'email', 'password', 'tokens')
+
 
     def get_tokens(self, user):
         tokens = RefreshToken.for_user(user)
@@ -88,25 +93,77 @@ class RegistrationStudentSerializer(serializers.ModelSerializer):
         }
         return data
 
+    def validate(self, attrs):
+        # tokens = RefreshToken.for_user(user)
+        # refresh = text_type(tokens)
+        # access = text_type(tokens.access_token)
+        # attrs["refresh"] = refresh,
+        # attrs["access"] = access,
+        # attrs["expiresIn"] = int(round(time.time() * 1000)) + int(
+        #     round(settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].seconds * 1000))
+        # return data
+        return attrs
+
+    # def create(self, validated_data):
+    #     user_data = dict()
+    #     user_data.setdefault('fullname', validated_data.pop('fullname'))
+    #     user_data.setdefault('email', validated_data.pop('email'))
+    #     user_data.setdefault('password', validated_data.pop('password'))
+    #
+    #     try:
+    #         group = Group.objects.get(name=validated_data['group'])
+    #     except Exception:
+    #         raise GroupNotFoundError
+    #     try:
+    #         user = User.objects.create_student(**user_data)
+    #     except Exception:
+    #         raise ThisEmailIsAlreadyExistError
+    #
+    #     validated_data['user'] = user
+    #
+    #     validated_data['group'] = group
+    #
+    #     Student.objects.create(**validated_data)
+    #
+    #     return user
+
+    # def create(self, validated_data):
+    #     institute = Institute.objects.filter(title=validated_data.pop('institute')).first()
+    #
+    #     group = Group.objects.filter(name=validated_data.pop('group'), institute=institute).first()
+    #
+    #     student_data = Student.objects.filter(group=group)
+    #
+    #     for student in student_data:
+    #         user = User.objects.filter(fullname=validated_data['fullname'], id=student.user.id).first()
+    #         if user:
+    #             break
+    #
+    #     user.set_password(validated_data.pop('password'))
+    #     user.email = validated_data.pop('email')
+    #     user.is_active = True
+    #
+    #     user.save()
+    #
+    #     return user
+
     def create(self, validated_data):
-        user_data = dict()
-        user_data.setdefault('fullname', validated_data.pop('fullname'))
-        user_data.setdefault('email', validated_data.pop('email'))
-        user_data.setdefault('password', validated_data.pop('password'))
-        try:
-            group = Group.objects.get(name=validated_data['group'])
-        except Exception:
-            raise GroupNotFoundError
-        try:
-            user = User.objects.create_student(**user_data)
-        except Exception:
-            raise ThisEmailIsAlreadyExistError
+        institute = Institute.objects.filter(title=validated_data['institute']).first()
 
-        validated_data['user'] = user
+        group = Group.objects.filter(name=validated_data['group'], institute=institute).first()
 
-        validated_data['group'] = group
+        student_data = Student.objects.filter(group=group)
 
-        Student.objects.create(**validated_data)
+        for student in student_data:
+            user = User.objects.filter(fullname=validated_data['fullname'], id=student.user.id).first()
+            if user:
+                break
+
+        user.set_password(validated_data.pop('password'))
+        user.email = validated_data['email']
+        user.is_active = True
+
+        user.save()
 
         return user
 
@@ -574,3 +631,56 @@ class PostBypassSheetTemplateSerializer(serializers.ModelSerializer):
         self.create_bypass_sheets(bypass_sheet_template)
 
         return bypass_sheet_template
+
+class UnregisteredStudentSerializer(serializers.ModelSerializer):
+    group = serializers.SerializerMethodField(read_only=True, required=False)
+    institute = serializers.SerializerMethodField(read_only=True, required=False)
+
+    class Meta:
+        model = User
+        fields = ('fullname', 'group', 'institute')
+
+    def get_group(self, user):
+        student = Student.objects.filter(user=user).first()
+
+        group = Group.objects.filter(id=student.group.id).first()
+
+        return group.name
+
+    def get_institute(self, user):
+        student = Student.objects.filter(user=user).first()
+
+        group = Group.objects.filter(id=student.group.id).first()
+
+        institute = Institute.objects.filter(id=group.institute.id).first()
+
+        return institute.title
+
+class CheckAccessSerializer(serializers.Serializer):
+
+    accessToken = serializers.CharField(write_only=True)
+    role = serializers.ListField(write_only=True)
+
+    def validate(self, attrs):
+
+        data = dict()
+
+        data['hasAccess'] = False
+
+        accessToken = attrs['accessToken']
+
+        user_id = jwt.decode(accessToken, settings.SECRET_KEY, algorithms="HS256")['user_id']
+
+        user_role = User.objects.get(id=user_id).status
+
+        roles = attrs['role']
+
+        for role in roles:
+            if user_role == role:
+                data['hasAccess'] = True
+                break
+
+        return data
+
+    def save(self, **kwargs):
+        pass
