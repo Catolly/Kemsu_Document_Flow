@@ -97,50 +97,8 @@ class RegistrationStudentSerializer(serializers.ModelSerializer):
         return data
 
     def validate(self, attrs):
+        self.PASSWORD = attrs.pop('password')
         return attrs
-
-    # def create(self, validated_data):
-    #     user_data = dict()
-    #     user_data.setdefault('fullname', validated_data.pop('fullname'))
-    #     user_data.setdefault('email', validated_data.pop('email'))
-    #     user_data.setdefault('password', validated_data.pop('password'))
-    #
-    #     try:
-    #         group = Group.objects.get(name=validated_data['group'])
-    #     except Exception:
-    #         raise GroupNotFoundError
-    #     try:
-    #         user = User.objects.create_student(**user_data)
-    #     except Exception:
-    #         raise ThisEmailIsAlreadyExistError
-    #
-    #     validated_data['user'] = user
-    #
-    #     validated_data['group'] = group
-    #
-    #     Student.objects.create(**validated_data)
-    #
-    #     return user
-
-    # def create(self, validated_data):
-    #     institute = Institute.objects.filter(title=validated_data.pop('institute')).first()
-    #
-    #     group = Group.objects.filter(name=validated_data.pop('group'), institute=institute).first()
-    #
-    #     student_data = Student.objects.filter(group=group)
-    #
-    #     for student in student_data:
-    #         user = User.objects.filter(fullname=validated_data['fullname'], id=student.user.id).first()
-    #         if user:
-    #             break
-    #
-    #     user.set_password(validated_data.pop('password'))
-    #     user.email = validated_data.pop('email')
-    #     user.is_active = True
-    #
-    #     user.save()
-    #
-    #     return user
 
     def create(self, validated_data):
         group = Group.objects.filter(name=validated_data['group']).first()
@@ -156,7 +114,7 @@ class RegistrationStudentSerializer(serializers.ModelSerializer):
         if user_email:
             raise ThisEmailIsAlreadyExistError
 
-        user.set_password(validated_data.pop('password'))
+        user.set_password(self.PASSWORD)
         user.email = validated_data['email']
         user.is_active = True
 
@@ -167,14 +125,14 @@ class RegistrationStudentSerializer(serializers.ModelSerializer):
 class GroupSerializer(serializers.ModelSerializer):
 
     institute = serializers.SlugRelatedField(slug_field='title', read_only=True)
-    courseNumber = serializers.SerializerMethodField()
+    # courseNumber = serializers.SerializerMethodField()
 
     class Meta:
         model = Group
-        fields = ('name', 'institute', 'courseNumber')
+        fields = ('name', 'institute', 'recruitment_date')
 
-    def get_courseNumber(self, group):
-        return 1
+    # def get_courseNumber(self, group):
+    #     return 1
 
 class InstituteSerializer(serializers.ModelSerializer):
 
@@ -350,7 +308,16 @@ class TokenEmailPairSerializer(TokenEmailSerializer):
         data['tokens'].setdefault('refresh', text_type(refresh))
         data['tokens'].setdefault('access', text_type(refresh.access_token))
         data['tokens'].setdefault('expiresIn', int(round(time.time() * 1000)) + int(round(settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].seconds * 1000)))
+        data['fullname'] = self.user.fullname
+        data['email'] = self.user.email
+        data['gender'] = self.user.gender
 
+        if self.user.status == "Студент":
+            student = Student.objects.filter(user=self.user).first()
+            data['group'] = student.group.name
+        else:
+            staff = Staff.objects.filter(user=self.user).first()
+            data['department'] = staff.department.title
         return data
 
 class UpdateUserSerializer(serializers.ModelSerializer):
