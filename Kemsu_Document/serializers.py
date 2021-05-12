@@ -80,10 +80,14 @@ class RegistrationStudentSerializer(serializers.ModelSerializer):
 
     tokens = serializers.SerializerMethodField()
 
+    id = serializers.SerializerMethodField()
+
     class Meta:
         model = Student
-        fields = ('fullname', 'group', 'email', 'password', 'tokens')
+        fields = ('id', 'fullname', 'group', 'email', 'password', 'tokens')
 
+    def get_id(self, user):
+        return user.id
 
     def get_tokens(self, user):
         tokens = RefreshToken.for_user(user)
@@ -311,6 +315,7 @@ class TokenEmailPairSerializer(TokenEmailSerializer):
         data['fullname'] = self.user.fullname
         data['email'] = self.user.email
         data['gender'] = self.user.gender
+        data['id'] = self.user.id
 
         if self.user.status == "Студент":
             student = Student.objects.filter(user=self.user).first()
