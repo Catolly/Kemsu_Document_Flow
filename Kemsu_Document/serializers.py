@@ -1,4 +1,4 @@
-from datetime import time
+from datetime import time, datetime
 import json
 
 import jwt
@@ -172,12 +172,11 @@ class StaffSerializer(serializers.ModelSerializer):
 class PointSerializer(serializers.ModelSerializer):
 
     uploadedDocuments = UploadedDocumentSerializer(many=True, read_only=True)
-    requiredDocuments = RequiredDocumentsSerializer(many=True, read_only=True)
     staff = StaffSerializer(read_only=True)
 
     class Meta:
         model = Point
-        fields = ("title", "status", "uploadedDocuments", "requiredDocuments", "staff")
+        fields = ("title", "status", "uploadedDocuments", "staff", "rejectReason")
 
 class UserSerializer(serializers.ModelSerializer):
 
@@ -198,17 +197,47 @@ class BypassSheetsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = BypassSheet
-        fields = ("title", "statements", "points", )
+        fields = ("name", "statements", "points", "status")
 
 class StudentSerializer(serializers.ModelSerializer):
 
-    user = UserSerializer(required=False, read_only=True)
-    group = GroupSerializer(required=False, read_only=True)
+    # user = UserSerializer(required=False, read_only=True)
+    # group = GroupSerializer(required=False, read_only=True)
+    # bypassSheet = BypassSheetsSerializer(required=False, read_only=True, many=True)
+    #
+    # class Meta:
+    #     model = Student
+    #     fields = ('user', 'group', 'educationForm', 'status', 'bypassSheet')
+
+    id = serializers.SerializerMethodField()
+    fullname = serializers.SerializerMethodField()
+    email = serializers.SerializerMethodField()
+    group = serializers.SlugRelatedField(slug_field='name', read_only=True)
+    institute = serializers.SerializerMethodField()
+    courseNumber = serializers.SerializerMethodField()
     bypassSheet = BypassSheetsSerializer(required=False, read_only=True, many=True)
 
     class Meta:
         model = Student
-        fields = ('user', 'group', 'educationForm', 'status', 'bypassSheet')
+        fields = ('id', 'fullname', 'email', 'recruitmentForm', 'status', 'group',
+                  'institute', 'courseNumber', 'bypassSheet')
+
+    def get_id(self, student):
+        return student.user.id
+
+    def get_fullname(self, student):
+        return student.user.fullname
+
+    def get_email(self, student):
+        return student.user.email
+
+    def get_institute(self, student):
+        return student.group.institute.title
+
+    def get_courseNumber(self, student):
+        recruitment_data = student.group.recruitment_date
+
+        return int(((datetime.now().date() - recruitment_data).days)//365.2425)+1
 
 class PostStatementsSerializer(serializers.ModelSerializer):
 
@@ -223,11 +252,11 @@ class PostByPassSheetsSerializer(serializers.ModelSerializer):
 
     statements = PostStatementsSerializer(many=True, write_only=True)
 
-    title = serializers.CharField(max_length=50, write_only=True)
+    name = serializers.CharField(max_length=50, write_only=True)
 
     class Meta:
         model = BypassSheet
-        fields = ('title', 'statements')
+        fields = ('name', 'statements')
 
     def statementsCreate(self, statements_data, module):
 
@@ -442,7 +471,7 @@ class BypassSheetTemplateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = BypassSheetTemplate
-        fields = ('title', 'educationForm', 'statements', 'points')
+        fields = ('name', 'educationForm', 'statements', 'points')
 
 class PostStatementTemplateSerializer(serializers.ModelSerializer):
 
@@ -478,7 +507,7 @@ class PostBypassSheetTemplateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = BypassSheetTemplate
-        fields = ('title', 'educationForm', 'statements', 'points', 'studentList')
+        fields = ('name', 'educationForm', 'statements', 'points', 'studentList')
 
     def create_statements_template(self, bypass_sheet_template, validated_data):
         statements_template = validated_data.pop('statements')
@@ -573,7 +602,7 @@ class PostBypassSheetTemplateSerializer(serializers.ModelSerializer):
 
         bypass_sheet_data = dict()
 
-        bypass_sheet_data['title'] = bypass_sheet_template.title
+        bypass_sheet_data['name'] = bypass_sheet_template.name
         bypass_sheet_data['educationForm'] = bypass_sheet_template.educationForm
 
         for student in studentQuery:
@@ -588,7 +617,7 @@ class PostBypassSheetTemplateSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         bypass_sheet_validated_data = dict()
 
-        bypass_sheet_validated_data.setdefault('title', validated_data.pop('title'))
+        bypass_sheet_validated_data.setdefault('name', validated_data.pop('name'))
         bypass_sheet_validated_data.setdefault('educationForm', validated_data.pop('educationForm'))
         bypass_sheet_template = BypassSheetTemplate.objects.create(**bypass_sheet_validated_data)
         bypass_sheet_template.studentList.set(validated_data.pop('studentList'))

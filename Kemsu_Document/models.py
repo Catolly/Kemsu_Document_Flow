@@ -158,7 +158,7 @@ class Student(models.Model):
         return self.user.fullname
 
 class BypassSheetTemplate(models.Model):
-    title = models.CharField("Название модуля", default=None, max_length=50)
+    name = models.CharField("Название модуля", default=None, max_length=50)
     studentList = models.ManyToManyField(Student, verbose_name="Студент", related_name="bypassSheetTemplate")
 
     EDUCATION_FORM = (
@@ -210,9 +210,14 @@ class PointTemplate(models.Model):
         return self.title
 
 class BypassSheet(models.Model):
-    title = models.CharField("Название модуля", default=None, max_length=50)
+    name = models.CharField("Название модуля", default=None, max_length=50)
     student_id = models.ForeignKey(Student, verbose_name="Студент", on_delete=models.CASCADE, null=False, related_name='bypassSheet')
     # bypass_sheet_template = models.OneToOneField(BypassSheetTemplate, verbose_name="Шаблон обходного листа", on_delete=models.SET_NULL, null=True, related_name='BypassSheet')
+
+    STATUS = (
+        ('Подписан', 'Подписан'),
+        ('Не подписан', 'Не подписан')
+    )
 
     EDUCATION_FORM = (
         ('Очная', 'Очная'),
@@ -223,6 +228,8 @@ class BypassSheet(models.Model):
     educationForm = models.CharField("Форма обучения", max_length=20, choices=EDUCATION_FORM, blank=True,
                                      help_text="Форма обучения")
 
+    status = models.CharField("Подпись", max_length=20, choices=STATUS, default='Не подписан',
+                                     help_text="Форма обучения")
     class Meta:
         verbose_name = "Обходной лист"
         verbose_name_plural = "Обходные листы"
