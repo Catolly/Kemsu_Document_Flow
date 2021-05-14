@@ -63,4 +63,6 @@ class BypassSheetViewPermission(permissions.BasePermission):
 class UsersViewPermission(permissions.BasePermission):
 
     def has_permission(self, request, view):
-        return bool(request.user and request.user.status == "Администратор")
+        if request.user.is_authenticated:
+            return bool((request.user and request.user.status == "Администратор")
+                        or (request.user and request.user.status == "Работник"))
