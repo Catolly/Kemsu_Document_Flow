@@ -11,12 +11,11 @@
 		</app-button>
 
   	<span class="filter-body">
-			{{filterNamesBody}}
-      <span class="filter-head">{{filterNamesHead}}</span>
+			{{filterPathBody}}
+      <span class="filter-head">{{filterPathHead}}</span>
 		</span>
 
   </nav>
-
 </template>
 
 <script>
@@ -32,35 +31,30 @@ export default {
 	},
 
   props: {
-    filterNames: {
+    filterPath: {
       type: Array,
       default:() => ([])
     },
   },
 
   computed: {
-    // Переименовать filterPathHead
-    filterNamesHead() {
-      return this.filterNamesClearedEmpty.slice(-1).join()
+    filterPathHead() {
+      return this.filterPathClear
+      .slice(-1)
+      .join()
     },
 
-    // Переименовать filterPathBody
-    filterNamesBody() {
-      if (this.filterNamesClearedEmpty.length <= 1) return ''
+    filterPathBody() {
+      if (this.filterPathClear.length <= 1) return ''
 
-      return this.filterNamesClearedEmpty.slice(0, -1)
-                                         .join(' / ') +
-                                         ' / ' // Разделитель последнего элемента
+      return this.filterPathClear
+      .slice(0, -1)
+      .join(' / ') + ' / ' // Разделитель последнего элемента
     },
 
-    // Заменить на filterNamesHead
-    filterNamesClearedEmpty() {
-      return this.filterNames.filter(filterName => filterName)
+    filterPathClear() {
+      return this.filterPath.filter(filterName => filterName)
     },
-
-    // filterPath() {
-    //   return
-    // },
   },
 }
 </script>
