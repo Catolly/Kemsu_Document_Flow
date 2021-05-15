@@ -1,20 +1,14 @@
 <template>
-
 	<nav class="app-filter-nav">
-
-    <!-- change NuxtLink to app-button with icon attribute -->
-  	<NuxtLink
-		to="#"
-		class="back-link">
-			<icon-arrow-back class="active"/>
-		</NuxtLink>
-
-    <!-- change NuxtLink to app-button with icon attribute -->
-  	<NuxtLink
-		to="#"
-		class="next-link">
-			<icon-arrow-next/>
-		</NuxtLink>
+  	<app-button
+      icon
+      blue
+      square
+		  class="back-button"
+      @click="$emit('setFilterDepth', filterPathClear.length - 2)"
+    >
+			<icon-arrow/>
+		</app-button>
 
   	<span class="filter-body">
 			{{filterNamesBody}}
@@ -26,15 +20,15 @@
 </template>
 
 <script>
-import IconArrowBack from '~/components/icons/IconArrowBack'
-import IconArrowNext from '~/components/icons/IconArrowNext'
+import IconArrow from '~/components/icons/IconArrow'
+import AppButton from '~/components/common/AppButton'
 
 export default {
 	name: "AppFilterNav",
 
 	components: {
-		IconArrowBack,
-		IconArrowNext,
+		IconArrow,
+    AppButton,
 	},
 
   props: {
@@ -72,29 +66,23 @@ export default {
 </script>
 
 <style lang="less" scoped>
-
-// change style
 .app-filter-nav {
   margin-top: 16px;
 
-  .back-link:after,
-  .next-link:after {
-  	display: none;
-  }
-
-  .back-link {
-  	margin-right: 14px;
-  }
-
-  .next-link {
-  	margin-right: 28px;
-  }
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
 
   .filter-body {
   	color: @text-grey;
   	font-size: @fz-small;
     font-weight: @fw-normal;
   }
+.back-button {
+  height: fit-content;
+  width: fit-content;
+}
 
   .filter-head {
   	color: #000;
