@@ -18,6 +18,7 @@
       >
 
       <label
+        v-if="placeholder"
         class="label"
         @click="focus"
       >
