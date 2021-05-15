@@ -35,3 +35,79 @@
     color: @color;
   }
 }
+
+.plus(@size: 20px) {
+  position: absolute;
+
+  width: @size;
+  height: @size;
+
+  top: calc(50% - .5*@size);
+  bottom: 50%;
+  left: 50%;
+  right: 50%;
+
+  &::before,
+  &::after {
+    .absolute();
+    background: @black;
+
+    width: 10%;
+    height: 100%;
+  }
+
+  &::before {
+    transform: rotate(90deg);
+  }
+}
+
+.minus(@size: 20px) {
+  position: absolute;
+
+  width: @size;
+  height: @size;
+
+  top: calc(50% - .5*@size);
+  bottom: 50%;
+  left: 50%;
+  right: 50%;
+
+  &::before {
+    .absolute();
+    background: @black;
+
+    width: 10%;
+    height: 100%;
+
+    transform: rotate(90deg);
+  }
+}
+
+.cross(@size: 20px) {
+  position: absolute;
+
+  width: @size;
+  height: @size;
+
+  top: calc(50% - .5*@size);
+  bottom: 50%;
+  left: 50%;
+  right: 50%;
+
+  &::before,
+  &::after {
+    .absolute();
+    background: @black;
+
+    width: 10%;
+    height: 100%;
+  }
+
+  &::before {
+    transform: rotate(45deg);
+  }
+
+  &::after {
+    transform: rotate(135deg);
+  }
+}
