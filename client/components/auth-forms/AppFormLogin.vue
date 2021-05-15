@@ -22,6 +22,7 @@
           @input="reset($v.email)"
           @change="checkField($v.email)"
         />
+
   			<app-input
     			v-model="$v.password.$model"
     			placeholder="Пароль"
@@ -34,7 +35,7 @@
             ... $v.password.$dirty &&
                 $v.password.required
                 && !$v.password.minLength
-                ? ['Пароль должен содержать 7 и более символов']
+                ? [`Пароль должен содержать ${minPasswordLength} и более символов`]
                 : [],
           ]"
           @input="reset($v.password)"
@@ -67,6 +68,7 @@
 
 <script>
 import { required, minLength, email } from "vuelidate/lib/validators"
+import { minPasswordLength } from "~/vuelidate/constants"
 
 import AppButton from '~/components/common/AppButton'
 import AppInput from '~/components/common/AppInput'
@@ -82,6 +84,10 @@ export default {
   data:() => ({
     email: '',
     password: '',
+
+    minPasswordLength: minPasswordLength,
+
+    loginError: '',
   }),
 
   validations:() => ({
@@ -91,7 +97,7 @@ export default {
     },
     password: {
       required,
-      minLength: minLength(7),
+      minLength: minLength(minPasswordLength),
     },
   }),
 
@@ -103,7 +109,7 @@ export default {
     },
 
     checkField($v) {
-      if (!$v.required) return
+      $v.$model = $v.$model.trim()
 
       $v.$touch()
     },
