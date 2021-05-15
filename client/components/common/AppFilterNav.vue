@@ -68,19 +68,18 @@ export default {
   gap: 24px;
 }
 
-  .filter-body {
-  	color: @text-grey;
-  	font-size: @fz-small;
-    font-weight: @fw-normal;
-  }
 .back-button {
   height: fit-content;
   width: fit-content;
 }
 
-  .filter-head {
-  	color: #000;
-  }
+.filter-body {
+	color: @text-grey;
+	font-size: @fz-small;
+  font-weight: @fw-normal;
 }
 
+.filter-head {
+	color: @black;
+}
 </style>
