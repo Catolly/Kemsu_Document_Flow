@@ -1,74 +1,84 @@
 <template>
 	<app-list-item
-	@click="toggle"
-	:class="{
-		'green': status === 'signed',
-		'red': status === 'rejected',
-		'disabled': status === 'reviewing',
-		'is-open' : isOpen
-	}"
-	class="app-list-item-point">
+  	:class="classObj"
+  	class="point"
+  >
 		<div
-		class="point-header">
+  		class="point-header"
+      @click="isOpen = !isOpen"
+    >
 			<h3 class="point-title">
-				{{title}}
+				{{point.title}}
 			</h3>
 			<span
-			v-show="isOpen"
-			v-if="status === 'rejected'"
-			class="reason">
-				{{reason}}
+  			v-show="isOpen"
+  			v-if="point.status === bypassSheetStatus.Rejected"
+  			class="reason"
+      >
+				{{point.reason}}
 			</span>
 			<div class="arrow" />
 		</div>
+
+<!-- 		@click.stop="" -->
 		<div
-		@click.stop=""
-		v-show="isOpen"
-		class="point-inner">
+  		v-show="isOpen"
+  		class="point-body"
+    >
 			<div class="required-documents-wrapper">
 				<span class="required-document-header">
 					Необходимые документы
 				</span>
+
 				<div class="required-documents">
 					<img
-					v-for="doc in requiredDocuments"
-					:key="doc.id"
-					:src="doc.src"
-					class="required-document-img">
+  					v-for="(doc, index) in point.requiredDocuments"
+  					:key="index"
+  					:src="doc.src"
+  					class="required-document-img"
+          >
 				</div>
+
 				<span class="worker">
-					Поставил отказ <b>{{worker}}</b>
+					Поставил отказ <b>{{point.worker}}</b>
 				</span>
 				<span class="contacts">
-					Телефон библиотеки <b>{{phone}}</b>
+					Телефон библиотеки <b>{{point.phone}}</b>
 				</span>
 			</div>
+
 			<form
-			v-if="['rejected', 'not sent'].includes(status)"
-			class="send-document-form">
+  			v-if="[bypassSheetStatus.Rejected, bypassSheetStatus.NotSent].includes(point.status)"
+  			class="send-document-form"
+      >
 				<h2>Отправить документы</h2>
+
 				<div class="app-document-upload-section">
 					<div
-					v-for="doc in requiredDocuments"
-					:key="doc.id"
-					class="app-document-upload-wrapper">
+  					v-for="(doc, index) in point.requiredDocuments"
+  					:key="index"
+  					class="app-document-upload-wrapper"
+          >
 						<span class="document-title">
 							{{doc.title}}
 						</span>
+
 						<div class="app-document-upload">
-							<app-image-upload
-							class="document-image-upload" />
+							<app-image-upload class="document-image-upload" />
 							<img class="document-image-uploaded">
 						</div>
 					</div>
 				</div>
+
 				<app-button class="blue filled submit">
 					Отправить
 				</app-button>
 			</form>
+
 			<div
-			v-else
-			class="document-sent">
+  			v-else
+  			class="document-sent"
+      >
 				<p>
 					Ваши документы на проверке, вы можете
 					<NuxtLink class="document-cancel-link" to="#">отменить отправку</NuxtLink>
@@ -79,51 +89,82 @@
 </template>
 
 <script>
+import bypassSheetStatus from '~/services/bypassSheetStatus'
+
 import AppListItem from '~/components/common/AppListItem'
 import AppImageUpload from '~/components/bypass-sheets/AppImageUpload'
 import AppButton from '~/components/common/AppButton'
 
 export default {
 	name: 'AppBypassSheetPoint',
+
 	components: {
 		AppListItem,
 		AppImageUpload,
 		AppButton,
 	},
-	data() {
-		return {
-			isOpen: false,
-		}
-	},
+
+	data:() => ({
+    isOpen: false,
+  }),
+
 	props: {
-		id: {
-			type: Number,
-			required: true
-		},
-		status: {
-			type: String,
-			required: true
-		},
-		title: {
-			type: String,
-			required: true
-		},
-		reason: String,
-		requiredDocuments: Array,
-		worker: String,
-		phone: String,
+    point: {
+      type: Object,
+      required: true,
+
+      status: {
+        type: String,
+        required: true,
+      },
+
+      title: {
+        type: String,
+        required: true,
+      },
+
+      reason: {
+        type: String,
+        default: '',
+      },
+      requiredDocuments: {
+        type: Array,
+        default: [],
+      },
+      worker: {
+        type: String,
+        default: '',
+      },
+      phone: {
+        type: String,
+        default: '',
+      },
+    },
 	},
+
+  computed: {
+    classObj() {
+      return {
+        'green': this.point.status === bypassSheetStatus.Signed,
+        'red': this.point.status === bypassSheetStatus.Rejected,
+        'disabled': this.point.status === bypassSheetStatus.Reviewing,
+        'is-open' : this.isOpen,
+      }
+    },
+
+    bypassSheetStatus() {
+      return bypassSheetStatus
+    },
+  },
+
 	methods: {
-		toggle: function() {
-			this.isOpen = !this.isOpen
-		}
-	}
+
+	},
 }
 </script>
 
 <style lang="less" scoped>
 
-// move to AppListItem
 .green {
 	color: @green;
 	border-color: @green;
@@ -138,10 +179,14 @@ export default {
 	color: @text-grey;
 	border-color: #F3F3F3;
 }
-//
 
 .point {
-	.flex(space-between, normal, column);
+  padding: 0;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
 	position: relative;
 
 	&.is-open .arrow {
@@ -166,47 +211,49 @@ export default {
 }
 
 .point-header,
-.point-inner {
+.point-body {
 	z-index: 1;
 }
 
 .point-header {
-	position: relative;
+  padding: 40px 48px;
 	min-width: 100%;
-	.flex(flex-start, normal, column);
+
+	position: relative;
+
+  display: flex;
+  flex-direction: column;
 }
 
 .arrow {
-	.absolute();
-	@size: 8px;
-	top: .5*(@fz-h2 - @size);
-	right: 4px;
-
-	width: 0;
-	height: 0;
-
-	border-top: @size solid #262626;
-	border-left: .5*@size solid transparent;
-	border-right: .5*@size solid transparent;
+	.arrow();
 }
 
 .reason {
 	margin-top: 8px;
 }
 
-.point-inner {
-	.flex(space-between, normal, row);
-	color: #000;
+.point-body {
+  padding: 0 48px 40px;
+
+  width: 100%;
+
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-column-gap: 96px;
+
+	color: @black;
 	font-weight: @fw-light;
 	cursor: default;
 
 	.required-documents-wrapper {
-		margin-top: 40px;
-		.flex(flex-start, normal, column);
+    display: flex;
+    flex-direction: column;
 
 		.required-documents {
 			margin-top: 24px;
-			.flex(flex-start);
+
+      display: flex;
 		}
 
 		.required-document-img {
@@ -226,13 +273,12 @@ export default {
 
 	.send-document-form {
 		z-index: 0;
-		width: 50%;
-		padding-top: 8px;
 		padding-left: 64px;
 
 		.app-document-upload-section {
 			margin-top: 24px;
-			.flex(flex-start);
+
+      display: flex;
 
 			.app-document-upload-wrapper {
 				margin-right: 32px;
@@ -240,7 +286,8 @@ export default {
 
 			.app-document-upload {
 				margin-top: 12px;
-				.flex(flex-start, normal);
+
+        display: flex;
 			}
 
 			.document-image-upload,
@@ -268,8 +315,9 @@ export default {
 	}
 
 	.document-sent {
-		.flex(center, center);
-		width: 50%;
+		display: flex;
+    justify-content: center;
+    align-items: center;
 
 		p {
 			display: inline-block;
