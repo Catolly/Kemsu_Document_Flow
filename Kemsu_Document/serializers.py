@@ -129,14 +129,16 @@ class RegistrationStudentSerializer(serializers.ModelSerializer):
 class GroupSerializer(serializers.ModelSerializer):
 
     institute = serializers.SlugRelatedField(slug_field='title', read_only=True)
-    # courseNumber = serializers.SerializerMethodField()
+    courseNumber = serializers.SerializerMethodField()
 
     class Meta:
         model = Group
-        fields = ('name', 'institute', 'recruitment_date')
+        fields = ('name', 'institute', 'courseNumber')
 
-    # def get_courseNumber(self, group):
-    #     return 1
+    def get_courseNumber(self, group):
+        recruitment_data = group.recruitment_date
+
+        return int(((datetime.now().date() - recruitment_data).days) // 365.2425) + 1
 
 class InstituteSerializer(serializers.ModelSerializer):
 
@@ -173,10 +175,11 @@ class PointSerializer(serializers.ModelSerializer):
 
     uploadedDocuments = UploadedDocumentSerializer(many=True, read_only=True)
     staff = StaffSerializer(read_only=True)
+    requiredDocuments = RequiredDocumentsSerializer(many=True, read_only=True)
 
     class Meta:
         model = Point
-        fields = ("title", "status", "uploadedDocuments", "staff", "rejectReason")
+        fields = ("title", "status", "uploadedDocuments", "staff", "rejectReason", 'requiredDocuments')
 
 class UserSerializer(serializers.ModelSerializer):
 
@@ -198,6 +201,25 @@ class BypassSheetsSerializer(serializers.ModelSerializer):
     class Meta:
         model = BypassSheet
         fields = ("name", "statements", "points", "status")
+
+    # def get_points(self, BypassSheet):
+    #     # bypassSheetsName = self.context.get('bypassSheetsName')
+    #     #
+    #     # bypassSheets = BypassSheet.objects.filter(name=bypassSheetsName, student_id=user)
+    #     #
+    #     # serializers = BypassSheetsSerializer(bypassSheets, context=self.context, many=True)
+    #     #
+    #     # return serializers.data
+    #     pointsName = self.context.get('pointName')
+    #     print(pointsName)
+    #     if pointsName != "":
+    #         points = Point.objects.filter(title=pointsName, bypass_sheet=BypassSheet)
+    #     else:
+    #         points = Point.objects.filter(bypass_sheet=BypassSheet)
+    #
+    #     serializers = PointSerializer(points, many=True, read_only=True)
+
+        # return serializers.data
 
 class StudentSerializer(serializers.ModelSerializer):
 
@@ -421,23 +443,89 @@ class DepartmentsSerializer(serializers.ModelSerializer):
         fields = ('title', 'address', 'institute')
 
 class UserBypassSheetSerializer(serializers.ModelSerializer):
-    user = UserSerializer(required=False, read_only=True)
-    group = GroupSerializer(required=False, read_only=True)
+    id = serializers.SerializerMethodField()
+    fullname = serializers.SerializerMethodField()
+    email = serializers.SerializerMethodField()
+    group = serializers.SlugRelatedField(slug_field='name', read_only=True)
+    institute = serializers.SerializerMethodField()
+    courseNumber = serializers.SerializerMethodField()
     bypassSheet = serializers.SerializerMethodField()
 
     class Meta:
         model = Student
-        fields = ('user', 'group', 'bypassSheet')
+        fields = ('id', 'fullname', 'email', 'recruitmentForm', 'status', 'group',
+                  'institute', 'courseNumber', 'bypassSheet')
+
+    def get_id(self, student):
+        return student.user.id
+
+    def get_fullname(self, student):
+        return student.user.fullname
+
+    def get_email(self, student):
+        return student.user.email
+
+    def get_institute(self, student):
+        return student.group.institute.title
+
+    def get_courseNumber(self, student):
+        recruitment_data = student.group.recruitment_date
+
+        return int(((datetime.now().date() - recruitment_data).days) // 365.2425) + 1
 
     def get_bypassSheet(self, user):
         bypassSheetsName = self.context.get('bypassSheetsName')
 
-        bypassSheets = BypassSheet.objects.filter(title=bypassSheetsName, student_id=user)
+        bypassSheets = BypassSheet.objects.filter(name=bypassSheetsName, student_id=user)
 
-        serializers = BypassSheetsSerializer(bypassSheets, many=True)
+        serializers = BypassSheetsSerializer(bypassSheets, context=self.context, many=True)
 
         return serializers.data
 
+class UserBypassSheetPointSerializer(serializers.ModelSerializer):
+    id = serializers.SerializerMethodField()
+    fullname = serializers.SerializerMethodField()
+    email = serializers.SerializerMethodField()
+    group = serializers.SlugRelatedField(slug_field='name', read_only=True)
+    institute = serializers.SerializerMethodField()
+    courseNumber = serializers.SerializerMethodField()
+    point = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Student
+        fields = ('id', 'fullname', 'email', 'recruitmentForm', 'status', 'group',
+                  'institute', 'courseNumber', 'point')
+
+    def get_id(self, student):
+        return student.user.id
+
+    def get_fullname(self, student):
+        return student.user.fullname
+
+    def get_email(self, student):
+        return student.user.email
+
+    def get_institute(self, student):
+        return student.group.institute.title
+
+    def get_courseNumber(self, student):
+        recruitment_data = student.group.recruitment_date
+
+        return int(((datetime.now().date() - recruitment_data).days) // 365.2425) + 1
+
+    def get_point(self, user):
+        bypassSheetsName = self.context.get('bypassSheetsName')
+        pointsName = self.context.get('pointName')
+
+        bypassSheets = BypassSheet.objects.filter(name=bypassSheetsName, student_id=user)
+
+        points = Point.objects.filter(title=None)
+        for bypassSheet in bypassSheets:
+            points |= Point.objects.filter(title=pointsName, bypass_sheet=bypassSheet)
+
+        serializers = PointSerializer(points, many=True, read_only=True)
+
+        return serializers.data
 class FileSerializer(serializers.ModelSerializer):
 
     class Meta:

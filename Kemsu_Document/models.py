@@ -111,7 +111,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     status = models.CharField(max_length=20, choices=STATUS, blank=True, help_text='Статус пользователя')
     USERNAME_FIELD = 'id'
     EMAIL_FIELD = 'email'
-    REQUIRED_FIELDS = ('fullname',)
+    REQUIRED_FIELDS = ('fullname', 'email')
 
     objects = UserManager()
 
@@ -303,7 +303,8 @@ class UploadedDocuments(models.Model):
 class RequiredDocuments(models.Model):
     title = models.CharField("Название документа", default=None, max_length=50)
     img = models.ImageField("Файл", upload_to="required_documents/", blank=True)
-    point = models.ForeignKey(PointTemplate, verbose_name="Пункт", on_delete=models.CASCADE, null=False, related_name="requiredDocuments")
+    point_template = models.ForeignKey(PointTemplate, verbose_name="Шаблон пункта", on_delete=models.CASCADE, null=False, related_name="requiredDocuments")
+    point = models.ForeignKey(Point, verbose_name="Пункт", on_delete=models.CASCADE, null=True, related_name="requiredDocuments")
 
     def __str__(self):
         return self.title

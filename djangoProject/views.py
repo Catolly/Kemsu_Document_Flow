@@ -1,4 +1,4 @@
-from django.db.models import QuerySet
+from django.db.models import QuerySet, Q
 from rest_framework import status, permissions
 from rest_framework.generics import GenericAPIView, ListCreateAPIView
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -21,6 +21,7 @@ from Kemsu_Document.serializers import (
     LogoutSerializer, RefreshTokenSerializer, PostByPassSheetsSerializer, DepartmentsSerializer,
     UserBypassSheetSerializer, FileSerializer, GroupSerializer, BypassSheetTemplateSerializer,
     PostBypassSheetTemplateSerializer, UnregisteredStudentSerializer, CheckAccessSerializer,
+    UserBypassSheetPointSerializer,
 )
 
 from .permissions import (
@@ -225,24 +226,46 @@ class UserBypassSheetsView(APIView):
 
     permission_classes = [AllowAny]
 
-    def __getUserQuery(self):
+    def __getBypassSheetQuery(self):
+        self.bypassSheets = BypassSheet.objects.filter(name=None)
 
-        userQuery = QuerySet(model=Student)
+        for point in self.points:
+            self.bypassSheets |= BypassSheet.objects.filter(id=point.bypass_sheet.id)
+
+    def __getUserBypassSheetQuery(self):
+
+        userQuery = Student.objects.filter(user=None)
 
         for bypassSheet in self.bypassSheets:
-            userQuery |= Student.objects.filter(user=bypassSheet.student_id)
+            userQuery |= Student.objects.filter(user=bypassSheet.student_id.user)
+
+        return userQuery
+
+    def __getUserPointQuery(self):
+
+        userQuery = Student.objects.filter(user=None)
+
+        self.__getBypassSheetQuery()
+
+        for bypassSheet in self.bypassSheets:
+            userQuery |= Student.objects.filter(user=bypassSheet.student_id.user)
 
         return userQuery
 
     def get(self, request):
         bypassSheetsName = request.GET.get('name', '')
+        pointName = request.GET.get('pointName', '')
 
-        self.bypassSheets = BypassSheet.objects.filter(title=bypassSheetsName)
+        self.bypassSheets = BypassSheet.objects.filter(name=bypassSheetsName)
 
-        students = self.__getUserQuery()
-
-        serializer = UserBypassSheetSerializer(students, context={'bypassSheetsName' : bypassSheetsName}, many=True)
-
+        if pointName == "":
+            students = self.__getUserBypassSheetQuery()
+            serializer = UserBypassSheetSerializer(students, context={'bypassSheetsName': bypassSheetsName}, many=True)
+        else:
+            self.points = Point.objects.filter(title=pointName)
+            students = self.__getUserPointQuery()
+            serializer = UserBypassSheetPointSerializer(students, context={'bypassSheetsName': bypassSheetsName,
+                                                                           'pointName' : pointName}, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 class FileApiView(APIView):
