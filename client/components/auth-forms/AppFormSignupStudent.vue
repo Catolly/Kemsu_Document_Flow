@@ -6,22 +6,25 @@
     <div class="body">
       <div class="inputs">
         <app-autocomplete
-          v-model="$v.fullNameAndGroup.$model"
-          :options="relevantUsersOptionList"
+          v-model="$v.fullnameAndGroup.$model"
+          :options="unregisteredStudentsOptionList"
           placeholder="Ф.И.О."
           :errorMessages="[
-            ... $v.fullNameAndGroup.$dirty
-                && !$v.fullNameAndGroup.required
+            ... $v.fullnameAndGroup.$dirty
+                && !$v.fullnameAndGroup.required
                 ? ['Поле должно быть заполнено']
                 : [],
-            ... $v.fullNameAndGroup.$dirty
-                && $v.fullNameAndGroup.required
-                && !$v.fullNameAndGroup.exist
+            ... $v.fullnameAndGroup.$dirty
+                && $v.fullnameAndGroup.required
+                && !$v.fullnameAndGroup.exist
                 ? ['Такого студента или группы не существует']
                 : [],
+            ... fetchUnregisteredStudentsError
+                ? ['Не удалось загрузить список пользователей']
+                : [],
           ]"
-          @input="reset($v.fullNameAndGroup)"
-          @change="checkField($v.fullNameAndGroup)"
+          @input="reset($v.fullnameAndGroup)"
+          @change="checkField($v.fullnameAndGroup)"
         />
 
         <app-input
@@ -46,7 +49,7 @@
           v-model="$v.password.$model"
           type="password"
           placeholder="Пароль"
-          :messages="['Пароль должен содержать 7 и более символов']"
+          :messages="[`Пароль должен содержать ${minPasswordLength} и более символов`]"
           :errorMessages="[
             ... $v.password.$dirty
                 && !$v.password.required
@@ -55,7 +58,7 @@
             ... $v.password.$dirty
                 && $v.password.required
                 && !$v.password.minLength
-                ? ['Пароль должен содержать 7 и более символов']
+                ? [`Пароль должен содержать ${minPasswordLength} и более символов`]
                 : [],
           ]"
           @input="reset($v.password)"
@@ -90,6 +93,7 @@
 <script>
 import { required, minLength, email } from "vuelidate/lib/validators"
 import { optionExist } from "~/vuelidate/validators"
+import { minPasswordLength } from "~/vuelidate/constants"
 
 import AppButton from '~/components/common/AppButton'
 import AppInput from '~/components/common/AppInput'
@@ -105,9 +109,15 @@ export default {
   },
 
   data:() => ({
-    fullNameAndGroup: '',
+    fullnameAndGroup: '',
+
+    fullname: '',
+    group: '',
     email: '',
     password: '',
+    divider: ' - ', // Разделяет fullname и group
+
+    minPasswordLength: minPasswordLength,
 
     relevantUsers: [
       {
@@ -134,9 +144,9 @@ export default {
   }),
 
   validations:() => ({
-    fullNameAndGroup: {
+    fullnameAndGroup: {
       required,
-      exist: optionExist,
+      exist: (value, vm) => !!vm.unregisteredStudentsOptionList.find(option => option.value === value)
     },
     email: {
       required,
@@ -144,7 +154,7 @@ export default {
     },
     password: {
       required,
-      minLength: minLength(7),
+      minLength: minLength(minPasswordLength),
     },
   }),
 
@@ -155,6 +165,12 @@ export default {
         value: user.fullName + ' - ' + user.group,
       }))
     }
+
+  watch: {
+    fullnameAndGroup() {
+      this.fullname = this.fullnameAndGroup.split(this.divider)[0]
+      this.group = this.fullnameAndGroup.split(this.divider)[1]
+    },
   },
 
   methods: {
@@ -165,8 +181,6 @@ export default {
     },
 
     checkField($v) {
-      if (!$v.required) return
-
       $v.$model = $v.$model.trim()
 
       $v.$touch()
@@ -219,5 +233,11 @@ export default {
       margin-top: 16px;
     }
   }
+}
+
+.signup-error {
+  margin-top: 16px;
+  margin-bottom: -16px;
+  color: @red;
 }
 </style>
