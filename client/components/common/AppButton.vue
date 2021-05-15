@@ -2,6 +2,8 @@
 	<button
   	tabindex="0"
   	class="app-button"
+    :class="{ 'disabled': disabled }"
+    :disabled="disabled"
   	@click="$emit('click')"
   	@keydown.enter="$emit('click')"
   >
@@ -12,219 +14,107 @@
 <script>
 export default {
 	name: 'AppButton',
+
+  props: {
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
+  },
 }
 </script>
 
 <style lang="less" scoped>
 
 .app-button {
-  color: @text-grey;
-  font-size: @fz-normal;
-  font-weight: @fw-normal;
-
   height: 50px;
   width: fit-content;
-  padding: 0;
-	border: none;
-	background: transparent;
 
-  &:focus-visible,
-	&:hover {
-		color: #000;
-    cursor: pointer;
-	}
+  padding: 12px 48px;
+  border-radius: 10px;
 
-  &.big {
-    height: 70px;
-  }
+  color: @grey-darkset;
+  .setInteractiveColor(color, @black, @black);
 
-  &.fluid {
-    width: 100%;
-  }
+  font-size: @fz-normal;
+  font-weight: @fw-medium;
 
-  &.icon {
-    height: fit-content;
-    width: fit-content;
-  }
+	border: 1px solid @grey-darkset;
+	background: none;
+
+  cursor: pointer;
 }
 
-.plain,
-.icon {
-  &.red,
-  &.green,
-  &.blue,
-  &.cancel {
-    padding: 0;
-    background: none;
-    border: none;
+.big {
+  height: 70px;
+}
 
-    font-size: @fz-normal;
-    font-weight: @fw-normal;
-
-    &:hover,
-    &:focus-visible,
-    &:active, {
-      background: none;
-      border: none;
-    }
-  }
+.fluid {
+  width: 100%;
 }
 
 .underlined {
   text-decoration: underline;
 }
 
-.red,
-.green,
-.blue,
-.cancel {
-  padding: 12px 48px;
-  border-radius: 10px;
-  font-weight: @fw-medium;
-}
-
-.red,
-.green,
-.blue {
-  &:focus-visible,
-  &:hover,
-  &:active:not(:focus-visible),
-  &:active:not(:hover) {
-    color: #fff;
-  }
-
-	&.filled {
-		border: 1px solid transparent;
-		color: #fff;
-	}
-	&.filled:hover {
-		color: #fff;
-	}
-}
-
 .red {
-	color: @red;
-	border: 1px solid @red;
-
-	&:focus-visible,
-	&:hover {
-		background: @red;
-	}
-  &:active {
-    background: @red-active;
-  }
-
-	&.filled {
-		background: @red;
-
-  	&:focus-visible,
-  	&:hover {
-  		background: @red-hover;
-  	}
-    &:active {
-      background: @red-active;
-    }
-  }
-
-  &.plain {
-    color: @red;
-
-    &:focus-visible,
-    &:hover {
-      color: @red-hover;
-    }
-    &:active {
-      color: @red-active;
-    }
-  }
+	.setColor(@red, @red-hover, @red-active);
 }
 
 .green {
-	color: @green;
-	border: 1px solid @green;
-
-	&:focus-visible,
-	&:hover {
-		background: @green;
-	}
-  &:active {
-    background: @green-active;
-  }
-
-  &.filled {
-		background: @green;
-
-    &:focus-visible,
-    &:hover {
-      background: @green-hover;
-    }
-    &:active {
-      background: @green-active;
-    }
-  }
-
-  &.plain {
-    color: @green;
-
-    &:focus-visible,
-    &:hover {
-      color: @green-hover;
-    }
-    &:active {
-      color: @green-active;
-    }
-  }
+  .setColor(@green, @green-hover, @green-active);
 }
 
 .blue {
-  color: @blue;
-  border: 1px solid @blue;
+  .setColor(@blue, @blue-hover, @blue-active);
+}
 
+.plain {
+  height: fit-content;
+  width: fit-content;
+  padding: 0;
+
+  font-weight: @fw-normal;
+  background: none;
+  border: none;
+}
+
+.disabled {
+  cursor: auto;
+
+  .setColor(@grey-darkset, @grey-darkset, @grey-darkset);
+}
+
+.filled {
+  color: #fff;
+}
+
+.setInteractiveColor(@prop, @color-hover, @color-active) {
   &:focus-visible,
   &:hover {
-    background: @blue;
+    @{prop}: @color-hover;
   }
   &:active {
-    background: @blue-active;
-  }
-
-  &.filled {
-    background: @blue;
-
-    &:focus-visible,
-    &:hover {
-      background: @blue-hover;
-    }
-    &:active {
-      background: @blue-active;
-    }
-  }
-
-  &.plain {
-    color: @blue;
-
-    &:focus-visible,
-    &:hover {
-      color: @blue-hover;
-    }
-    &:active {
-      color: @blue-active;
-    }
+    @{prop}: @color-active;
   }
 }
 
-.cancel {
-  color: @text-grey;
-  border: 1px solid #E0E0E0;
+.setColor(@color, @color-hover, @color-active) {
+  color: @color;
+  border-color: @color;
 
-  &:focus-visible,
-  &:hover {
-    color: @red;
-    border-color: @red;
+  .setInteractiveColor(background, @color-hover, @color-active);
+  .setInteractiveColor(color, @white, @white);
+
+  &.filled {
+    background: @color;
+
+    .setInteractiveColor(background, @color-hover, @color-active);
   }
-  &:active {
-    color: @red-active;
-    border-color: @red-active;
+
+  &.plain {
+    .setInteractiveColor(background, none, none);
+    .setInteractiveColor(color, @color-hover, @color-active);
   }
 }
 

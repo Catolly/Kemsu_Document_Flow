@@ -1,6 +1,6 @@
 .flex(
-      @justify-content: center, 
-      @align-items: normal, 
+      @justify-content: center,
+      @align-items: normal,
       @flex-direction: row
       ) {
   display: flex;
@@ -13,4 +13,25 @@
   position: absolute;
   display: block;
   content: '';
+}
+
+.arrow(@top: 100%, @size: 8px) {
+  .absolute();
+
+  top: .5*(@top - @size);
+  right: 32px;
+
+  width: 0;
+  height: 0;
+
+  border-top: @size solid #262626;
+  border-left: .5*@size solid transparent;
+  border-right: .5*@size solid transparent;
+}
+
+.focused(@color) {
+  border-color: @color;
+  & + .label {
+    color: @color;
+  }
 }

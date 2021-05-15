@@ -2,14 +2,16 @@
   <div class="app-search-wrapper">
     <app-input
       :value="value"
-      @input="updateValue"
+      @input="updateValue($event)"
       :type="type"
       :required="required"
       :disabled="disabled"
       :placeholder="placeholder"
-      :class="{'round': round}"
+      :round="round"
+      :small="small"
       class="app-search"
     />
+
     <icon-search
       v-show="!value"
       class="icon-search"
@@ -31,20 +33,30 @@ export default {
 
   props: {
     value: String,
+
     placeholder: String,
+
     type: {
       type: String,
       default: 'text',
     },
+
     required: {
       type: Boolean,
       default: false,
     },
+
     disabled: {
       type: Boolean,
       default: false,
     },
+
     round: {
+      type: Boolean,
+      default: false,
+    },
+
+    small: {
       type: Boolean,
       default: false,
     },
@@ -53,57 +65,34 @@ export default {
   methods: {
     updateValue(value) {
       this.$emit('input', value)
-    }
+    },
   },
 }
 </script>
 
 <style lang="less" scoped>
-@input-background: #FDFDFD;
 
 .app-search-wrapper {
-  transition: .2s ease all;
-
-  margin-top: 18px;
   position: relative;
 
-  height: 70px;
+  height: fit-content;
   width: 100%;
 
-  &.round .app-search {
-    border-radius: 100px;
+  .app-search {
+    position: relative;
   }
 
   .icon-search {
-    display: none;
-  }
+    .absolute();
+    top: calc(50% - 12px);
+    right: 18px;
 
-  &.search {
-    .icon-search {
-      .absolute();
-      top: calc(50% - 12px);
-      right: 18px;
+    height: 24px;
+    width: 24px;
 
-      height: 24px;
-      width: 24px;
-    }
-  }
-}
+    fill: @grey-darkset;
 
-.app-search {
-  position: relative;
-
-  height: inherit;
-  width: inherit;
-
-  background: @input-background;
-  border: 1px solid #F3F3F3;
-  border-radius: 10px;
-
-  &:focus {
-    & ~ .icon-search {
-      display: none;
-    }
+    cursor: text;
   }
 }
 

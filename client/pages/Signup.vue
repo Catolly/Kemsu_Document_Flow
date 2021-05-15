@@ -27,7 +27,10 @@ export default {
 
 .container {
   height: 100vh;
-  .flex(center, center, column);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .content {

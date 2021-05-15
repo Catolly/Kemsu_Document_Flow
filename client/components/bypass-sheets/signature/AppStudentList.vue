@@ -15,8 +15,8 @@
           {{student.fullName}}
         </span>
         <span class="student-status">
-          {{student.group.name}},
-          {{student.courseNumber}} курс.
+          {{student.groupName}},
+          {{student.courseNumber}}.
           {{student.educationForm}}.
           {{student.status}}
         </span>
@@ -45,8 +45,7 @@
 
         <app-button
           v-if="student.point.status != 'rejected'"
-          :class="student.point.status === 'reviewing' ? 'red' : 'cancel'"
-          class="btn reject"
+          class="btn reject red"
           @click="$emit('reject', student)"
         >
           Отказать

@@ -1,52 +1,95 @@
 <template>
-	<form @submit.prevent="checkForm" id="form">
-    <h1 id="form-header">Регистрация</h1>
-    <div id="form-inner">
-      <app-autocomplete
-      v-model.trim="form.username"
-      :options="relevantUsersOptions"
-      autocomplete="off"
-      id="username"
-      class="username"
-      type="text"
-      placeholder="Ф.И.О."
-      required />
-      <app-input
-      v-model.trim="form.email"
-      id="email"
-      class="email"
-      type="email"
-      placeholder="Email"
-      required />
-      <app-input
-      v-model.trim="form.password"
-      id="password"
-      class="password"
-      type="password"
-      placeholder="Пароль"
-      required />
-      <app-button
-      id="signup"
-      class="signup-btn blue big filled fluid">
-        Зарегистрироваться
-      </app-button>
-      <NuxtLink
-      to="/login"
-      class="login-link">
+	<form @submit.prevent="submit" class="form">
+
+    <h1 class="header">Регистрация</h1>
+
+    <div class="body">
+      <div class="inputs">
+        <app-autocomplete
+          v-model="$v.fullNameAndGroup.$model"
+          :options="relevantUsersOptionList"
+          placeholder="Ф.И.О."
+          :errorMessages="[
+            ... $v.fullNameAndGroup.$dirty
+                && !$v.fullNameAndGroup.required
+                ? ['Поле должно быть заполнено']
+                : [],
+            ... $v.fullNameAndGroup.$dirty
+                && $v.fullNameAndGroup.required
+                && !$v.fullNameAndGroup.exist
+                ? ['Такого студента или группы не существует']
+                : [],
+          ]"
+          @input="reset($v.fullNameAndGroup)"
+          @change="checkField($v.fullNameAndGroup)"
+        />
+
+        <app-input
+          v-model.trim="$v.email.$model"
+          placeholder="Email"
+          :errorMessages="[
+            ... $v.email.$dirty
+                && !$v.email.required
+                ? ['Поле должно быть заполнено']
+                : [],
+            ... $v.email.$dirty
+                && $v.email.required
+                && !$v.email.email
+                ? ['Введите email']
+                : [],
+          ]"
+          @input="reset($v.email)"
+          @change="checkField($v.email)"
+        />
+
+        <app-input
+          v-model="$v.password.$model"
+          type="password"
+          placeholder="Пароль"
+          :messages="['Пароль должен содержать 7 и более символов']"
+          :errorMessages="[
+            ... $v.password.$dirty
+                && !$v.password.required
+                ? ['Поле должно быть заполнено']
+                : [],
+            ... $v.password.$dirty
+                && $v.password.required
+                && !$v.password.minLength
+                ? ['Пароль должен содержать 7 и более символов']
+                : [],
+          ]"
+          @input="reset($v.password)"
+          @change="checkField($v.password)"
+        />
+      </div>
+
+      <div class="btns">
         <app-button
-        class="login-btn blue big fluid">
-          Войти
+          class="signup-btn blue big filled fluid"
+          :disabled="$v.$invalid"
+        >
+          Зарегистрироваться
         </app-button>
-      </NuxtLink>
+
+        <NuxtLink to="/login" tabindex="-1" class="clear">
+          <app-button class="to-login-btn blue big fluid">
+            Войти
+          </app-button>
+        </NuxtLink>
+      </div>
+
       <p class="signup-problem">
-        Кто-то зарегистрировался под вашим именем? Обратитесь к <NuxtLink to="#">администрации</NuxtLink>
+        Кто-то зарегистрировался под вашим именем? Обратитесь к
+        <NuxtLink to="#">администрации</NuxtLink>
       </p>
     </div>
+
   </form>
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
+import { required, minLength, email } from "vuelidate/lib/validators"
+import { optionExist } from "~/vuelidate/validators"
 
 import AppButton from '~/components/common/AppButton'
 import AppInput from '~/components/common/AppInput'
@@ -54,90 +97,92 @@ import AppAutocomplete from '~/components/common/AppAutocomplete'
 
 export default {
   name: 'FormSingupStudent',
+
   components: {
     AppButton,
     AppInput,
     AppAutocomplete,
   },
-  data() {
-    return {
-      form: {
-        username: '',
-        email: '',
-        password: '',
+
+  data:() => ({
+    fullNameAndGroup: '',
+    email: '',
+    password: '',
+
+    relevantUsers: [
+      {
+        id: 34,
+        fullName: 'Козырева Татьяна Андреевна',
+        group: "M-174",
       },
-      relevantUsers: [
-        {
-          id: 34,
-          fullName: 'Козырева Татьяна Андреевна',
-          group: "M-174",
-        },
-        {
-          id: 64,
-          fullName: 'Козырева Татьяна Андреевна',
-          group: "M-185",
-        },
-        {
-          id: 18,
-          fullName: 'Сергиенко Анатолий Николаевич',
-          group: "M-174",
-        },
-        {
-          id: 93,
-          fullName: 'Оооооооооооооооооооочень длинное имя',
-          group: "M-174",
-        },
-      ],
-    }
-  },
+      {
+        id: 64,
+        fullName: 'Козырева Татьяна Андреевна',
+        group: "M-185",
+      },
+      {
+        id: 18,
+        fullName: 'Сергиенко Анатолий Николаевич',
+        group: "M-174",
+      },
+      {
+        id: 93,
+        fullName: 'Оооооооооооооооооооочень длинное имя',
+        group: "M-174",
+      },
+    ],
+  }),
+
+  validations:() => ({
+    fullNameAndGroup: {
+      required,
+      exist: optionExist,
+    },
+    email: {
+      required,
+      email,
+    },
+    password: {
+      required,
+      minLength: minLength(7),
+    },
+  }),
+
   computed: {
-    relevantUsersOptions() {
-      return this.relevantUsers.map(user => {
-        return {
-          id: user.id,
-          value: user.fullName + ' - ' + user.group
-        }
-      })
+    relevantUsersOptionList() {
+      return this.relevantUsers.map(user => ({
+        id: user.id,
+        value: user.fullName + ' - ' + user.group,
+      }))
     }
   },
+
   methods: {
-    ...mapMutations ([
-      'updateTokens'
-    ]),
-    checkForm() {
-      // Проверка данных формы
-      // ...
+    reset($v) {
+      if (!$v.required) return
+
+      $v.$reset()
+    },
+
+    checkField($v) {
+      if (!$v.required) return
+
+      $v.$model = $v.$model.trim()
+
+      $v.$touch()
+    },
+
+    submit() {
+      this.$v.$touch()
+
+      if (this.$v.$invalid) return
+
       this.signup()
     },
-    async signup() {
-      // const body = JSON.stringify({
-      //   fullName: 'TEST FULLNAME',
-      //   email: 'TEST EMAIL',
-      //   group: 'TEST GROUP',
-      //   password: 'TEST PASSWORD'
-      // })
 
-      // // Отправка данных на сервер
-      // // ...
-      // try {
-      //   const tokens = await fetch('http://mydoc.kemsu.ru/api/signup/student', {
-      //     method: 'POST',
-      //     headers: {
-      //       'Accept': 'application/json',
-      //       'Content-Type': 'application/json',
-      //       'X-Content-Type-Options': 'nosniff',
-      //       'OPTIONS': '*',
-      //     },
-      //     body,
-      //   })
-      //   .then(response => response.json())
-      //   .then(tokens => {
-      //     console.log(tokens)
-      //     this.updateTokens(tokens)
-      //   })
-      // } catch (err) {
-      //   console.error(err)
-      // }
+    async signup() {
+      // Отправка данных на сервер
+      // ...
 
       this.$router.push('/')
     },
@@ -146,41 +191,33 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import '~/styles/index.less';
 
-#form {
-  width: 516px;
+.inputs,
+.btns {
+  display: grid;
 }
 
-#form-header {
-  text-align: center;
-}
-
-#form-inner {
-  margin-top: 48px;
-
-  .username {
-    width: 100%;
+.form {
+  .header {
+    text-align: center;
   }
 
-  .forgot-password {
-    margin-top: 8px;
-  }
+  .body {
+    margin-top: 48px;
 
-  .signup-btn {
-    margin-top: 32px;
-  }
+    .inputs {
+      grid-row-gap: 16px;
+    }
 
-  .login-btn {
-    margin-top: 10px;
-  }
+    .btns {
+      margin-top: 32px;
 
-  .login-link:after {
-    display: none;
-  }
+      grid-row-gap: 8px;
+    }
 
-  .signup-problem {
-    margin-top: 16px;
+    .signup-problem {
+      margin-top: 16px;
+    }
   }
 }
 </style>

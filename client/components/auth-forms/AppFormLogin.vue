@@ -1,71 +1,124 @@
 <template>
-	<form @submit.prevent="checkForm" id="form">
-		<h1 id="form-header">Вход</h1>
-		<div id="form-inner">
-			<app-input
-			v-model.trim="form.username"
-			placeholder="Ф.И.О. / Email"
-			id="username"
-      class="username"
-			required />
-			<app-input
-			v-model.trim="form.password"
-			placeholder="Пароль"
-			id="password"
-			type="password"
-			required />
+	<form @submit.prevent="submit" class="form">
+
+		<h1 class="header">Вход</h1>
+
+		<div class="body">
+      <div class="inputs">
+  			<app-input
+    			v-model.trim="$v.email.$model"
+    			placeholder="Email"
+          :errorMessages="[
+            ... $v.email.$dirty
+                && !$v.email.required
+                ? ['Поле должно быть заполнено']
+                : [],
+            ... $v.email.$dirty
+                && $v.email.required
+                && !$v.email.email
+                ? ['Введите email']
+                : [],
+          ]"
+          @input="reset($v.email)"
+          @change="checkField($v.email)"
+        />
+  			<app-input
+    			v-model="$v.password.$model"
+    			placeholder="Пароль"
+    			type="password"
+          :errorMessages="[
+            ... $v.password.$dirty
+                && !$v.password.required
+                ? ['Поле должно быть заполнено']
+                : [],
+            ... $v.password.$dirty &&
+                $v.password.required
+                && !$v.password.minLength
+                ? ['Пароль должен содержать 7 и более символов']
+                : [],
+          ]"
+          @input="reset($v.password)"
+          @change="checkField($v.password)"
+        />
+      </div>
+
 			<p class="forgot-password">
 				<NuxtLink to="#">Не помню пароль</NuxtLink>
 			</p>
-			<app-button
-			id="login"
-			class="login-btn blue big filled fluid">
-				Войти
-			</app-button>
+
+      <div class="btns">
+  			<app-button
+          class="login-btn blue big filled fluid"
+          :disabled="$v.$invalid"
+        >
+  				Войти
+  			</app-button>
+
+        <NuxtLink to="/signup" tabindex="-1" class="clear">
+          <app-button class="to-register-btn blue big fluid">
+            Зарегистрироваться
+          </app-button>
+        </NuxtLink>
+      </div>
 		</div>
+
 	</form>
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
+import { required, minLength, email } from "vuelidate/lib/validators"
 
 import AppButton from '~/components/common/AppButton'
 import AppInput from '~/components/common/AppInput'
 
 export default {
   name: 'AppFormLogin',
+
   components: {
     AppButton,
     AppInput,
   },
-  data() {
-    return {
-      form: {
-        username: '',
-        password: '',
-      }
-    }
-  },
+
+  data:() => ({
+    email: '',
+    password: '',
+  }),
+
+  validations:() => ({
+    email: {
+      required,
+      email,
+    },
+    password: {
+      required,
+      minLength: minLength(7),
+    },
+  }),
+
   methods: {
-    ...mapMutations([
-      'updateTokens'
-    ]),
-    checkForm() {
-      // Проверка данных формы
-      // ...
+    reset($v) {
+      if (!$v.required) return
+
+      $v.$reset()
+    },
+
+    checkField($v) {
+      if (!$v.required) return
+
+      $v.$touch()
+    },
+
+    submit() {
+      this.$v.$touch()
+
+      if (this.$v.$invalid) return
+
       this.login()
     },
+
     async login() {
-      // // Валидация данных на сервере
-      // // ...
-      const tokens = await new Promise((res, rej) => {
-        setTimeout(() => res({
-          accessToken: 'logged',
-          refreshToken: 'logged',
-          expiresIn: Date.now() + 1800e3,
-        }), 500)
-      })
-      this.updateTokens(tokens)
+      // Отправка данных на сервер
+      // ...
 
       this.$router.push('/')
     },
@@ -74,29 +127,33 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import '~/styles/index.less';
 
-#form {
-	width: 516px;
-}
-
-#form-header {
-  text-align: center;
-}
-
-#form-inner {
-  margin-top: 48px;
-
-  .username {
-    width: 100%;
+.form {
+  .header {
+    text-align: center;
   }
 
-  .forgot-password {
-    margin-top: 8px;
-  }
+  .body {
+    margin-top: 48px;
 
-  .login-btn {
-    margin-top: 32px;
+    .inputs,
+    .btns {
+      display: grid;
+    }
+
+    .inputs {
+      grid-row-gap: 16px;
+    }
+
+    .forgot-password {
+      margin-top: 8px;
+    }
+
+    .btns {
+      margin-top: 32px;
+
+      grid-row-gap: 8px;
+    }
   }
 }
 

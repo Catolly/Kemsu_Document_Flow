@@ -71,20 +71,27 @@ a {
   color: @blue;
   text-decoration: none;
   position: relative;
-}
 
-a::after {
-  .absolute();
-  bottom: 0;
-  left: 0;
+  &.clear::after {
+    display: none;
+  }
 
-  width: 100%;
-  border-bottom: 1px solid @blue;
-}
+  &::after {
+    .absolute();
+    bottom: 0;
+    left: 0;
 
-a:hover,
-a:hover::after {
-  color: @blue-hover;
+    width: 100%;
+    border-bottom: 1px solid @blue;
+  }
+
+  &:hover {
+    color: @blue-active;
+
+    &::after {
+      border-bottom: 1px solid @blue-active;
+    }
+  }
 }
 
 img {

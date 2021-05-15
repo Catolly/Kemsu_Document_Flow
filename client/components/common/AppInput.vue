@@ -1,75 +1,146 @@
 <template>
-	<div class="app-input-wrapper">
-		<input
-  		:value="value"
-  		@input="updateValue($event.target.value)"
-  		:type="type"
-  		:required="required"
-  		:disabled="disabled"
-  		class="app-input"
-  		placeholder=" "
-      ref="appInput"
-    >
-		<label
-      class="label"
-      @click="focus"
-    >
-      {{placeholder}}
-    </label>
-	</div>
+	<div
+    :class="classObj"
+    class="app-input-wrapper"
+    ref="appInputWrapper"
+  >
+    <div class="app-input-field">
+  		<input
+    		:value="value"
+    		@input="$emit('input', $event.target.value)"
+        @change="$emit('change', $event.target.value)"
+    		:type="type"
+    		:required="required"
+    		:disabled="disabled"
+    		class="app-input"
+    		placeholder=" "
+        ref="appInput"
+      >
+
+      <label
+        class="label"
+        @click="focus"
+      >
+        {{placeholder}}
+      </label>
+    </div>
+
+    <template v-if="errorMessages.length">
+      <app-message-list
+        :error-messages="errorMessages"
+        :messages="messages"
+        class="message-list"
+        ref="AppMessageList"
+      />
+    </template>
+
+  </div>
 </template>
 
 <script>
+import AppMessageList from '~/components/common/AppMessageList'
+
 export default {
-	name: 'AppInput',
+  name: 'AppInput',
 
-	props: {
-		value: String,
+  components: {
+    AppMessageList
+  },
 
-		placeholder: String,
+  props: {
+    value: String,
+
+    placeholder: String,
 
     type: {
-			type: String,
-			default: 'text',
-		},
+      type: String,
+      default: 'text',
+    },
 
     required: {
-			type: Boolean,
-			default: false,
-		},
+      type: Boolean,
+      default: false,
+    },
 
     disabled: {
-			type: Boolean,
-			default: false,
-		},
-	},
+      type: Boolean,
+      default: false,
+    },
 
-	methods: {
-		updateValue(value) {
-      this.$emit('input', value.trim())
-		},
+    round: {
+      type: Boolean,
+      default: false,
+    },
+
+    small: {
+      type: Boolean,
+      default: false,
+    },
+
+    error: {
+      type: Boolean,
+      default: false,
+    },
+
+    errorMessages: {
+      type: Array,
+      default:() => [],
+    },
+
+    messages: {
+      type: Array,
+      default:() => [],
+    },
+  },
+
+  computed: {
+    classObj() {
+      return {
+        'round': this.round,
+        'small': this.small,
+        'error': this.error || !!this.errorMessages.length,
+      }
+    },
+  },
+
+  methods: {
+    // inputValue(value) {
+    //   this.$emit('input', value)
+    // },
 
     focus() {
       this.$refs.appInput.focus()
     },
-	},
+  },
 }
 </script>
 
 <style lang="less" scoped>
-@input-background: #FDFDFD;
 
 .app-input-wrapper {
-	position: relative;
+  position: relative;
 
-  height: 70px;
+  height: fit-content;
   width: 100%;
 
-  border: 1px solid #F3F3F3;
+  &.small .app-input-field {
+    height: @app-small-input-height;
+  }
+
+  &.error {
+    .app-input,
+    .app-input:focus {
+      .focused(@red);
+    }
+  }
 
   &.round,
   &.round .app-input {
-    border-radius: 100px;
+    border-radius: @app-input-height;
+  }
+
+  &.open .app-input { // Для поддержки AppAutocomplete
+    border-radius: 10px 10px 0 0;
   }
 
   &,
@@ -82,21 +153,26 @@ export default {
     transition: .2s ease all;
   }
 
+  .app-input-field {
+    position: relative;
+
+    height: @app-input-height;
+    width: inherit;
+  }
+
   .app-input {
     position: relative;
 
-    min-height: 100%;
-    min-width: 100%;
+    height: inherit;
+    width: inherit;
     padding-left: 24px;
+    padding-right: 48px;
 
-    border: 1px solid transparent;
-    background: @input-background;
+    border: 1px solid @grey-light;
+    background: @grey-bright;
 
     &:focus {
-      border-color: @blue;
-      & + .label {
-        color: @blue;
-      }
+      .focused(@blue);
     }
 
     // Фиксирует плейсхолдер на верхней левой границе при фокусе
@@ -115,11 +191,14 @@ export default {
     position: absolute;
     top: calc(50% - .6em); // Фиксирует label по центру input'а
     left: 1.2em;
+    z-index: 1;
 
-    color: @text-grey;
-    background: linear-gradient(to top, @input-background 50%, transparent 0);
+    color: @grey-darkset;
+
+    background: linear-gradient(to top, @grey-bright 50%, transparent 0);
 
     user-select: none;
+    cursor: text;
   }
 }
 
