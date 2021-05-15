@@ -83,6 +83,11 @@ export default {
 			default: false
 		},
 
+    small: {
+      type: Boolean,
+      default: false
+    },
+
     error: {
       type: Boolean,
       default: false
@@ -103,6 +108,7 @@ export default {
     classObj() {
       return {
         'error': !!this.errorMessages.length,
+        'small': !!this.small,
       }
     },
   },
@@ -138,7 +144,11 @@ export default {
 	position: relative;
   font-size: @fz-large;
 
-  height: inherit;
+  height: 70px;
+
+  &.small {
+    height: 50px;
+  }
 
   &.error {
     .app-select,
@@ -187,13 +197,20 @@ export default {
     transition: .2s ease all;
   }
 
+  &.small {
+    .selected,
+    .option {
+      height: 50px;
+    }
+  }
+
   .selected,
   .option {
     display: flex;
     flex-direction: column;
     justify-content: center;
 
-    min-height: @app-input-height;
+    height: @app-input-height;
     width: 100%;
     padding: 24px;
     padding-right: 48px;
@@ -212,10 +229,14 @@ export default {
   .option-wrapper {
     position: absolute;
     top: calc(100% - 1px);
+
     height: inherit;
     width: 100%;
 
-    z-index: 1;
+    max-height: 16em;
+    overflow-y: auto;
+
+    z-index: 2; // z-index: 1 не перекрывает label app-input
 
     box-shadow: 2px 2px 10px rgba(0, 0, 0, .05);
     border-radius: 0 0 10px 10px;
