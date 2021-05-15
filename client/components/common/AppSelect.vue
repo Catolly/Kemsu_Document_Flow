@@ -11,12 +11,12 @@
   		class="app-select"
     >
 			<span class="selected">
-  			{{selected}}
+  			{{value}}
 				<div class="arrow" />
 			</span>
 
 			<label
-  			:class="{'small': selected}"
+  			:class="{'small': value}"
   			class="label"
       >
 				{{placeholder}}
@@ -64,7 +64,7 @@ export default {
 	},
 
 	props: {
-		selected: {
+		value: {
       type: [String, Number],
       default: '',
     },
@@ -119,7 +119,7 @@ export default {
     },
 
 		select(option) {
-			this.$emit('select', option)
+			this.$emit('input', option)
 			this.unfocus()
 		},
 
