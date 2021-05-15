@@ -1,21 +1,21 @@
 <template>
 	<div class="container">
 		<!-- student -->
-		<!-- <bypass-sheet-list-student /> -->
+		<!-- <app-bypass-sheet-list-student /> -->
 
 		<!-- staff -->
-		<bypass-sheet-list-staff />
+		<app-bypass-sheet-list-staff />
 	</div>
 </template>
 
 <script>
-import bypassSheetListStudent from '~/pages/bypass-sheets/bypassSheetListStudent'
-import bypassSheetListStaff from '~/pages/bypass-sheets/bypassSheetListStaff'
+import AppBypassSheetListStudent from '~/components/bypass-sheets/AppBypassSheetListStudent'
+import AppBypassSheetListStaff from '~/components/bypass-sheets/AppBypassSheetListStaff'
 
 export default {
 	components: {
-		bypassSheetListStudent,
-    bypassSheetListStaff,
+		AppBypassSheetListStudent,
+    AppBypassSheetListStaff,
 	},
 }
 </script>
