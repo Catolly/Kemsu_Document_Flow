@@ -1,11 +1,13 @@
 <template>
   <div
-    :class="classObj"
+    :class="{'error': error || !!errorMessages.length}"
     class="app-text-field-wrapper"
   >
     <textarea
-      class="app-text-field"
+      :value="value"
       :rows="rows"
+      class="app-text-field"
+      @input="$emit('input', $event.target.value)"
     />
 
     <app-message-list
@@ -28,9 +30,14 @@ export default {
   },
 
   props: {
+    value: {
+      type: String,
+      default: '',
+    },
+
     rows: {
       type: Number,
-      default: 7,
+      default: 8,
     },
 
     error: {
@@ -48,19 +55,10 @@ export default {
       default:() => [],
     },
   },
-
-  computed: {
-    classObj() {
-      return {
-        'error': !!this.errorMessages.length,
-      }
-    },
-  },
 }
 </script>
 
 <style lang="less" scoped>
-
 .app-text-field-wrapper {
   width: 100%;
 
@@ -70,25 +68,27 @@ export default {
       border-color: @red;
     }
   }
-
-  .app-text-field {
-    padding: 32px;
-
-    width: inherit;
-
-    background: @grey-bright;
-    border: 1px solid @grey-light;
-    border-radius: 5px;
-
-    transition: .2s ease all;
-
-    resize: none;
-
-    &:focus {
-      border-color: @blue;
-    }
-  }
 }
 
+.app-text-field {
+  padding: 32px;
 
+  width: inherit;
+
+  font-size: @fz-large;
+  font-weight: @fw-light;
+  line-height: 160%;
+
+  background: @grey-bright;
+  border: 1px solid @grey-light;
+  border-radius: 5px;
+
+  transition: .2s ease all;
+
+  resize: none;
+
+  &:focus {
+    border-color: @blue;
+  }
+}
 </style>

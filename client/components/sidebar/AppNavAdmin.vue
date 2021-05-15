@@ -1,17 +1,14 @@
 <template>
   <nav class="app-nav-admin">
     <NuxtLink
-    to="/bypass-sheets"
+    to="/schemas"
     class="nav-link">Обходной лист</NuxtLink>
     <NuxtLink
     to="/users"
     class="nav-link">Пользователи</NuxtLink>
     <NuxtLink
-    to="/signs"
+    to="/bypass-sheets"
     class="nav-link">Подписи</NuxtLink>
-    <NuxtLink
-    to="/history"
-    class="nav-link">История</NuxtLink>
     <NuxtLink
     to="/settings"
     class="nav-link">Настройки</NuxtLink>

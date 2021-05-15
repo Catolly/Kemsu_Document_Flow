@@ -31,7 +31,7 @@ export default {
 	padding: 40px 48px;
 
 	background: @item-background-color;
-	border: 2px solid @item-border-color;
+	border: 1px solid @item-border-color;
 	border-radius: 12px;
 
 	.flex(space-between, center);

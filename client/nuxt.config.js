@@ -1,5 +1,3 @@
-// import { API_URL } from '@/services/config.js'
-
 module.exports = {
 
   //Headers of the page
@@ -36,24 +34,7 @@ module.exports = {
   // Modules configuration
   modules: [
     '@nuxtjs/style-resources',
-    '@nuxtjs/axios'
   ],
-
-  axios: {
-    baseURL: 'http://mydoc.kemsu.ru/',
-  },
-
-  publicRuntimeConfig: {
-    axios: {
-      browserBaseURL: process.env.BROSER_BASE_URL
-    },
-  },
-
-  privateRuntimeConfig: {
-    axios: {
-      baseURL: process.env.BASE_URL
-    },
-  },
 
   // Style resources configuration
   styleResources: {
@@ -67,7 +48,7 @@ module.exports = {
 
   // Plugins configuration
   plugins: [
-    '~/plugins/Vuelidate'
+    '~/plugins/Vuelidate',
   ],
 
   // Router configuration

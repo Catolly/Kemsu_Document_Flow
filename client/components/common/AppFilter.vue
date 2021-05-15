@@ -14,17 +14,16 @@
 
     <app-list
       class="filter-list"
-      :gap="18"
+      :gap="16"
     >
-      <!-- // add first default option "-"-->
       <app-select
         v-for="(filter, index) in filterList"
         :key="index"
         :placeholder="filter.placeholder"
-        :options="filter.options"
-        :selected="filter.selected"
+        :options="filter.options.map(option => option + (filter.postfix || ''))"
+        :value="filter.selected + (filter.selected && filter.postfix || '')"
         class="select"
-        @select="select($event, filter)"
+        @input="select($event, filter)"
       />
     </app-list>
 
@@ -54,8 +53,12 @@ export default {
 
   methods: {
     select(selected, filter) {
-      this.$emit('select', selected, filter)
-    },
+      if (filter.postfix) {
+        selected = selected.substring(0, selected.indexOf(filter.postfix))
+      }
+
+      this.$emit('select', [selected, filter])
+    }
   },
 }
 </script>

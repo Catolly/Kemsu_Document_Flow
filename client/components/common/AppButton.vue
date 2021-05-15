@@ -2,7 +2,7 @@
 	<button
   	tabindex="0"
   	class="app-button"
-    :class="{ 'disabled': disabled }"
+    :class="classObj"
     :disabled="disabled"
   	@click="$emit('click')"
   	@keydown.enter="$emit('click')"
@@ -20,6 +20,92 @@ export default {
       type: Boolean,
       default: false,
     },
+
+    round: {
+      type: Boolean,
+      default: false,
+    },
+
+    semiRound: {
+      type: Boolean,
+      default: false,
+    },
+
+    big: {
+      type: Boolean,
+      default: false,
+    },
+
+    red: {
+      type: Boolean,
+      default: false,
+    },
+
+    green: {
+      type: Boolean,
+      default: false,
+    },
+
+    blue: {
+      type: Boolean,
+      default: false,
+    },
+
+    cancel: {
+      type: Boolean,
+      default: false,
+    },
+
+    plain: {
+      type: Boolean,
+      default: false,
+    },
+
+    fluid: {
+      type: Boolean,
+      default: false,
+    },
+
+    underlined: {
+      type: Boolean,
+      default: false,
+    },
+
+    square: {
+      type: Boolean,
+      default: false,
+    },
+
+    filled: {
+      type: Boolean,
+      default: false,
+    },
+
+    icon: {
+      type: Boolean,
+      default: false,
+    },
+  },
+
+  computed: {
+    classObj() {
+      return {
+        'disabled': this.disabled,
+        'round': this.round,
+        'big': this.big,
+        'red': this.red,
+        'green': this.green,
+        'blue': this.blue,
+        'cancel': this.cancel,
+        'plain': this.plain,
+        'fluid': this.fluid,
+        'underlined': this.underlined,
+        'square': this.square,
+        'filled': this.filled,
+        'icon': this.icon,
+        'semi-round': this.semiRound,
+      }
+    },
   },
 }
 </script>
@@ -27,11 +113,17 @@ export default {
 <style lang="less" scoped>
 
 .app-button {
+  position: relative;
+
   height: 50px;
   width: fit-content;
 
   padding: 12px 48px;
   border-radius: 10px;
+
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
 
   color: @grey-darkset;
   .setInteractiveColor(color, @black, @black);
@@ -45,8 +137,31 @@ export default {
   cursor: pointer;
 }
 
+.square {
+  padding: 0;
+
+  height: 50px;
+  width: 50px;
+
+  &.big {
+    min-height: 70px;
+    min-width: 70px;
+  }
+}
+
+.round {
+  padding: 0;
+  width: 50px;
+  border-radius: 100%;
+}
+
+.semi-round {
+  border-radius: 100px;
+}
+
 .big {
-  height: 70px;
+  min-height: 70px;
+  min-width: 70px;
 }
 
 .fluid {
@@ -67,6 +182,10 @@ export default {
 
 .blue {
   .setColor(@blue, @blue-hover, @blue-active);
+}
+
+.cancel {
+  .setColor(@grey-darkset, @red-hover, @red-active);
 }
 
 .plain {
@@ -104,17 +223,33 @@ export default {
   border-color: @color;
 
   .setInteractiveColor(background, @color-hover, @color-active);
+  .setInteractiveColor(border-color, @color-hover, @color-active);
   .setInteractiveColor(color, @white, @white);
 
   &.filled {
     background: @color;
+    &.icon{
+      fill: @white;
+      .setInteractiveColor(fill, @white, @white);
+    }
 
     .setInteractiveColor(background, @color-hover, @color-active);
+    .setInteractiveColor(border-color, @color-hover, @color-active);
   }
 
   &.plain {
     .setInteractiveColor(background, none, none);
     .setInteractiveColor(color, @color-hover, @color-active);
+  }
+
+  &.icon {
+    border-color: transparent;
+    fill: @black;
+
+    .setInteractiveColor(background, none, none);
+    .setInteractiveColor(color, @color-hover, @color-active);
+    .setInteractiveColor(border-color, transparent, transparent);
+    .setInteractiveColor(fill, @color-hover, @color-active);
   }
 }
 

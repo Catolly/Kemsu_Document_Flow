@@ -1,54 +1,81 @@
 <template>
-  <div class="app-reject-form">
-
+  <form
+    @submit.prevent=""
+    class="app-reject-form"
+  >
     <app-button
-      class="close-btn icon"
-      @click="$emit('close')"
+      icon
+      square
+      red
+      class="close-btn"
+      @click="close"
     >
       <icon-close />
     </app-button>
 
-    <div class="header">
+    <div class="head">
       <h1>Отказать</h1>
 
       <span>
-        <span>
-          Козырева Татьяна Андреевна
+        <span class="header">
+          {{student.fullname}}
         </span>
         <br>
         <span class="student-status">
-          Курс, факультет и тд.
+          {{student.group}},
+          {{student.courseNumber}} курс.
+          {{student.recruitmentForm}}.
+          {{student.status}}.
         </span>
       </span>
     </div>
 
     <div class="reason">
-      <app-text-field
-        class="reason-text-field"
-      />
+      <div class="section">
+        <span class="header">Загрузить документы</span>
+        <div class="upload-wrapper">
+          <app-upload
+            small
+            class="upload"
+            @upload="setRequiredDocuments"
+          />
+          <app-upload-list
+            v-if="requiredDocuments.length"
+            small
+            :documentList="requiredDocuments"
+            class="upload-list"
+            @delete="deleteRequiredDocument"
+          />
+        </div>
+      </div>
 
-      <!-- @click="addChipsToTextField" -->
-      <div class="likely-reason-crisps">
-        <app-chips class="chips">
-          Необходимо сдать ключ от комнаты
-        </app-chips>
-        <app-chips class="chips">
-          Необходимо сдать ключ от комнаты
-        </app-chips>
-        <app-chips class="chips">
-          Необходимо сдать ключ от комнаты
-        </app-chips>
+      <div class="section">
+        <span class="header">Сообщение</span>
+        <app-text-field
+          v-model="rejectReason"
+          :rows="3"
+          class="reason-text-field"
+        />
+        <div class="possible-reason-crisps">
+          <app-chips
+            v-for="(reason, index) in possibleReasons"
+            :key="index"
+            class="chips"
+            @click="rejectReason = rejectReason + reason"
+          >
+            {{reason}}
+          </app-chips>
+        </div>
       </div>
     </div>
 
     <app-button
       class="reject-btn red filled"
-      @click="$emit('reject')"
+      @click="reject"
     >
       Отказать
     </app-button>
-
-  </div>
+  </form>
 </template>
 
 <script>
@@ -56,6 +83,9 @@ import AppButton from '~/components/common/AppButton'
 import IconClose from '~/components/icons/IconClose'
 import AppTextField from '~/components/common/AppTextField'
 import AppChips from '~/components/common/AppChips'
+import AppUpload from '~/components/common/AppUpload'
+import AppUploadList from '~/components/common/AppUploadList'
+
 
 export default {
   name: 'AppRejectForm',
@@ -65,9 +95,85 @@ export default {
     IconClose,
     AppTextField,
     AppChips,
+    AppUpload,
+    AppUploadList,
   },
 
+  data:() => ({
+    possibleReasons: [ // bypassSheetSchema.possibleReasons
+      'Необходимо сдать ключ от комнаты',
+      'Необходимо сдать койко-место коменданту',
+      'Необходимо сдать койко-место коменданту',
+    ],
 
+    rejectReason: '',
+    requiredDocuments: [],
+  }),
+
+  props: {
+    student: {
+      type: Object,
+      required: true,
+
+      point: {
+        type: Object,
+        required: true,
+
+        rejectReason: {
+          type: String,
+          default: '',
+        },
+        requiredDocuments: {
+          type: Array,
+          default:() => [],
+        },
+      },
+    },
+  },
+
+  watch: {
+    student() {
+      this.setFormData()
+    },
+  },
+
+  methods: {
+    setFormData() {
+      this.rejectReason = this.student.point.rejectReason
+      this.requiredDocuments = this.student.point.requiredDocuments
+    },
+
+    clearFormData() {
+      this.rejectReason = ''
+      this.requiredDocuments = []
+    },
+
+    reject() {
+      this.student.point.rejectReason = this.rejectReason,
+      this.student.point.requiredDocuments = this.requiredDocuments,
+      this.$emit('reject', this.student)
+
+      this.clearFormData()
+    },
+
+    close() {
+      this.$emit('close')
+      this.setFormData()
+    },
+
+    setRequiredDocuments(requiredDocuments) {
+      this.requiredDocuments = Array.from(requiredDocuments)
+    },
+
+    deleteRequiredDocument(deletingDoc) {
+      this.requiredDocuments = this.requiredDocuments.filter(doc =>
+        doc != deletingDoc)
+    },
+  },
+
+  beforeMount() {
+    this.setFormData()
+  },
 }
 </script>
 
@@ -75,8 +181,9 @@ export default {
 .app-reject-form {
   position: relative;
 
-  display: grid;
-  grid-row-gap: 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 
   width: 900px;
 
@@ -86,27 +193,40 @@ export default {
     right: 0;
   }
 
-  .header,
+  .header {
+    font-weight: @fw-normal;
+  }
+
+  .head,
   .reason {
-    display: grid;
-    grid-row-gap: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
   }
 
   .student-status {
     color: @text-grey;
   }
 
-  .reason-text-field {
-
+  .section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
   }
 
-  .likely-reason-crisps {
+  .upload-wrapper {
+    display: flex;
+    gap: 16px;
+  }
+
+  .upload {
+    flex-shrink: 0;
+  }
+
+  .possible-reason-crisps {
     display: flex;
     flex-flow: row wrap;
-
-    .chips {
-      margin: 4px 8px 4px 0;
-    }
+    gap: 8px;
   }
 }
 

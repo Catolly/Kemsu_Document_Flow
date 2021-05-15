@@ -57,8 +57,6 @@ export default {
 
 <style lang="less" scoped>
 .app-sign-topbar {
-  margin-top: 48px;
-
   display: flex;
   align-items: center;
   gap: 18px;

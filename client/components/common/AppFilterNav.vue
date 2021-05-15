@@ -1,104 +1,85 @@
 <template>
-
 	<nav class="app-filter-nav">
-
-    <!-- change NuxtLink to app-button with icon attribute -->
-  	<NuxtLink
-		to="#"
-		class="back-link">
-			<icon-arrow-back class="active"/>
-		</NuxtLink>
-
-    <!-- change NuxtLink to app-button with icon attribute -->
-  	<NuxtLink
-		to="#"
-		class="next-link">
-			<icon-arrow-next/>
-		</NuxtLink>
+  	<app-button
+      icon
+      blue
+      square
+		  class="back-button"
+      @click="$emit('setFilterDepth', filterPathClear.length - 2)"
+    >
+			<icon-arrow/>
+		</app-button>
 
   	<span class="filter-body">
-			{{filterNamesBody}}
-      <span class="filter-head">{{filterNamesHead}}</span>
+			{{filterPathBody}}
+      <span class="filter-head">{{filterPathHead}}</span>
 		</span>
 
   </nav>
-
 </template>
 
 <script>
-import IconArrowBack from '~/components/icons/IconArrowBack'
-import IconArrowNext from '~/components/icons/IconArrowNext'
+import IconArrow from '~/components/icons/IconArrow'
+import AppButton from '~/components/common/AppButton'
 
 export default {
 	name: "AppFilterNav",
 
 	components: {
-		IconArrowBack,
-		IconArrowNext,
+		IconArrow,
+    AppButton,
 	},
 
   props: {
-    filterNames: {
+    filterPath: {
       type: Array,
       default:() => ([])
     },
   },
 
   computed: {
-    // Переименовать filterPathHead
-    filterNamesHead() {
-      return this.filterNamesClearedEmpty.slice(-1).join()
+    filterPathHead() {
+      return this.filterPathClear
+      .slice(-1)
+      .join()
     },
 
-    // Переименовать filterPathBody
-    filterNamesBody() {
-      if (this.filterNamesClearedEmpty.length <= 1) return ''
+    filterPathBody() {
+      if (this.filterPathClear.length <= 1) return ''
 
-      return this.filterNamesClearedEmpty.slice(0, -1)
-                                         .join(' / ') +
-                                         ' / ' // Разделитель последнего элемента
+      return this.filterPathClear
+      .slice(0, -1)
+      .join(' / ') + ' / ' // Разделитель последнего элемента
     },
 
-    // Заменить на filterNamesHead
-    filterNamesClearedEmpty() {
-      return this.filterNames.filter(filterName => filterName)
+    filterPathClear() {
+      return this.filterPath.filter(filterName => filterName)
     },
-
-    // filterPath() {
-    //   return
-    // },
   },
 }
 </script>
 
 <style lang="less" scoped>
-
-// change style
 .app-filter-nav {
   margin-top: 16px;
 
-  .back-link:after,
-  .next-link:after {
-  	display: none;
-  }
-
-  .back-link {
-  	margin-right: 14px;
-  }
-
-  .next-link {
-  	margin-right: 28px;
-  }
-
-  .filter-body {
-  	color: @text-grey;
-  	font-size: @fz-small;
-    font-weight: @fw-normal;
-  }
-
-  .filter-head {
-  	color: #000;
-  }
+  display: flex;
+  align-items: center;
+  gap: 24px;
 }
 
+.back-button {
+  height: fit-content;
+  width: fit-content;
+}
+
+.filter-body {
+	color: @text-grey;
+	font-size: @fz-small;
+  font-weight: @fw-normal;
+}
+
+.filter-head {
+	color: @black;
+}
 </style>

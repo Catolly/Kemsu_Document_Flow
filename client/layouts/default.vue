@@ -1,13 +1,16 @@
 <template>
 	<div class="container">
-		<app-sidebar class="app-sidebar" />
+		<app-sidebar class="app-sidebar"/>
 		<div class="content-wrapper">
-			<Nuxt />
+			<Nuxt class="content" />
 		</div>
 	</div>
 </template>
 
 <script>
+import { mapGetters } from "vuex"
+import { CHECK_AUTH } from '~/store/actions.type'
+
 import AppSidebar from '~/components/sidebar/AppSidebar'
 
 export default {
@@ -25,7 +28,16 @@ export default {
 		AppSidebar,
 	},
 
-	// middleware: 'checkUserIsLoggedIn'
+  computed: {
+    ...mapGetters(['isAuthenticated']),
+  },
+
+  beforeMount() {
+    this.$store.dispatch(CHECK_AUTH)
+      .then(() => {
+        if (!this.isAuthenticated) this.$router.push('/login')
+      })
+  },
 }
 </script>
 
@@ -38,12 +50,17 @@ export default {
 
 .content-wrapper {
 	margin-left: @app-sidebar-width;
-  padding-left: 104px;
-  padding-right: 48px;
 
-	height: 100vh;
+	height: fit-content;
 
 	background: @white;
+}
+
+.content {
+  min-height: 100vh;
+  padding-left: 96px;
+  padding-right: 48px;
+  padding-bottom: 60px;
 }
 
 </style>

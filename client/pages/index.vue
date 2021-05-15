@@ -6,8 +6,8 @@
 export default {
   name: 'index',
 
-  beforeCreate() {
-    this.$router.push('/bypass-sheets/')
-  },
+  // beforeCreate() { Чекаем права и перекидываем, куда надо
+  //   this.$router.push('/bypass-sheets/')
+  // },
 }
 </script>

@@ -1,11 +1,14 @@
 <template>
-	<div class="container">
+	<div class="empty container">
 		<icon-logo class="logo big" />
 		<Nuxt />
 	</div>
 </template>
 
 <script>
+import { mapGetters } from "vuex"
+import { CHECK_AUTH } from '~/store/actions.type'
+
 import IconLogo from '~/components/icons/IconLogo'
 
 export default {
@@ -23,16 +26,23 @@ export default {
 		IconLogo,
 	},
 
-	// middleware: 'checkUserIsLoggedOut',
+  computed: {
+    ...mapGetters(['isAuthenticated']),
+  },
+
+	beforeMount() {
+    this.$store.dispatch(CHECK_AUTH)
+      .then(() => {
+        if (this.isAuthenticated) this.$router.push('/')
+      })
+  },
 }
 </script>
 
 <style lang="less" scoped>
-
 .logo {
   position: fixed;
   top: 25px;
   left: 60px;
 }
-
 </style>
