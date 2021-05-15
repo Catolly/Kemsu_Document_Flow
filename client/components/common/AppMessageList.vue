@@ -47,9 +47,22 @@ export default {
   display: grid;
   grid-row-gap: 8px;
 
-  .error-message {
-    color: @red;
-  }
+  font-size: @fz-small;
+  font-weight: @fw-light;
+}
+
+.message,
+.error-message {
+  font-size: @fz-small;
+  font-weight: @fw-light;
+}
+
+.message {
+  color: @grey-darkset;
+}
+
+.error-message {
+  color: @red;
 }
 
 </style>
