@@ -26,7 +26,7 @@
       </label>
     </div>
 
-    <template v-if="errorMessages.length">
+    <template v-if="errorMessages.length || messages.length">
       <app-message-list
         :error-messages="errorMessages"
         :messages="messages"
