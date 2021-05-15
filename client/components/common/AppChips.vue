@@ -1,31 +1,35 @@
 <template>
-  <span
+  <app-button
+    blue
+    semi-round
     class="app-chips"
     @click="$emit('click')"
   >
     <slot />
-  </span>
+  </app-button>
 </template>
 
 <script>
+import AppButton from '~/components/common/AppButton'
+
+
 export default {
-  name: 'AppChips'
+  name: 'AppChips',
+
+  components: {
+    AppButton,
+  },
 }
 </script>
 
 <style lang="less" scoped>
 
 .app-chips {
-  display: inline-block;
-  box-sizing: border-box;
+  transition: .1s;
 
   padding: 12px 24px;
-  width: fit-content;
 
   font-size: @fz-small;
-  color: @blue;
-  border: 1px solid @blue;
-  border-radius: 100px;
 }
 
 </style>
