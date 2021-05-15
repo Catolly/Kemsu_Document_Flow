@@ -10,8 +10,8 @@
     <!-- Определяем, какие права у юзера -->
     <div class="nav">
       <!-- <app-nav-student /> -->
-      <app-nav-staff />
-      <!-- <app-nav-admin /> -->
+      <!-- <app-nav-staff /> -->
+      <app-nav-admin />
     </div>
   </div>
 </template>

@@ -4,9 +4,6 @@
     to="/bypass-sheets"
     class="nav-link">Подписи</NuxtLink>
     <NuxtLink
-    to="/history"
-    class="nav-link">История</NuxtLink>
-    <NuxtLink
     to="/settings"
     class="nav-link">Настройки</NuxtLink>
     <NuxtLink
