@@ -16,6 +16,7 @@
 			</span>
 
 			<label
+        v-if="placeholder"
   			:class="{'small': value}"
   			class="label"
       >
