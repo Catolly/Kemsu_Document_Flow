@@ -4,8 +4,10 @@
     class="app-text-field-wrapper"
   >
     <textarea
-      class="app-text-field"
+      :value="value"
       :rows="rows"
+      class="app-text-field"
+      @input="$emit('input', $event.target.value)"
     />
 
     <app-message-list
@@ -28,6 +30,11 @@ export default {
   },
 
   props: {
+    value: {
+      type: String,
+      default: '',
+    },
+
     rows: {
       type: Number,
       default: 8,
