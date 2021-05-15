@@ -20,7 +20,7 @@ const actions = {
   [FETCH_BYPASS_SHEETS](context, data) {
     const {
       bypassSheets: prevBypassSheets,
-      department,
+      department = '',
     } = data
     if (prevBypassSheets.length !== 0) {
       return context.commit(SET_BYPASS_SHEETS, prevBypassSheets)
@@ -28,7 +28,7 @@ const actions = {
     return new Promise((resolve, reject) => {
       context.dispatch(WAIT_FOR, 'checkingAuth')
         .then(() => {
-          BypassSheetsService.get(department || '')
+          BypassSheetsService.get(department)
             .then(({ data }) => {
               context.commit(SET_BYPASS_SHEETS, data)
               resolve(data)
