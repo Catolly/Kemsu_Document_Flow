@@ -246,12 +246,9 @@ class StudentSerializer(serializers.ModelSerializer):
 
 class PostStatementsSerializer(serializers.ModelSerializer):
 
-    title = serializers.CharField(max_length=50, write_only=True)
-    img = serializers.ImageField(use_url=True, allow_empty_file=True, allow_null=True)
-
     class Meta:
         model = Statement
-        fields = ('title', 'img')
+        fields = ('title', 'file')
 
 class PostByPassSheetsSerializer(serializers.ModelSerializer):
 
@@ -266,8 +263,28 @@ class PostByPassSheetsSerializer(serializers.ModelSerializer):
     def statementsCreate(self, statements_data, module):
 
         for statement_data in statements_data:
-            statement_data['module'] = module
+            statement_data['bypass_sheet'] = module
             Statement.objects.create(**statement_data)
+
+    def __createPoints(self, bypass_sheet, student):
+        bypass_sheet_template = BypassSheetTemplate.objects.filter(title=bypass_sheet.title, educationForm=student.educationForm).first()
+
+        bypass_sheet_template.studentList.add(student.user.id)
+
+        points_template = PointTemplate.objects.filter(bypass_sheet_template = bypass_sheet_template)
+
+        point_data = dict()
+
+        for point in points_template:
+            point_data['title'] = point.title
+            point_data['description'] = point.description
+            point_data['gender'] = point.gender
+            point_data['department'] = point.department
+            point_data['bypass_sheet'] = bypass_sheet
+
+            Point.objects.create(**point_data)
+
+            point_data = dict()
 
     def create(self, validated_data):
         user = None
@@ -287,13 +304,13 @@ class PostByPassSheetsSerializer(serializers.ModelSerializer):
 
         validated_data['student_id'] = student
 
-        module = BypassSheet.objects.create(**validated_data)
+        bypass_sheet = BypassSheet.objects.create(**validated_data)
 
-        self.statementsCreate(statements_data, module)
+        self.statementsCreate(statements_data, bypass_sheet)
 
-        self.__createPoints(module)
+        self.__createPoints(bypass_sheet, student)
 
-        return module
+        return bypass_sheet
 
 class TokenEmailSerializer(Serializer):
     email = User.EMAIL_FIELD
