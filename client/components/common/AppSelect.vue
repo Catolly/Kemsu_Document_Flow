@@ -40,6 +40,7 @@
 		</div>
 
     <app-message-list
+      v-if="errorMessages.length || messages.length"
       :error-messages="errorMessages"
       :messages="messages"
       class="message-list"
