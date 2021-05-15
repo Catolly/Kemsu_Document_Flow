@@ -1,7 +1,7 @@
 const Role = {
-  Student: 'Student',
   Staff: 'Staff',
   Admin: 'Admin',
+  Student: 'Студент',
 }
 
 export default Role

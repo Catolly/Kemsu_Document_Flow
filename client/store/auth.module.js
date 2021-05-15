@@ -156,6 +156,17 @@ const actions = {
       }
     })
   },
+  async [CHECK_ROLE](context, roles) {
+    if (!roles) throw `Error roles: roles missing`
+    if (typeof roles === 'string') roles = [roles]
+    if (!roles.length) throw `Error roles format: roles inputed - ${roles}`
+
+    ApiService.setHeader()
+    return await ApiService.post('checkAccess', {
+      role: roles,
+      accessToken: JwtService.getToken().access,
+    })
+  },
   [UPDATE_USER](context, payload) {
     return new Promise((resolve, reject) => {
       ApiService.setHeader()
