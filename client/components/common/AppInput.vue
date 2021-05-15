@@ -105,10 +105,6 @@ export default {
   },
 
   methods: {
-    // inputValue(value) {
-    //   this.$emit('input', value)
-    // },
-
     focus() {
       this.$refs.appInput.focus()
     },
@@ -117,7 +113,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-
 .app-input-wrapper {
   position: relative;
 
@@ -187,20 +182,19 @@ export default {
       }
     }
   }
-
-  .label {
-    position: absolute;
-    top: calc(50% - .6em); // Фиксирует label по центру input'а
-    left: 1.2em;
-    z-index: 1;
-
-    color: @grey-darkset;
-
-    background: linear-gradient(to top, @grey-bright 50%, transparent 0);
-
-    user-select: none;
-    cursor: text;
-  }
 }
 
+.label {
+  position: absolute;
+  top: calc(50% - .6em); // Фиксирует label по центру input'а
+  left: 1.2em;
+  z-index: 1;
+
+  color: @grey-darkset;
+
+  background: linear-gradient(to top, @grey-bright 50%, transparent 0);
+
+  user-select: none;
+  cursor: text;
+}
 </style>
