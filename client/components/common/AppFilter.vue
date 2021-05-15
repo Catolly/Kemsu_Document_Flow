@@ -16,7 +16,6 @@
       class="filter-list"
       :gap="16"
     >
-      <!-- // add first default option "-"-->
       <app-select
         v-for="(filter, index) in filterList"
         :key="index"
@@ -24,7 +23,7 @@
         :options="filter.options.map(option => option + (filter.postfix || ''))"
         :value="filter.selected + (filter.selected && filter.postfix || '')"
         class="select"
-        @select="select($event, filter)"
+        @input="select($event, filter)"
       />
     </app-list>
 
