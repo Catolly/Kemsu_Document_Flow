@@ -14,7 +14,7 @@
 
     <app-list
       class="filter-list"
-      :gap="18"
+      :gap="16"
     >
       <!-- // add first default option "-"-->
       <app-select
