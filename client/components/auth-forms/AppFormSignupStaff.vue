@@ -6,21 +6,21 @@
     <div class="body">
       <div class="inputs">
         <app-input
-          v-model="$v.fullName.$model"
+          v-model="$v.fullname.$model"
           placeholder="Ф.И.О."
           :errorMessages="[
-            ... $v.fullName.$dirty
-                && !$v.fullName.required
+            ... $v.fullname.$dirty
+                && !$v.fullname.required
                 ? ['Поле должно быть заполнено']
                 : [],
-            ... $v.fullName.$dirty
-                && $v.fullName.required
-                && !$v.fullName.twoOrThreeWords
+            ... $v.fullname.$dirty
+                && $v.fullname.required
+                && !$v.fullname.twoOrThreeWords
                 ? ['Поле должно содержать хотя бы имя и фамилию']
                 : [],
           ]"
-          @input="reset($v.fullName)"
-          @change="checkField($v.fullName)"
+          @input="reset($v.fullname)"
+          @change="checkField($v.fullname)"
         />
 
         <app-input
@@ -57,7 +57,7 @@
           v-model="$v.password.$model"
           type="password"
           placeholder="Пароль"
-          :messages="['Пароль должен содержать 7 и более символов']"
+          :messages="[`Пароль должен содержать ${minPasswordLength} и более символов`]"
           :errorMessages="[
             ... $v.password.$dirty
                 && !$v.password.required
@@ -66,7 +66,7 @@
             ... $v.password.$dirty
                 && $v.password.required
                 && !$v.password.minLength
-                ? ['Пароль должен содержать 7 и более символов']
+                ? [`Пароль должен содержать ${minPasswordLength} и более символов`]
                 : [],
           ]"
           @input="reset($v.password)"
@@ -101,6 +101,7 @@
 <script>
 import { required, minLength, email, helpers } from "vuelidate/lib/validators"
 import { twoOrThreeWordsReg } from '~/vuelidate/validators'
+import { minPasswordLength } from "~/vuelidate/constants"
 
 import AppButton from '~/components/common/AppButton'
 import AppInput from '~/components/common/AppInput'
@@ -121,7 +122,7 @@ export default {
   },
 
   validations:() => ({
-    fullName: {
+    fullname: {
       required,
       twoOrThreeWords,
     },
@@ -134,12 +135,12 @@ export default {
     },
     password: {
       required,
-      minLength: minLength(7),
+      minLength: minLength(minPasswordLength),
     },
   }),
 
   data:() => ({
-    fullName: '',
+    fullname: '',
     email: '',
     department: '',
     password: '',
@@ -159,6 +160,7 @@ export default {
         'Юридический институт',
         'Среднетехнический факультет',
     ],
+    minPasswordLength: minPasswordLength,
   }),
 
   methods: {
@@ -169,16 +171,16 @@ export default {
     },
 
     checkField($v) {
-      if (!$v.required) return
-
       $v.$model = $v.$model.trim()
 
       $v.$touch()
     },
 
     submit() {
-      // Проверка данных формы
-      // ...
+      this.$v.$touch()
+
+      if (this.$v.$invalid) return
+
       this.signup()
     },
 
@@ -193,7 +195,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-
 .inputs,
 .btns {
   display: grid;
