@@ -43,7 +43,7 @@
 
         <app-select
           v-model="$v.department.$model"
-          :options="departmentList"
+          :options="allDepartments.map(department => department.title)"
           placeholder="Отдел, в котором работаете"
           :errorMessages="[
             ... $v.department.$dirty
@@ -74,6 +74,15 @@
         />
       </div>
 
+      <p
+        v-if="sugnupError"
+        class="signup-error"
+      >
+        Не удалось зарегистрироваться
+        <br>
+        Повторите попытку позже
+      </p>
+
       <div class="btns">
         <app-button
           class="signup-btn blue big filled fluid"
@@ -99,6 +108,9 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex"
+import { SIGNUP_STAFF, FETCH_ALL_DEPARTMENTS } from "~/store/actions.type"
+
 import { required, minLength, email, helpers } from "vuelidate/lib/validators"
 import { twoOrThreeWordsReg } from '~/vuelidate/validators'
 import { minPasswordLength } from "~/vuelidate/constants"
@@ -145,23 +157,14 @@ export default {
     department: '',
     password: '',
 
-    departmentList: [
-        'Институт биологии, экологии и природных ресурсов',
-        'Институт инженерных технологий',
-        'Институт истории и международных отношений',
-        'Институт образования',
-        'Институт филологии, иностранных языков и медиакоммуникаций',
-        'Технологический институт пищевой промышленности',
-        'Институт цифры',
-        'Институт экономики и управления',
-        'Социально-психологический институт',
-        'Факультет физкультуры и спорта',
-        'Институт фундаментальных наук',
-        'Юридический институт',
-        'Среднетехнический факультет',
-    ],
     minPasswordLength: minPasswordLength,
+
+    sugnupError: '',
   }),
+
+  computed: {
+    ...mapGetters(['allDepartments']),
+  },
 
   methods: {
     reset($v) {
@@ -184,12 +187,25 @@ export default {
       this.signup()
     },
 
-    async signup() {
-      // Отправка данных на сервер
-      // ...
-
-      this.$router.push('/')
+    signup() {
+      this.$store
+        .dispatch(SIGNUP_STAFF, {
+          'fullname': this.fullname,
+          'email': this.email,
+          'department': this.department,
+          'password': this.password,
+        })
+        .then(() => this.$router.push('/'))
+        .catch(error => this.sugnupError = error)
     },
+
+    fetchAllDepartments() {
+      this.$store.dispatch(FETCH_ALL_DEPARTMENTS, this.allDepartments)
+    },
+  },
+
+  mounted() {
+    this.fetchAllDepartments()
   },
 }
 </script>
@@ -224,4 +240,9 @@ export default {
   }
 }
 
+.signup-error {
+  margin-top: 16px;
+  margin-bottom: -16px;
+  color: @red;
+}
 </style>
