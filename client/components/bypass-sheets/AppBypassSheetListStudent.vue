@@ -82,7 +82,7 @@ export default {
   beforeMount() {
     this.$store
       .dispatch(FETCH_BYPASS_SHEETS, {
-        prevBypassSheets: this.bypassSheets,
+        bypassSheets: this.bypassSheets,
         // department: 'ИФН' //currentUser.department
       })
       .catch(error => this.loadError = error)
