@@ -577,7 +577,7 @@ class PostUploadDocumentsFormatSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UploadDocumentsFormat
-        fields = ('title', 'format', 'filesCount')
+        fields = ('title', 'format')
 
 class PostPointTemplateSerializer(serializers.ModelSerializer):
 
@@ -592,6 +592,7 @@ class PostBypassSheetTemplateSerializer(serializers.ModelSerializer):
 
     statements = PostStatementTemplateSerializer(many=True, write_only=True)
     points = PostPointTemplateSerializer(many=True, write_only=True)
+    studentList = serializers.ListField(write_only=True, allow_empty=True)
 
     class Meta:
         model = BypassSheetTemplate
@@ -615,7 +616,7 @@ class PostBypassSheetTemplateSerializer(serializers.ModelSerializer):
 
         for required_document in required_documents:
             required_documents_data['title'] = required_document['title']
-            required_documents_data['point'] = point_template
+            required_documents_data['point_template'] = point_template
 
             RequiredDocuments.objects.create(**required_documents_data)
 
@@ -629,7 +630,6 @@ class PostBypassSheetTemplateSerializer(serializers.ModelSerializer):
         for upload_document_format in upload_documents_format:
             upload_documents_format_data['title'] = upload_document_format['title']
             upload_documents_format_data['format'] = upload_document_format['format']
-            upload_documents_format_data['filesCount'] = upload_document_format['filesCount']
             upload_documents_format_data['point_template'] = point_template
 
             UploadDocumentsFormat.objects.create(**upload_documents_format_data)

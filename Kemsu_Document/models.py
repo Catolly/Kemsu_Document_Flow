@@ -159,7 +159,7 @@ class Student(models.Model):
 
 class BypassSheetTemplate(models.Model):
     name = models.CharField("Название модуля", default=None, max_length=50)
-    studentList = models.ManyToManyField(Student, verbose_name="Студент", related_name="bypassSheetTemplate")
+    studentList = models.ManyToManyField(Student, verbose_name="Студент", related_name="bypassSheetTemplate", null=True)
 
     EDUCATION_FORM = (
         ('Очная', 'Очная'),
@@ -312,7 +312,6 @@ class RequiredDocuments(models.Model):
 class UploadDocumentsFormat(models.Model):
     title = models.CharField("Название документа", default=None, max_length=50)
     format = models.CharField("Название документа", default=None, max_length=100)
-    filesCount = models.PositiveSmallIntegerField("Кол-во загружаемых документов")
     point_template = models.ForeignKey(PointTemplate, verbose_name="Шаблон пункта", on_delete=models.CASCADE, null=False, related_name='uploadDocumentsFormat')
 
     def __str__(self):
