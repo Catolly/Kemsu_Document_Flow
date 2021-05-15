@@ -66,6 +66,15 @@
         />
       </div>
 
+      <p
+        v-if="signupError"
+        class="signup-error"
+      >
+        Не удалось зарегистрироваться
+        <br>
+        Повторите попытку позже
+      </p>
+
       <div class="btns">
         <app-button
           class="signup-btn blue big filled fluid"
@@ -91,6 +100,9 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex"
+import { SIGNUP_STUDENT, FETCH_UNREGISTERED_STUDENTS } from "~/store/actions.type"
+
 import { required, minLength, email } from "vuelidate/lib/validators"
 import { optionExist } from "~/vuelidate/validators"
 import { minPasswordLength } from "~/vuelidate/constants"
@@ -119,28 +131,8 @@ export default {
 
     minPasswordLength: minPasswordLength,
 
-    relevantUsers: [
-      {
-        id: 34,
-        fullName: 'Козырева Татьяна Андреевна',
-        group: "M-174",
-      },
-      {
-        id: 64,
-        fullName: 'Козырева Татьяна Андреевна',
-        group: "M-185",
-      },
-      {
-        id: 18,
-        fullName: 'Сергиенко Анатолий Николаевич',
-        group: "M-174",
-      },
-      {
-        id: 93,
-        fullName: 'Оооооооооооооооооооочень длинное имя',
-        group: "M-174",
-      },
-    ],
+    signupError: '',
+    fetchUnregisteredStudentsError: '',
   }),
 
   validations:() => ({
@@ -159,12 +151,15 @@ export default {
   }),
 
   computed: {
-    relevantUsersOptionList() {
-      return this.relevantUsers.map(user => ({
+    ...mapGetters(['unregisteredStudents']),
+
+    unregisteredStudentsOptionList() {
+      return this.unregisteredStudents.slice(0, 5).map(user => ({
         id: user.id,
-        value: user.fullName + ' - ' + user.group,
+        value: user.fullname + this.divider + user.group,
       }))
-    }
+    },
+  },
 
   watch: {
     fullnameAndGroup() {
@@ -194,13 +189,24 @@ export default {
       this.signup()
     },
 
-    async signup() {
-      // Отправка данных на сервер
-      // ...
-
-      this.$router.push('/')
+    signup() {
+      this.$store
+        .dispatch(SIGNUP_STUDENT, {
+          'fullname': this.fullname,
+          'group': this.group,
+          'email': this.email,
+          'password': this.password,
+        })
+        .then(() => this.$router.push('/'))
+        .catch(error => this.signupError = error)
     },
-  }
+  },
+
+  created() {
+    this.$store
+      .dispatch(FETCH_UNREGISTERED_STUDENTS, this.unregisteredStudents)
+      .catch(error => this.fetchUnregisteredStudentsError = error)
+  },
 }
 </script>
 
