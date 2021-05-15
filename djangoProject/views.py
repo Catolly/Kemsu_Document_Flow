@@ -11,7 +11,7 @@ from Kemsu_Document.exceptions import GroupNotFoundError, ThisUserIsAlreadyExist
     DepartmentNotFoundException
 from Kemsu_Document.models import (
     User, BypassSheet,
-    Point, Student, Department, Institute, Group, BypassSheetTemplate,
+    Point, Student, Department, Institute, Group, BypassSheetTemplate, Staff,
 )
 
 from Kemsu_Document.serializers import (
@@ -21,11 +21,12 @@ from Kemsu_Document.serializers import (
     LogoutSerializer, RefreshTokenSerializer, PostByPassSheetsSerializer, DepartmentsSerializer,
     UserBypassSheetSerializer, FileSerializer, GroupSerializer, BypassSheetTemplateSerializer,
     PostBypassSheetTemplateSerializer, UnregisteredStudentSerializer, CheckAccessSerializer,
-    UserBypassSheetPointSerializer,
+    UserBypassSheetPointSerializer, StaffSerializer,
 )
 
 from .permissions import (
-    StudentViewPermission, BypassSheetsViewPermission, UsersViewPermission, BypassSheetViewPermission, )
+    BypassSheetsViewPermission, UsersViewPermission, BypassSheetViewPermission,
+    UserViewPermission, )
 
 
 class RegistrationStudentAPIView(APIView):
@@ -111,18 +112,23 @@ class RegistrationStaffAPIView(APIView):
         )
 
 class UserList(APIView):
-    permission_classes = [StudentViewPermission]
+    permission_classes = [UserViewPermission]
 
     def get(self, request, pk):
         student = Student.objects.filter(user=pk).first()
+
         if not student:
-            return Response(
-                {
-                    "message": "The student with this id does not exist"
-                },
-                status=status.HTTP_204_NO_CONTENT
-            )
-        serializer = StudentSerializer(student)
+            staff = Staff.objects.filter(user=pk).first()
+            if not staff:
+                return Response(
+                    {
+                        "message": "The user with this id does not exist"
+                    },
+                    status=status.HTTP_204_NO_CONTENT
+                )
+            serializer = StaffSerializer(staff)
+        else:
+            serializer = StudentSerializer(student)
         return Response(serializer.data)
 
     def patch(self, request, pk):
@@ -133,11 +139,14 @@ class UserList(APIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 class UsersListView(APIView):
-    permission_classes = [UsersViewPermission]
+    # permission_classes = [UsersViewPermission]
+    permission_classes = [AllowAny]
 
     def get(self, request):
         student = Student.objects.all()
+
         serializer = StudentSerializer(student, many=True)
+
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 class BypassSheetsView(APIView):

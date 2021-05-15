@@ -30,17 +30,18 @@ class IsStudent(permissions.BasePermission):
     def has_permission(self, request, view):
         return bool(request.user and request.user.status == "Студент" and request.user.id == view.kwargs['pk'])
 
-class StudentViewPermission(permissions.BasePermission):
+class UserViewPermission(permissions.BasePermission):
 
     def has_permission(self, request, view):
         if request.user.is_authenticated:
             if request.method == "GET":
                 return bool((request.user and request.user.status == "Студент" and request.user.id == view.kwargs['pk'])
                             or (request.user and request.user.status == "Администратор")
-                            or (request.user and request.user.status == "Работник"))
+                            or (request.user and request.user.status == "Работник" and request.user.id == view.kwargs['pk']))
             elif request.method == "PATCH":
                 return bool((request.user and request.user.status == "Студент" and request.user.id == view.kwargs['pk'])
-                            or (request.user and request.user.status == "Администратор"))
+                            or (request.user and request.user.status == "Администратор")
+                            or (request.user and request.user.status == "Работник" and request.user.id == view.kwargs['pk']))
             return False
         return False
 

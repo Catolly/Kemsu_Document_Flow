@@ -164,12 +164,23 @@ class RequiredDocumentsSerializer(serializers.ModelSerializer):
         fields = ("title", "img")
 
 class StaffSerializer(serializers.ModelSerializer):
-
-    user = serializers.SlugRelatedField('fullname', read_only=True)
+    id = serializers.SerializerMethodField()
+    fullname = serializers.SerializerMethodField()
+    email = serializers.SerializerMethodField()
+    department = serializers.SlugRelatedField(slug_field='title', read_only=True)
 
     class Meta:
         model = Staff
-        fields = ('user', )
+        fields = ('id', 'fullname', 'email', 'department', 'contactNumber')
+
+    def get_id(self, staff):
+        return staff.user.id
+
+    def get_fullname(self, staff):
+        return staff.user.fullname
+
+    def get_email(self, staff):
+        return staff.user.email
 
 class PointSerializer(serializers.ModelSerializer):
 
@@ -200,37 +211,9 @@ class BypassSheetsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = BypassSheet
-        fields = ("name", "statements", "points", "status")
-
-    # def get_points(self, BypassSheet):
-    #     # bypassSheetsName = self.context.get('bypassSheetsName')
-    #     #
-    #     # bypassSheets = BypassSheet.objects.filter(name=bypassSheetsName, student_id=user)
-    #     #
-    #     # serializers = BypassSheetsSerializer(bypassSheets, context=self.context, many=True)
-    #     #
-    #     # return serializers.data
-    #     pointsName = self.context.get('pointName')
-    #     print(pointsName)
-    #     if pointsName != "":
-    #         points = Point.objects.filter(title=pointsName, bypass_sheet=BypassSheet)
-    #     else:
-    #         points = Point.objects.filter(bypass_sheet=BypassSheet)
-    #
-    #     serializers = PointSerializer(points, many=True, read_only=True)
-
-        # return serializers.data
+        fields = ("title", "statements", "points", "status")
 
 class StudentSerializer(serializers.ModelSerializer):
-
-    # user = UserSerializer(required=False, read_only=True)
-    # group = GroupSerializer(required=False, read_only=True)
-    # bypassSheet = BypassSheetsSerializer(required=False, read_only=True, many=True)
-    #
-    # class Meta:
-    #     model = Student
-    #     fields = ('user', 'group', 'educationForm', 'status', 'bypassSheet')
-
     id = serializers.SerializerMethodField()
     fullname = serializers.SerializerMethodField()
     email = serializers.SerializerMethodField()
@@ -274,11 +257,11 @@ class PostByPassSheetsSerializer(serializers.ModelSerializer):
 
     statements = PostStatementsSerializer(many=True, write_only=True)
 
-    name = serializers.CharField(max_length=50, write_only=True)
+    title = serializers.CharField(max_length=50, write_only=True)
 
     class Meta:
         model = BypassSheet
-        fields = ('name', 'statements')
+        fields = ('title', 'statements')
 
     def statementsCreate(self, statements_data, module):
 
@@ -476,7 +459,7 @@ class UserBypassSheetSerializer(serializers.ModelSerializer):
     def get_bypassSheet(self, user):
         bypassSheetsName = self.context.get('bypassSheetsName')
 
-        bypassSheets = BypassSheet.objects.filter(name=bypassSheetsName, student_id=user)
+        bypassSheets = BypassSheet.objects.filter(title=bypassSheetsName, student_id=user)
 
         serializers = BypassSheetsSerializer(bypassSheets, context=self.context, many=True)
 
@@ -517,7 +500,7 @@ class UserBypassSheetPointSerializer(serializers.ModelSerializer):
         bypassSheetsName = self.context.get('bypassSheetsName')
         pointsName = self.context.get('pointName')
 
-        bypassSheets = BypassSheet.objects.filter(name=bypassSheetsName, student_id=user)
+        bypassSheets = BypassSheet.objects.filter(title=bypassSheetsName, student_id=user)
 
         points = Point.objects.filter(title=None)
         for bypassSheet in bypassSheets:
@@ -559,7 +542,7 @@ class BypassSheetTemplateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = BypassSheetTemplate
-        fields = ('name', 'educationForm', 'statements', 'points')
+        fields = ('title', 'educationForm', 'statements', 'points')
 
 class PostStatementTemplateSerializer(serializers.ModelSerializer):
 
@@ -596,7 +579,7 @@ class PostBypassSheetTemplateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = BypassSheetTemplate
-        fields = ('name', 'educationForm', 'statements', 'points', 'studentList')
+        fields = ('title', 'educationForm', 'statements', 'points', 'studentList')
 
     def create_statements_template(self, bypass_sheet_template, validated_data):
         statements_template = validated_data.pop('statements')
@@ -690,7 +673,7 @@ class PostBypassSheetTemplateSerializer(serializers.ModelSerializer):
 
         bypass_sheet_data = dict()
 
-        bypass_sheet_data['name'] = bypass_sheet_template.name
+        bypass_sheet_data['title'] = bypass_sheet_template.title
         bypass_sheet_data['educationForm'] = bypass_sheet_template.educationForm
 
         for student in studentQuery:
@@ -705,7 +688,7 @@ class PostBypassSheetTemplateSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         bypass_sheet_validated_data = dict()
 
-        bypass_sheet_validated_data.setdefault('name', validated_data.pop('name'))
+        bypass_sheet_validated_data.setdefault('title', validated_data.pop('title'))
         bypass_sheet_validated_data.setdefault('educationForm', validated_data.pop('educationForm'))
         bypass_sheet_template = BypassSheetTemplate.objects.create(**bypass_sheet_validated_data)
         bypass_sheet_template.studentList.set(validated_data.pop('studentList'))

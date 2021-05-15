@@ -158,7 +158,7 @@ class Student(models.Model):
         return self.user.fullname
 
 class BypassSheetTemplate(models.Model):
-    name = models.CharField("Название модуля", default=None, max_length=50)
+    title = models.CharField("Название модуля", default=None, max_length=50)
     studentList = models.ManyToManyField(Student, verbose_name="Студент", related_name="bypassSheetTemplate", null=True)
 
     EDUCATION_FORM = (
@@ -210,7 +210,7 @@ class PointTemplate(models.Model):
         return self.title
 
 class BypassSheet(models.Model):
-    name = models.CharField("Название модуля", default=None, max_length=50)
+    title = models.CharField("Название модуля", default=None, max_length=50)
     student_id = models.ForeignKey(Student, verbose_name="Студент", on_delete=models.CASCADE, null=False, related_name='bypassSheet')
     # bypass_sheet_template = models.OneToOneField(BypassSheetTemplate, verbose_name="Шаблон обходного листа", on_delete=models.SET_NULL, null=True, related_name='BypassSheet')
 
