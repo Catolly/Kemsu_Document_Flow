@@ -48,6 +48,13 @@
 			</p>
 
       <div class="btns">
+        <p
+          v-if="loginError"
+          class="error-message"
+        >
+          Неверный логин или пароль
+        </p>
+
   			<app-button
           class="login-btn blue big filled fluid"
           :disabled="$v.$invalid"
@@ -67,6 +74,8 @@
 </template>
 
 <script>
+import { LOGIN } from "~/store/actions.type"
+
 import { required, minLength, email } from "vuelidate/lib/validators"
 import { minPasswordLength } from "~/vuelidate/constants"
 
@@ -122,17 +131,24 @@ export default {
       this.login()
     },
 
-    async login() {
-      // Отправка данных на сервер
-      // ...
-
-      this.$router.push('/')
+    login() {
+      this.$store
+        .dispatch(LOGIN, {
+          'email': this.email,
+          'password': this.password,
+        })
+        .then(() => this.$router.push('/'))
+        .catch(error => this.loginError = error)
     },
   },
 }
 </script>
 
 <style lang="less" scoped>
+
+.error-message {
+  color: @red;
+}
 
 .form {
   .header {
