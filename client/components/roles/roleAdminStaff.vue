@@ -9,11 +9,14 @@ import { mapGetters } from 'vuex'
 import { ROLE_IS } from '~/store/actions.type'
 
 export default {
-  name: 'roleStudent',
+  name: 'roleAdminStaff',
 
   async beforeMount() {
     try {
-      const hasAccess = await this.$store.dispatch(ROLE_IS, this.Role.Student)
+      const hasAccess = await this.$store.dispatch(ROLE_IS, [
+        this.Role.Admin,
+        this.Role.Staff
+      ])
       if (!hasAccess) this.$router.push('/')
     } catch (error) {
       console.error(error)
