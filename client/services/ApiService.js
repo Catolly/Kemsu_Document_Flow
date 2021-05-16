@@ -98,7 +98,6 @@ export const BypassSheetsSchemasService = {
 
 export const DepartmentsService = {
   get(institute='', department='') {
-    ApiService.setHeader()
     return ApiService.get(
       `departments`
       + (institute ? `/${institute}` : '')
