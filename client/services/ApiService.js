@@ -62,12 +62,12 @@ export default ApiService
 export const BypassSheetsService = {
   post(bypassSheet) {
     ApiService.setHeader()
-    return ApiService.post('bypass-sheets/', bypassSheet)
+    return ApiService.post('bypass_sheets/', bypassSheet)
   },
 
   get() { //department=''
     ApiService.setHeader()
-    return ApiService.get('bypass-sheets')
+    return ApiService.get('bypass_sheets')
   },
 
   patchMany(params) {
@@ -77,7 +77,7 @@ export const BypassSheetsService = {
     } = params
     console.log(department, bypassSheets)
     ApiService.setHeader()
-    return ApiService.patch(`bypass-sheets/${department}`, bypassSheets)
+    return ApiService.patch(`bypass_sheets/${department}`, bypassSheets)
   },
 }
 
