@@ -2,7 +2,8 @@ import { BypassSheetsService } from '~/services/ApiService'
 import {
   CHECK_AUTH,
   FETCH_BYPASS_SHEETS,
-  UPDATE_BYPASS_SHEETS
+  UPDATE_BYPASS_SHEETS,
+  WAIT_FOR,
 } from './actions.type'
 import { SET_BYPASS_SHEETS, SET_ERROR } from './mutations.type'
 
