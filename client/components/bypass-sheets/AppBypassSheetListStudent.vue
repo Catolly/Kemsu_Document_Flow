@@ -85,7 +85,10 @@ export default {
         bypassSheets: this.bypassSheets,
         // department: 'ИФН' //currentUser.department
       })
-      .catch(error => this.loadError = error)
+      .catch(error => {
+        console.error(error)
+        this.loadError = error
+      })
   },
 }
 </script>
