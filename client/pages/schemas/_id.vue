@@ -1,115 +1,116 @@
 <template>
-  <form
+  <roleAdmin
     :class="{'step-two': step == '2'}"
-    @submit.prevent=""
     class="container"
   >
-    <div class="form-wrapper">
-      <h1 class="header">Редактирование обходного листа</h1>
+    <form @submit.prevent="">
+      <div class="form-wrapper">
+        <h1 class="header">Редактирование обходного листа</h1>
 
-      <span
-        v-if="loadError"
-        class="error-message"
-      >
-        Не удалось загрузить форму
-      </span>
-
-      <div
-        v-if="!loadError"
-        class="steps"
-      >
-        <NuxtLink
-          :class="{
-            'current': step == '1',
-            'has-error': isInvalidForm && step != '1'
-          }"
-          class="step"
-          :to="{
-            path: this.$route.path,
-            query: { step: '1' }
-          }"
+        <span
+          v-if="loadError"
+          class="error-message"
         >
-        Шаг 1
-        </NuxtLink>
+          Не удалось загрузить форму
+        </span>
 
-        <NuxtLink
-          :class="{'current': step == '2'}"
-          class="step"
-          :to="{
-            path: this.$route.path,
-            query: { step: '2' }
-          }"
+        <div
+          v-if="!loadError"
+          class="steps"
         >
-        Шаг 2
-        </NuxtLink>
+          <NuxtLink
+            :class="{
+              'current': step == '1',
+              'has-error': isInvalidForm && step != '1'
+            }"
+            class="step"
+            :to="{
+              path: this.$route.path,
+              query: { step: '1' }
+            }"
+          >
+          Шаг 1
+          </NuxtLink>
+
+          <NuxtLink
+            :class="{'current': step == '2'}"
+            class="step"
+            :to="{
+              path: this.$route.path,
+              query: { step: '2' }
+            }"
+          >
+          Шаг 2
+          </NuxtLink>
+        </div>
+
+        <app-schema-edit-form
+          v-if="schema && filteredStudentList && !loadError"
+          :step="step"
+          :studentList="filteredStudentList"
+          :schema="schema"
+          :filterPath="filterPath"
+          @setFilterDepth="setFilterDepth"
+          @changeStep="step = $event"
+          @touch="isInvalidForm = $event"
+          class="edit-form"
+        />
       </div>
 
-      <app-schema-edit-form
-        v-if="schema && filteredStudentList && !loadError"
-        :step="step"
-        :studentList="filteredStudentList"
-        :schema="schema"
-        :filterPath="filterPath"
-        @setFilterDepth="setFilterDepth"
-        @changeStep="step = $event"
-        @touch="isInvalidForm = $event"
-        class="edit-form"
-      />
-    </div>
+      <div
+        v-show="step == '2'"
+        class="filter-section"
+      >
+        <app-filter
+          v-if="schema && filterList && !loadError"
+          :filterList="filterList"
+          @select="select"
+          @clear="clear"
+          class="filter"
+        />
 
-    <div
-      v-show="step == '2'"
-      class="filter-section"
-    >
-      <app-filter
-        v-if="schema && filterList && !loadError"
-        :filterList="filterList"
-        @select="select"
-        @clear="clear"
-        class="filter"
-      />
-
-      <div class="submit-section">
-        <div class="submit">
-          <span
-            v-if="updateError"
-            class="error-message"
-          >
-            Не удалось обновить обходной лист
-          </span>
-
-          <div v-if="!loadError" class="nav-btns">
-            <NuxtLink
-              class="clear"
-              tabindex="-1"
-              :to="{
-                path: this.$route.path,
-                query: { step: '1' }
-              }"
-              append
+        <div class="submit-section">
+          <div class="submit">
+            <span
+              v-if="updateError"
+              class="error-message"
             >
-              <app-button
-                cancel
-                class="back"
+              Не удалось обновить обходной лист
+            </span>
+
+            <div v-if="!loadError" class="nav-btns">
+              <NuxtLink
+                class="clear"
+                tabindex="-1"
+                :to="{
+                  path: this.$route.path,
+                  query: { step: '1' }
+                }"
+                append
               >
-                Назад
-              </app-button>
-            </NuxtLink>
+                <app-button
+                  cancel
+                  class="back"
+                >
+                  Назад
+                </app-button>
+              </NuxtLink>
 
-            <app-button
-              filled
-              blue
-              class="next-step"
-              :disabled="isInvalidForm"
-              @click="submit"
-            >
-              Сохранить
-            </app-button>
+              <app-button
+                filled
+                blue
+                class="next-step"
+                :disabled="isInvalidForm"
+                @click="submit"
+              >
+                Сохранить
+              </app-button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </form>
+    </form>
+  </roleAdmin>
 </template>
 
 <script>
@@ -124,12 +125,15 @@ import {
 
 import { initFilterService } from '~/services/FilterService'
 
+import roleAdmin from '~/components/roles/roleAdmin'
+
 import AppSchemaEditForm from '~/components/schemas-edit/AppSchemaEditForm'
 import AppFilter from '~/components/common/AppFilter'
 import AppButton from '~/components/common/AppButton'
 
 export default {
   components: {
+    roleAdmin,
     AppSchemaEditForm,
     AppFilter,
     AppButton,

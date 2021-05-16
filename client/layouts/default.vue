@@ -1,5 +1,5 @@
 <template>
-	<div class="container">
+	<div v-if="isAuthenticated" class="container">
 		<app-sidebar class="app-sidebar"/>
 		<div class="content-wrapper">
 			<Nuxt class="content" />

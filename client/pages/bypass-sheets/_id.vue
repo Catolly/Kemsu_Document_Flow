@@ -1,5 +1,5 @@
 <template>
-	<div class="container">
+	<roleStudent class="container">
 		<h1 class="header">
 			Обходной лист - {{title}}
 		</h1>
@@ -12,18 +12,21 @@
 				class="point"
       />
 		</app-list>
-	</div>
+	</roleStudent>
 </template>
 
 <script>
 import { mapGetters } from "vuex"
 import { LOGOUT, FETCH_BYPASS_SHEETS } from "~/store/actions.type"
 
+import roleStudent from '~/components/roles/roleStudent'
+
 import AppList from '~/components/common/AppList'
 import AppBypassSheetPoint from '~/components/bypass-sheets/AppBypassSheetPoint'
 
 export default {
 	components: {
+    roleStudent,
 		AppList,
     AppBypassSheetPoint,
 	},

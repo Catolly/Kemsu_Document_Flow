@@ -1,5 +1,5 @@
 <template>
-	<div class="empty container">
+	<div v-if="!isAuthenticated" class="empty container">
 		<icon-logo class="logo big" />
 		<Nuxt />
 	</div>

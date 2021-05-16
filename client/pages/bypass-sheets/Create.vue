@@ -1,5 +1,5 @@
 <template>
-	<div class="container">
+	<roleStudent class="container">
 		<form
       @submit.prevent="submit"
       class="form"
@@ -81,7 +81,7 @@
 				</app-button>
 			</div>
 		</form>
-	</div>
+	</roleStudent>
 </template>
 
 <script>
@@ -89,6 +89,8 @@ import { BypassSheetsService } from '~/services/ApiService'
 // import { CHECK_AUTH } from '~/store/actions.type'
 
 import { required } from "vuelidate/lib/validators"
+
+import roleStudent from '~/components/roles/roleStudent'
 
 import AppButton from '~/components/common/AppButton'
 import AppSelect from '~/components/common/AppSelect'
@@ -101,6 +103,7 @@ export default {
 	name: 'create',
 
 	components: {
+    roleStudent,
 		AppButton,
 		AppSelect,
 		AppUpload,

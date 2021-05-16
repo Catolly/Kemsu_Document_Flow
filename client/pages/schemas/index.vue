@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <roleAdmin class="container">
     <h1 class="header">Обходные листы</h1>
 
     <p
@@ -49,12 +49,14 @@
     >
       Нет результатов
     </h2>
-  </div>
+  </roleAdmin>
 </template>
 
 <script>
 import { mapGetters } from "vuex"
 import { FETCH_BYPASS_SHEETS_SCHEMAS } from "~/store/actions.type"
+
+import roleAdmin from '~/components/roles/roleAdmin'
 
 import AppButton from '~/components/common/AppButton'
 import AppSearch from '~/components/common/AppSearch'
@@ -65,6 +67,7 @@ export default {
   name: 'index',
 
   components: {
+    roleAdmin,
     AppButton,
     AppSearch,
     AppList,
