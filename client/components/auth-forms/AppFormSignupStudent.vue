@@ -92,14 +92,22 @@
 
       <p class="signup-problem">
         Кто-то зарегистрировался под вашим именем? Обратитесь к
-        <NuxtLink to="#">администрации</NuxtLink>
+        <a @click="dialog = true">администрации</a>
       </p>
     </div>
 
+    <app-dialog :isOpen="dialog" @close="dialog = false">
+      <p>
+        При возникновении проблем, свяжитесь с администрацией:
+        <b>{{adminEmail}}</b>
+      </p>
+    </app-dialog>
   </form>
 </template>
 
 <script>
+import { adminEmail } from "~/services/config"
+
 import { mapGetters } from "vuex"
 import { SIGNUP_STUDENT, FETCH_UNREGISTERED_STUDENTS } from "~/store/actions.type"
 
@@ -110,6 +118,7 @@ import { minPasswordLength } from "~/vuelidate/constants"
 import AppButton from '~/components/common/AppButton'
 import AppInput from '~/components/common/AppInput'
 import AppAutocomplete from '~/components/common/AppAutocomplete'
+import AppDialog from '~/components/common/AppDialog'
 
 export default {
   name: 'FormSingupStudent',
@@ -118,6 +127,7 @@ export default {
     AppButton,
     AppInput,
     AppAutocomplete,
+    AppDialog,
   },
 
   data:() => ({
@@ -133,6 +143,9 @@ export default {
 
     signupError: '',
     fetchUnregisteredStudentsError: '',
+
+    dialog: false,
+    adminEmail: adminEmail,
   }),
 
   validations:() => ({

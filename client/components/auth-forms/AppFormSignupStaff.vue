@@ -100,14 +100,22 @@
 
       <p class="signup-problem">
         Кто-то зарегистрировался под вашим именем? Обратитесь к
-        <NuxtLink to="#">администрации</NuxtLink>
+        <a @click="dialog = true">администрации</a>
       </p>
     </div>
 
+    <app-dialog :isOpen="dialog" @close="dialog = false">
+      <p>
+        При возникновении проблем, свяжитесь с администрацией:
+        <b>{{adminEmail}}</b>
+      </p>
+    </app-dialog>
   </form>
 </template>
 
 <script>
+import { adminEmail } from "~/services/config"
+
 import { mapGetters } from "vuex"
 import { SIGNUP_STAFF, FETCH_ALL_DEPARTMENTS } from "~/store/actions.type"
 
@@ -118,6 +126,7 @@ import { minPasswordLength } from "~/vuelidate/constants"
 import AppButton from '~/components/common/AppButton'
 import AppInput from '~/components/common/AppInput'
 import AppSelect from '~/components/common/AppSelect'
+import AppDialog from '~/components/common/AppDialog'
 
 const isTwoOrThreeWords = helpers.regex('isTwoOrThreeWords',
   twoOrThreeWordsReg) // От 2 до 3 слов
@@ -131,6 +140,7 @@ export default {
     AppButton,
     AppInput,
     AppSelect,
+    AppDialog,
   },
 
   validations:() => ({
@@ -160,6 +170,9 @@ export default {
     minPasswordLength: minPasswordLength,
 
     sugnupError: '',
+
+    dialog: false,
+    adminEmail: adminEmail,
   }),
 
   computed: {
