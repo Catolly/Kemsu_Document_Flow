@@ -15,6 +15,8 @@ export default {
 
 	name: 'login',
 
+  middleware: 'unauthenticated',
+
   components: {
     AppButton,
     AppFormLogin,

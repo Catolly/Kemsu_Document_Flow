@@ -81,6 +81,7 @@ import AppModal from '~/components/common/AppModal'
 import AppRejectForm from '~/components/bypass-sheets/signature/AppRejectForm'
 
 export default {
+  middleware: 'authenticated',
 
   components: {
     roleStaff,

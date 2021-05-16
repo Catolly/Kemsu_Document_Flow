@@ -142,6 +142,8 @@ import AppButton from '~/components/common/AppButton'
 export default {
 	name: 'settings',
 
+  middleware: 'authenticated',
+
 	components: {
 		AppInput,
 		AppButton

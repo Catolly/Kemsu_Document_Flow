@@ -88,6 +88,8 @@ import AppButton from '~/components/common/AppButton'
 export default {
   name: 'users',
 
+  middleware: 'authenticated',
+
   components: {
     AppFilter,
     AppFilterNav,

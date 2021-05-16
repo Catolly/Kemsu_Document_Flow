@@ -15,6 +15,7 @@ import AppFormSignupStudent from '~/components/auth-forms/AppFormSignupStudent'
 export default {
 	layout: 'empty',
 	name: 'signup',
+  middleware: 'unauthenticated',
   components: {
     AppButton,
     AppFormSignupStaff,
