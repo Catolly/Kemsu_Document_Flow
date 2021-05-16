@@ -44,7 +44,7 @@
       </div>
 
 			<p class="forgot-password">
-				<NuxtLink to="#">Не помню пароль</NuxtLink>
+				<a @click="dialog = true">Не помню пароль</a>
 			</p>
 
       <div class="btns">
@@ -70,10 +70,18 @@
       </div>
 		</div>
 
+    <app-dialog :isOpen="dialog" @close="dialog = false">
+      <p>
+        Для восстановления пароля свяжитесь с администрацией:
+        <b>{{adminEmail}}</b>
+      </p>
+    </app-dialog>
 	</form>
 </template>
 
 <script>
+import { adminEmail } from "~/services/config"
+
 import { LOGIN } from "~/store/actions.type"
 
 import { required, minLength, email } from "vuelidate/lib/validators"
@@ -81,6 +89,7 @@ import { minPasswordLength } from "~/vuelidate/constants"
 
 import AppButton from '~/components/common/AppButton'
 import AppInput from '~/components/common/AppInput'
+import AppDialog from '~/components/common/AppDialog'
 
 export default {
   name: 'AppFormLogin',
@@ -88,6 +97,7 @@ export default {
   components: {
     AppButton,
     AppInput,
+    AppDialog,
   },
 
   data:() => ({
@@ -97,6 +107,9 @@ export default {
     minPasswordLength: minPasswordLength,
 
     loginError: '',
+
+    dialog: false,
+    adminEmail: adminEmail,
   }),
 
   validations:() => ({
