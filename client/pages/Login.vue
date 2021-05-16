@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="content">
-      <app-form-login />
+      <app-form-login class="login" />
     </div>
   </div>
 </template>
@@ -23,18 +23,25 @@ export default {
 </script>
 
 <style scoped>
-
 .container {
   height: 100vh;
 
   display: flex;
   justify-content: center;
-  align-items: center;
 }
 
 .content {
   width: 516px;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
+.login {
+  padding: 48px 0;
+  overflow-y: auto;
+}
 </style>
 

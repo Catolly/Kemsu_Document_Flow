@@ -1,8 +1,8 @@
 <template>
   <div class="container">
     <div class="content">
-      <app-form-signup-staff v-if="$route.query.staff"/>
-      <app-form-signup-student v-else/>
+      <app-form-signup-staff v-if="$route.query.staff" class="signup"/>
+      <app-form-signup-student v-else class="signup"/>
     </div>
   </div>
 </template>
@@ -24,18 +24,24 @@ export default {
 </script>
 
 <style lang="less" scoped>
-
 .container {
   height: 100vh;
 
   display: flex;
   justify-content: center;
-  align-items: center;
 }
 
 .content {
   width: 516px;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
+.signup {
+  padding: 48px 0;
+  overflow-y: auto;
+}
 </style>
-
