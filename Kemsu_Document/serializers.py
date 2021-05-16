@@ -156,12 +156,12 @@ class UploadedDocumentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UploadedDocuments
-        fields = ("title", "img")
+        fields = ("img",)
 
 class RequiredDocumentsSerializer(serializers.ModelSerializer):
     class Meta:
         model = RequiredDocuments
-        fields = ("title", "img")
+        fields = ("img",)
 
 class StaffSerializer(serializers.ModelSerializer):
     id = serializers.SerializerMethodField()
@@ -202,7 +202,7 @@ class StatementSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Statement
-        fields = ("title",)
+        fields = ("file", )
 
 class BypassSheetsSerializer(serializers.ModelSerializer):
 
@@ -248,7 +248,7 @@ class PostStatementsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Statement
-        fields = ('title', 'file')
+        fields = ('file',)
 
 class PostByPassSheetsSerializer(serializers.ModelSerializer):
 
@@ -393,14 +393,7 @@ class UpdateStatementSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Statement
-        fields = ('title', )
-
-    # def update(self, instance, validated_data):
-    #     print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
-    #
-    #     instance.title = validated_data.get('title', instance.title)
-    #
-    #     return instance
+        fields = ('file', )
 
 class UpdateBypassSheetSerializer(serializers.ModelSerializer):
 
@@ -557,19 +550,19 @@ class FileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Statement
-        fields = ("file", "title")
+        fields = ("file",)
 
 class StatementsTemplateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = StatementsTemplate
-        fields = ('title', 'img')
+        fields = ('img',)
 
 class RequiredDocumentsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = RequiredDocuments
-        fields = ('title', 'img')
+        fields = ('img',)
 
 class PointTemplateSerializer(serializers.ModelSerializer):
 
@@ -586,25 +579,25 @@ class BypassSheetTemplateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = BypassSheetTemplate
-        fields = ('title', 'educationForm', 'statements', 'points')
+        fields = ('id', 'title', 'educationForm', 'statements', 'points')
 
 class PostStatementTemplateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = StatementsTemplate
-        fields = ('title', 'img')
+        fields = ('img',)
 
 class PostRequiredDocumentsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = RequiredDocuments
-        fields = ('title', 'img')
+        fields = ('img',)
 
 class PostUploadDocumentsFormatSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UploadDocumentsFormat
-        fields = ('title', 'format')
+        fields = ('format',)
 
 class PostPointTemplateSerializer(serializers.ModelSerializer):
 
@@ -631,7 +624,6 @@ class PostBypassSheetTemplateSerializer(serializers.ModelSerializer):
         statement_template_data = dict()
 
         for statement in statements_template:
-            statement_template_data['title'] = statement['title']
             statement_template_data['bypass_sheet_template'] = bypass_sheet_template
             StatementsTemplate.objects.create(**statement_template_data)
             statement_template_data = dict()
@@ -642,7 +634,6 @@ class PostBypassSheetTemplateSerializer(serializers.ModelSerializer):
         required_documents_data = dict()
 
         for required_document in required_documents:
-            required_documents_data['title'] = required_document['title']
             required_documents_data['point_template'] = point_template
 
             RequiredDocuments.objects.create(**required_documents_data)
@@ -655,7 +646,6 @@ class PostBypassSheetTemplateSerializer(serializers.ModelSerializer):
         upload_documents_format_data = dict()
 
         for upload_document_format in upload_documents_format:
-            upload_documents_format_data['title'] = upload_document_format['title']
             upload_documents_format_data['format'] = upload_document_format['format']
             upload_documents_format_data['point_template'] = point_template
 
@@ -704,7 +694,6 @@ class PostBypassSheetTemplateSerializer(serializers.ModelSerializer):
         statement_data = dict()
 
         for statement in statements_template_query:
-            statement_data['title'] = statement.title
             statement_data['img'] = statement.img
             statement_data['bypass_sheet'] = bypass_sheet
 

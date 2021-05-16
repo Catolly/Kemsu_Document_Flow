@@ -11,7 +11,7 @@ from Kemsu_Document.exceptions import GroupNotFoundError, ThisUserIsAlreadyExist
     DepartmentNotFoundException
 from Kemsu_Document.models import (
     User, BypassSheet,
-    Point, Student, Department, Institute, Group, BypassSheetTemplate, Staff, Statement,
+    Point, Student, Department, Institute, Group, BypassSheetTemplate, Staff, Statement, RequiredDocuments,
 )
 
 from Kemsu_Document.serializers import (
@@ -171,6 +171,43 @@ class BypassSheetsView(APIView):
         serializer.save()
         return Response(status=status.HTTP_201_CREATED)
 
+    def __updateRequiredDocuments(self, data, point):
+
+        for required_documents_data in data:
+            obj, statement = RequiredDocuments.objects.update_or_create(file=required_documents_data['file'],
+                                                                point=point,
+                                                                defaults={
+                                                                    'file': required_documents_data.get('file')
+                                                                })
+
+    def __updatePoint(self, data):
+
+        for point_and_bypass_sheet_data in data:
+            bypass_sheet = BypassSheet.objects.filter(id=point_and_bypass_sheet_data['id']).first()
+
+            point = Point.objects.filter(bypass_sheet=bypass_sheet, title=self.department_name).first()
+
+            point.status = point_and_bypass_sheet_data.get('status', point.status)
+
+            point.rejectReason = point_and_bypass_sheet_data.get('rejectReason', point.rejectReason)
+
+            point.staff = Staff.objects.get(user=self.user)
+
+            point.save()
+
+            self.__updateRequiredDocuments(point_and_bypass_sheet_data['requiredDocuments'], point)
+
+    def patch(self, request):
+        self.department_name = request.GET.get('department', '')
+
+        self.user = request.user
+
+        data = request.data
+
+        self.__updatePoint(data)
+
+        return Response(status=status.HTTP_200_OK)
+
 class BypassSheetView(APIView):
     # parser_classes = (MultiPartParser, FormParser)
     # permission_classes = [BypassSheetViewPermission]
@@ -180,9 +217,8 @@ class BypassSheetView(APIView):
 
         for statement_data in statements_data:
 
-            obj, statement = Statement.objects.update_or_create(title=statement_data['title'], bypass_sheet=bypass_sheet,
+            obj, statement = Statement.objects.update_or_create(file=statement_data['file'], bypass_sheet=bypass_sheet,
                                                            defaults = {
-                                                               'title': statement_data.get('title'),
                                                                'file': statement_data.get('file')
                                                            })
 
@@ -199,7 +235,7 @@ class BypassSheetView(APIView):
 
         serializer = BypassSheetsSerializer(bypass_sheet)
 
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_200_OK)
 
 class LoginView(TokenObtainPairView):
     serializer_class = TokenEmailPairSerializer

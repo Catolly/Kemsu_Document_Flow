@@ -177,7 +177,6 @@ class BypassSheetTemplate(models.Model):
         return self.title
 
 class StatementsTemplate(models.Model):
-    title = models.CharField("Название заявления", default=None, max_length=50)
     bypass_sheet_template = models.ForeignKey(BypassSheetTemplate, verbose_name="Шаблон обходного листа", on_delete=models.CASCADE, null=False, related_name="statements")
     img = models.FileField("Шаблон заявления", upload_to="statement_documents/", blank=True)
 
@@ -238,7 +237,6 @@ class BypassSheet(models.Model):
         return self.title
 
 class Statement(models.Model):
-    title = models.CharField("Название заявления", default=None, max_length=50)
     bypass_sheet = models.ForeignKey(BypassSheet, verbose_name="Обходной лист", on_delete=models.CASCADE, null=True, related_name="statements")
     file = models.FileField("Документ", upload_to="statement_documents/", blank=True)
     # statement_template = models.OneToOneField(StatementsTemplate, verbose_name="Шаблон заявления", on_delete=models.SET_NULL, null=True, related_name='statements')
@@ -246,8 +244,8 @@ class Statement(models.Model):
 
     STATUS = (
         ('На рассмотрении', 'На рассмотрении'),
-        ('Одобренно', 'Одобренно'),
-        ('Отказанно', 'Отказанно')
+        ('Одобрено', 'Одобрено'),
+        ('Отказано', 'Отказано')
     )
 
     status = models.CharField(max_length=20, choices=STATUS, blank=True, default='На рассмотрении', help_text='Статус заявления')
@@ -270,10 +268,10 @@ class Point(models.Model):
                                    related_name="points")
 
     STATUS = (
-        ('Не отправленно', 'Не отпрвленно'),
+        ('Не отправлено', 'Не отпрвлено'),
         ('На подписании', 'На подписании'),
-        ('Отказанно', 'Отказанно'),
-        ('Подписанно', 'Подписанно'),
+        ('Отказано', 'Отказано'),
+        ('Подписано', 'Подписано'),
     )
 
     GENDER = (
@@ -282,7 +280,7 @@ class Point(models.Model):
         ('None', 'None')
     )
 
-    status = models.CharField(max_length=20, choices=STATUS, blank=True, default='Не отправленно', help_text='Статус пункта')
+    status = models.CharField(max_length=20, choices=STATUS, blank=True, default='Не отправлено', help_text='Статус пункта')
     gender = models.CharField(max_length=10, choices=GENDER, blank=True, default='None')
 
     class Meta:
@@ -293,24 +291,21 @@ class Point(models.Model):
         return self.title
 
 class UploadedDocuments(models.Model):
-    title = models.CharField("Название документа", default=None, max_length=50)
-    img = models.ImageField("Файл", upload_to="Kemsu_Document/media/uploaded_documents", blank=True)
+    img = models.ImageField("Файл", upload_to="uploaded_documents/", blank=True)
     point = models.ForeignKey(Point, verbose_name="Пункт", on_delete=models.CASCADE, null=False, related_name="uploadedDocuments")
 
     def __str__(self):
         return self.title
 
 class RequiredDocuments(models.Model):
-    title = models.CharField("Название документа", default=None, max_length=50)
     img = models.ImageField("Файл", upload_to="required_documents/", blank=True)
-    point_template = models.ForeignKey(PointTemplate, verbose_name="Шаблон пункта", on_delete=models.CASCADE, null=False, related_name="requiredDocuments")
+    point_template = models.ForeignKey(PointTemplate, verbose_name="Шаблон пункта", on_delete=models.CASCADE, null=True, related_name="requiredDocuments")
     point = models.ForeignKey(Point, verbose_name="Пункт", on_delete=models.CASCADE, null=True, related_name="requiredDocuments")
 
     def __str__(self):
         return self.title
 
 class UploadDocumentsFormat(models.Model):
-    title = models.CharField("Название документа", default=None, max_length=50)
     format = models.CharField("Название документа", default=None, max_length=100)
     point_template = models.ForeignKey(PointTemplate, verbose_name="Шаблон пункта", on_delete=models.CASCADE, null=False, related_name='uploadDocumentsFormat')
 

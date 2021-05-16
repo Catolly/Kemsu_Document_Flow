@@ -1,5 +1,8 @@
 from rest_framework import permissions
 
+from Kemsu_Document.models import Staff
+
+
 class PermissionIsStudent(permissions.BasePermission):
 
     def has_permission(self, request, view):
@@ -56,6 +59,12 @@ class BypassSheetsViewPermission(permissions.BasePermission):
          elif request.method == "POST":
             if request.user.is_authenticated:
                 return bool(request.user and request.user.status == "Студент")
+         elif request.method == "PATCH":
+             if request.user.is_authenticated:
+                 print(Staff.objects.get(user=request.user).department.title)
+                 # print()
+                 return bool(request.user and request.user.status == "Работник" and
+                             Staff.objects.get(user=request.user).department.title == request.GET.get('department', ''))
 
 class BypassSheetViewPermission(permissions.BasePermission):
 
