@@ -11,7 +11,7 @@ from Kemsu_Document.exceptions import GroupNotFoundError, ThisUserIsAlreadyExist
     DepartmentNotFoundException
 from Kemsu_Document.models import (
     User, BypassSheet,
-    Point, Student, Department, Institute, Group, BypassSheetTemplate, Staff,
+    Point, Student, Department, Institute, Group, BypassSheetTemplate, Staff, Statement,
 )
 
 from Kemsu_Document.serializers import (
@@ -21,7 +21,7 @@ from Kemsu_Document.serializers import (
     LogoutSerializer, RefreshTokenSerializer, PostByPassSheetsSerializer, DepartmentsSerializer,
     UserBypassSheetSerializer, FileSerializer, GroupSerializer, BypassSheetTemplateSerializer,
     PostBypassSheetTemplateSerializer, UnregisteredStudentSerializer, CheckAccessSerializer,
-    UserBypassSheetPointSerializer, StaffSerializer,
+    UserBypassSheetPointSerializer, StaffSerializer, UpdateBypassSheetSerializer,
 )
 
 from .permissions import (
@@ -132,7 +132,7 @@ class UserList(APIView):
         return Response(serializer.data)
 
     def patch(self, request, pk):
-        user = User.objects.get(id=pk)
+        user = User.objects.filter(id=pk).first()
         serializer = UpdateUserSerializer(user, data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -156,10 +156,12 @@ class BypassSheetsView(APIView):
 
     def get(self, request):
         if request.user.status == "Студент":
-            modules = BypassSheet.objects.filter(student_id=request.user.id)
+            bypass_sheet = BypassSheet.objects.filter(student_id=request.user.id)
+        elif request.user.status == "Работник":
+            bypass_sheet = BypassSheet.objects.all()
         else:
-            modules = BypassSheet.objects.all()
-        serializer = BypassSheetsSerializer(modules, many=True)
+            bypass_sheet = BypassSheet.objects.all()
+        serializer = BypassSheetsSerializer(bypass_sheet, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -170,28 +172,32 @@ class BypassSheetsView(APIView):
         return Response(status=status.HTTP_201_CREATED)
 
 class BypassSheetView(APIView):
+    # parser_classes = (MultiPartParser, FormParser)
+    # permission_classes = [BypassSheetViewPermission]
+    permission_classes = [AllowAny]
 
-    permission_classes = [BypassSheetViewPermission]
+    def __updateStatements(self, bypass_sheet, statements_data):
 
-    def get(self, request, pk):
-        if request.user.status == "Студент":
-            module = BypassSheet.objects.filter(id=pk, student_id=request.user.id).first()
-            if not module:
-                return Response(
-                    {
-                        "message": "You don't have permissions to perform this action"
-                    },
-                    status=status.HTTP_200_OK)
-        elif request.user.status == "Работник" or request.user.status == "Администратор":
-            module = BypassSheet.objects.filter(id=pk).first()
-        else:
-            return Response(
-                {
-                    "message": "You don't have permissions to perform this action"
-                },
-                status=status.HTTP_200_OK)
+        for statement_data in statements_data:
 
-        serializer = BypassSheetsSerializer(module)
+            obj, statement = Statement.objects.update_or_create(title=statement_data['title'], bypass_sheet=bypass_sheet,
+                                                           defaults = {
+                                                               'title': statement_data.get('title'),
+                                                               'file': statement_data.get('file')
+                                                           })
+
+    def patch(self, request, pk):
+        data = request.data
+
+        bypass_sheet = BypassSheet.objects.filter(id=pk).first()
+
+        bypass_sheet.title = data.get('title', bypass_sheet.title)
+
+        bypass_sheet.save()
+
+        self.__updateStatements(bypass_sheet, data['statements'])
+
+        serializer = BypassSheetsSerializer(bypass_sheet)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 

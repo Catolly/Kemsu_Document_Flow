@@ -202,7 +202,7 @@ class StatementSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Statement
-        fields = ("title", "img")
+        fields = ("title",)
 
 class BypassSheetsSerializer(serializers.ModelSerializer):
 
@@ -211,7 +211,7 @@ class BypassSheetsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = BypassSheet
-        fields = ("title", "statements", "points", "status")
+        fields = ("id", "title", "statements", "points", "status")
 
 class StudentSerializer(serializers.ModelSerializer):
     id = serializers.SerializerMethodField()
@@ -220,12 +220,12 @@ class StudentSerializer(serializers.ModelSerializer):
     group = serializers.SlugRelatedField(slug_field='name', read_only=True)
     institute = serializers.SerializerMethodField()
     courseNumber = serializers.SerializerMethodField()
-    bypassSheet = BypassSheetsSerializer(required=False, read_only=True, many=True)
+    bypassSheets = BypassSheetsSerializer(required=False, read_only=True, many=True)
 
     class Meta:
         model = Student
         fields = ('id', 'fullname', 'email', 'recruitmentForm', 'status', 'group',
-                  'institute', 'courseNumber', 'bypassSheet')
+                  'institute', 'courseNumber', 'bypassSheets')
 
     def get_id(self, student):
         return student.user.id
@@ -389,6 +389,33 @@ class UpdateUserSerializer(serializers.ModelSerializer):
             }
         )
         return user
+class UpdateStatementSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Statement
+        fields = ('title', )
+
+    # def update(self, instance, validated_data):
+    #     print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+    #
+    #     instance.title = validated_data.get('title', instance.title)
+    #
+    #     return instance
+
+class UpdateBypassSheetSerializer(serializers.ModelSerializer):
+
+    statements = UpdateStatementSerializer(write_only=True, many=True)
+
+    class Meta:
+        model = BypassSheet
+        fields = ('title', 'statements')
+
+    def update(self, instance, validated_data):
+        for key in validated_data:
+            setattr(instance, key, validated_data.get(key, getattr(instance, key)))
+        instance.save()
+
+        return instance
 
 class LogoutSerializer(serializers.Serializer):
     refresh = serializers.CharField()
