@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <roleStaff class="container">
     <div class="sign-main">
       <div class="head">
         <h1 class="header">{{title}}</h1>
@@ -57,7 +57,7 @@
       @select="select"
       @clear="clear"
     />
-  </div>
+  </roleStaff>
 </template>
 
 <script>
@@ -70,6 +70,8 @@ import { FETCH_USERS, UPDATE_BYPASS_SHEETS } from "~/store/actions.type"
 import bypassSheetStatus from '~/services/bypassSheetStatus'
 import FilterService from '~/services/FilterService'
 
+import roleStaff from '~/components/roles/roleStaff'
+
 import AppFilter from '~/components/common/AppFilter'
 import AppFilterNav from '~/components/common/AppFilterNav'
 import AppSignTopbar from '~/components/bypass-sheets/signature/AppSignTopbar'
@@ -81,6 +83,7 @@ import AppRejectForm from '~/components/bypass-sheets/signature/AppRejectForm'
 export default {
 
   components: {
+    roleStaff,
     AppFilter,
     AppFilterNav,
     AppSignTopbar,

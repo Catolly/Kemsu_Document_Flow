@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <roleAdmin class="container">
     <div class="main">
       <h1 class="header">Пользователи</h1>
 
@@ -69,11 +69,13 @@
       @select="select"
       @clear="clear"
     />
-  </div>
+  </roleAdmin>
 </template>
 
 <script>
 import { initFilterService } from '~/services/FilterService'
+
+import roleAdmin from '~/components/roles/roleAdmin'
 
 import AppFilter from '~/components/common/AppFilter'
 import AppFilterNav from '~/components/common/AppFilterNav'
@@ -94,6 +96,7 @@ export default {
     AppList,
     AppListItem,
     AppButton,
+    roleAdmin,
   },
 
   data:() => ({

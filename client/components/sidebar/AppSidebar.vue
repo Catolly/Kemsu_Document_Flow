@@ -1,22 +1,24 @@
 <template>
   <div class="container">
-    <!-- Перенаправляет на главную страницу роли пользователя -->
     <div
       class="logo"
       @click="$router.push('/')"
     >
       <icon-logo />
     </div>
-    <!-- Определяем, какие права у юзера -->
+
     <div class="nav">
-      <!-- <app-nav-student /> -->
-      <!-- <app-nav-staff /> -->
-      <app-nav-admin />
+      <app-nav-student v-if="Role.isStudent" />
+      <app-nav-staff v-if="Role.isStaff" />
+      <app-nav-admin v-if="Role.isAdmin" />
     </div>
   </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+import { ROLE_IS } from '~/store/actions.type'
+
 import IconLogo from '~/components/icons/IconLogo'
 import AppNavStudent from '~/components/sidebar/AppNavStudent'
 import AppNavStaff from '~/components/sidebar/AppNavStaff'
@@ -24,11 +26,28 @@ import AppNavAdmin from '~/components/sidebar/AppNavAdmin'
 
 export default {
   name: 'AppSidebar',
+
   components: {
     IconLogo,
     AppNavStudent,
     AppNavStaff,
     AppNavAdmin,
+  },
+
+  async beforeMount() {
+    try {
+      await Promise.all([
+        this.$store.dispatch(ROLE_IS, this.Role.Student),
+        this.$store.dispatch(ROLE_IS, this.Role.Staff),
+        this.$store.dispatch(ROLE_IS, this.Role.Admin),
+      ])
+    } catch (error) {
+      console.error(error)
+    }
+  },
+
+  computed: {
+    ...mapGetters(['Role'])
   },
 }
 </script>

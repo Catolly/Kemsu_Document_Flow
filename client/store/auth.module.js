@@ -1,7 +1,6 @@
 import ApiService from '~/services/ApiService'
 import JwtService from '~/services/JWTService'
 import UserService from '~/services/UserService'
-import Role from '~/services/role'
 import {
   LOGIN,
   LOGOUT,
@@ -16,6 +15,7 @@ import {
 } from './actions.type'
 import {
   PURGE_AUTH,
+  PURGE_ROLES,
   SET_AUTH,
   SET_TOKEN,
   SET_CHECKING,
@@ -57,6 +57,7 @@ const actions = {
   },
   [LOGOUT](context) {
     context.commit(PURGE_AUTH)
+    context.commit(PURGE_ROLES)
   },
   [SIGNUP_STUDENT](context, credentials) {
     return new Promise((resolve, reject) => {
@@ -94,6 +95,7 @@ const actions = {
         })
         .catch(errors => {
           context.commit(PURGE_AUTH)
+          context.commit(PURGE_ROLES)
           reject(errors)
         })
     })
@@ -121,8 +123,9 @@ const actions = {
           if (tokens.expiresIn > Date.now()) {
             context.dispatch(FETCH_USER, id)
               .then(data => {
-                if (data)
-                  context.commit(SET_AUTH, data.user)
+                if (data) {
+                  context.commit(SET_AUTH, data)
+                }
                 else
                   context.commit(SET_TOKEN, tokens)
                 resolve(data)
@@ -151,6 +154,7 @@ const actions = {
         }
       } else {
         context.commit(PURGE_AUTH)
+        context.commit(PURGE_ROLES)
         resolve()
         context.commit(SET_CHECKING, false)
       }
