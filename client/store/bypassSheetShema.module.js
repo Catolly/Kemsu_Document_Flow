@@ -6,6 +6,7 @@ import {
   CREATE_BYPASS_SHEETS_SCHEMA,
   UPDATE_BYPASS_SHEETS_SCHEMA,
   WAIT_FOR,
+  CHECK_AUTH,
 } from './actions.type'
 import {
   SET_BYPASS_SHEETS_SCHEMAS,
@@ -30,30 +31,28 @@ const getters = {
 }
 
 const actions = {
-  [FETCH_BYPASS_SHEETS_SCHEMAS](context, data) {
-    const {
-      bypassSheetsSchemas: prevBypassSheetsSchemas,
-      department,
-    } = data
-    if (prevBypassSheetsSchemas.length !== 0) {
-      return context.commit(SET_BYPASS_SHEETS_SCHEMAS, prevBypassSheetsSchemas)
+  async [FETCH_BYPASS_SHEETS_SCHEMAS](context, {
+      bypassSheetsSchemas=[],
+      department='',
+    }) {
+    if (bypassSheetsSchemas.length !== 0) {
+      return context.commit(SET_BYPASS_SHEETS_SCHEMAS, bypassSheetsSchemas)
     }
-    return new Promise((resolve, reject) => {
-      context.dispatch(WAIT_FOR, 'checkingAuth')
-        .then(() => {
-          BypassSheetsSchemasService.get(department || '')
-            .then(({ data }) => {
-              context.commit(SET_BYPASS_SHEETS_SCHEMAS, data)
-              resolve(data)
-            })
-            .catch(error => {
-              context.commit(SET_ERROR, error)
-              reject(error)
-            })
-        })
-    })
+    try {
+      await context.dispatch(WAIT_FOR, 'checkingAuth')
+      const response = await BypassSheetsSchemasService.get(department)
+      const data = response.data
+      context.commit(SET_BYPASS_SHEETS_SCHEMAS, data)
+      return data
+    } catch (error) {
+      context.commit(SET_ERROR, error)
+      throw error
+    }
   },
-  async [FETCH_BYPASS_SHEETS_SCHEMA](context, {id, prevSchema=null}) {
+  async [FETCH_BYPASS_SHEETS_SCHEMA](context, {
+      id,
+      prevSchema=null
+    }) {
     if (prevSchema) {
       context.commit(SET_BYPASS_SHEETS_SCHEMA, prevSchema)
       return prevSchema
@@ -82,9 +81,31 @@ const actions = {
           })),
       }))
 
+    const formData = new FormData()
+    formData.append('title', data.title)
+    formData.append('description', data.description)
+    formData.append('educationForm', data.educationForm)
+    data.studentList.forEach(id => {
+      formData.append('studentList', id)
+    })
+    data.statements.forEach(file => {
+      formData.append('statements', file)
+    })
+
+    data.points.
+      forEach((point, index) => {
+        formData.append(`points[${index}]['title']`, point.title)
+        formData.append(`points[${index}]['description']`, point.description)
+        formData.append(`points[${index}]['gender']`, point.gender)
+        formData.append(`points[${index}]['uploadDocumentsFormat']`, point.studentUploadDocuments)
+        point.requiredDocuments.forEach(file => {
+          formData.append(`points[${index}]['requiredDocuments']`, file)
+        })
+      })
+
     try {
-      await context.dispatch(WAIT_FOR, 'checkingAuth')
-      return await BypassSheetsSchemasService.post(data)
+      await context.dispatch(CHECK_AUTH)
+      return await BypassSheetsSchemasService.post(formData)
     } catch (error) {
       context.commit(SET_ERROR, error)
       throw error
@@ -105,7 +126,7 @@ const actions = {
       }))
 
     try {
-      await context.dispatch(WAIT_FOR, 'checkingAuth')
+      await context.dispatch(CHECK_AUTH)
       return await BypassSheetsSchemasService.patch(data)
     } catch (error) {
       context.commit(SET_ERROR, error)

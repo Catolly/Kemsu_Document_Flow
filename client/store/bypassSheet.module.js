@@ -18,47 +18,38 @@ const getters = {
 }
 
 const actions = {
-  [FETCH_BYPASS_SHEETS](context, data) {
-    const {
-      bypassSheets: prevBypassSheets,
-      department = '',
-    } = data
-    if (prevBypassSheets.length !== 0) {
-      return context.commit(SET_BYPASS_SHEETS, prevBypassSheets)
+  async [FETCH_BYPASS_SHEETS](context, {
+    bypassSheets=[],
+    department=''
+  }) {
+    if (bypassSheets.length !== 0) {
+      return context.commit(SET_BYPASS_SHEETS, bypassSheets)
     }
-    return new Promise((resolve, reject) => {
-      context.dispatch(WAIT_FOR, 'checkingAuth')
-        .then(() => {
-          BypassSheetsService.get(department)
-            .then(({ data }) => {
-              context.commit(SET_BYPASS_SHEETS, data)
-              resolve(data)
-            })
-            .catch(errors => {
-              context.commit(SET_ERROR, errors)
-              reject(errors)
-            })
-        })
-    })
+    try {
+      await context.dispatch(WAIT_FOR, 'checkingAuth')
+      const response = await BypassSheetsService.get(department)
+      const data = response.data
+      context.commit(SET_BYPASS_SHEETS, data)
+      return data
+    } catch (error) {
+      context.commit(SET_ERROR, error)
+      throw error
+    }
   },
-  [UPDATE_BYPASS_SHEETS](context, data) {
-    return new Promise((resolve, reject) => {
-      const {
-        department,
-        bypassSheets,
-      } = data
-      BypassSheetsService.patchMany({
+  async [UPDATE_BYPASS_SHEETS](context, {
+      bypassSheets,
+      department,
+    }) {
+    try {
+      await context.dispatch(CHECK_AUTH)
+      return await BypassSheetsService.patchMany({
         department,
         bypassSheets,
       })
-        .then(data => {
-          resolve(data)
-        })
-        .catch(errors => {
-          context.commit(SET_ERROR, errors)
-          reject(errors)
-        })
-    })
+    } catch (error) {
+      context.commit(SET_ERROR, error)
+      throw error
+    }
   },
 }
 

@@ -63,6 +63,8 @@ export default {
 .app-filter-nav {
   margin-top: 16px;
 
+  height: 1em;
+
   display: flex;
   align-items: center;
   gap: 24px;
