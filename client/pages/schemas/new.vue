@@ -258,21 +258,24 @@ export default {
 
     async createSchema() {
       this.createError = ''
-      this.$store
-        .dispatch(CREATE_BYPASS_SHEETS_SCHEMA, {
-          title: this.schema.title,
-          description: this.schema.description,
-          educationForm: this.schema.educationForm,
-          statements: this.schema.statements,
-          studentList: this.studentList
-            .filter(student => student.checked)
-            .map(student => student.id),
-          points: this.schema.points
-            .filter(point => point.checked),
-        })
-          .catch(error => {
-            this.createError = error
+      try {
+        await this.$store
+          .dispatch(CREATE_BYPASS_SHEETS_SCHEMA, {
+            title: this.schema.title,
+            educationForm: this.schema.educationForm,
+            statements: this.schema.statements,
+            studentList: this.studentList
+              .filter(student => student.checked)
+              .map(student => student.id),
+            points: this.schema.points
+              .filter(point => point.checked),
           })
+        this.$router.push({ path: '..', append: true })
+      } catch (error) {
+        console.error(error)
+        this.createError = error
+        throw error
+      }
     },
 
     async fetchDepartments() {

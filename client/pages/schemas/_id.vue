@@ -294,8 +294,7 @@ export default {
       this.updateSuccess = false
       this.$store
         .dispatch(UPDATE_BYPASS_SHEETS_SCHEMA, {
-          // id: this.schema.id, в ответе get/schema/id не вкладывается id
-          id: this.$route.params.id,
+          id: this.schema.id,
           title: this.schema.title,
           description: this.schema.description,
           educationForm: this.schema.educationForm,
@@ -410,16 +409,35 @@ export default {
     }
   },
 
-  beforeMount() {
-    this.fetchSchema()
-      .then(schema => {
-        this.schema = schema
-        this.fetchDepartments()
-        this.fetchUsers()
-          .then(() => this.checkAttachedStudents())
-        this.fetchGrops()
-          .then(() => this.FilterService = initFilterService(this.groups))
-      })
+  async beforeMount() {
+    this.schema = await this.fetchSchema()
+    this.schema.statements
+      .forEach(file => {
+          file.fullname = file.img
+          file.name = file.img
+            .split('/')
+            .slice(-1)
+            .join()
+        })
+    this.schema.points
+        .forEach(point => {
+          if (!point.uploadDocumentsFormat)
+            this.$set(point, 'uploadDocumentsFormat', [])
+          point.requiredDocuments
+            .forEach(file => {
+              file.fullname = file.img
+              file.name = file.img
+                .split('/')
+                .slice(-1)
+                .join()
+            })
+        })
+
+    this.fetchDepartments()
+    this.fetchUsers()
+      .then(() => this.checkAttachedStudents())
+    this.fetchGrops()
+      .then(() => this.FilterService = initFilterService(this.groups))
   },
 
   created() {
