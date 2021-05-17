@@ -132,3 +132,7 @@ export const UsersService = {
     )
   },
 }
+
+export const errorCode = error => {
+  return error.toString().split(' ').reverse()[0]
+}
