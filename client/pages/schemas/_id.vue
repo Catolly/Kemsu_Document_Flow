@@ -26,6 +26,14 @@
           Не удалось загрузить форму
         </span>
 
+        <span
+          v-if="updateSuccess"
+          class="success-message"
+        >
+          Форма сохранена!
+        </span>
+
+
         <div
           v-if="!loadError"
           class="steps"
@@ -161,6 +169,7 @@ export default {
     loadGroupsError: '',
     loadSchemaError: '',
     updateError: '',
+    updateSuccess: false,
 
     isInvalidForm: true,
 
@@ -282,6 +291,7 @@ export default {
 
     async updateSchema() {
       this.updateError = ''
+      this.updateSuccess = false
       this.$store
         .dispatch(UPDATE_BYPASS_SHEETS_SCHEMA, {
           // id: this.schema.id, в ответе get/schema/id не вкладывается id
@@ -296,6 +306,7 @@ export default {
           points: this.schema.points
             .filter(point => point.checked),
         })
+          .then(() => this.updateSuccess = true)
           .catch(error => {
             console.error(error)
             this.updateError = error
@@ -419,7 +430,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.container {
+.form {
   padding-bottom: 0;
 
   &.step-two {
@@ -433,14 +444,27 @@ export default {
   padding: 48px 0;
 }
 
-.error-message {
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.error-message,
+.success-message {
   margin-top: 8px;
+}
+
+.error-message {
   color: @red;
+}
+
+.success-message {
+  color: @green;
 }
 
 .steps {
   margin-top: 24px;
-
   display: flex;
   gap: 24px;
 }
