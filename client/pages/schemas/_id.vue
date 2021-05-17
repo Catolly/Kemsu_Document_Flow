@@ -1,11 +1,23 @@
 <template>
-  <roleAdmin
-    :class="{'step-two': step == '2'}"
-    class="container"
-  >
-    <form @submit.prevent="">
+  <roleAdmin class="container">
+    <form
+      @submit.prevent=""
+      :class="{'step-two': step == '2'}"
+      class="form"
+    >
       <div class="form-wrapper">
-        <h1 class="header">Редактирование обходного листа</h1>
+        <div class="head">
+          <h1 class="header">Редактирование обходного листа</h1>
+
+          <app-button
+              plain
+              red
+              class="delete"
+              @click="deleteSchema"
+            >
+              Удалить шаблон
+          </app-button>
+        </div>
 
         <span
           v-if="loadError"
@@ -31,7 +43,6 @@
           >
           Шаг 1
           </NuxtLink>
-
           <NuxtLink
             :class="{'current': step == '2'}"
             class="step"
@@ -121,6 +132,7 @@ import {
   FETCH_USERS,
   FETCH_GROUPS,
   UPDATE_BYPASS_SHEETS_SCHEMA,
+  DELETE_BYPASS_SHEETS_SCHEMA,
 } from "~/store/actions.type"
 
 import { initFilterService } from '~/services/FilterService'
@@ -263,6 +275,7 @@ export default {
       return await this.$store
         .dispatch(FETCH_BYPASS_SHEETS_SCHEMA, {id: this.$route.params.id})
           .catch(error => {
+            console.error(error)
             this.loadSchemaError = error
           })
     },
@@ -284,6 +297,7 @@ export default {
             .filter(point => point.checked),
         })
           .catch(error => {
+            console.error(error)
             this.updateError = error
           })
     },
@@ -325,6 +339,7 @@ export default {
                 resolve()
             })
             .catch(error => {
+              console.error(error)
               this.loadDepartmentsError = error
               reject(error)
             })
@@ -353,6 +368,7 @@ export default {
                 resolve()
             })
             .catch(error => {
+              console.error(error)
               this.loadUsersError = error
               reject(error)
             })
@@ -365,11 +381,22 @@ export default {
           .dispatch(FETCH_GROUPS, this.groups)
             .then(() => resolve())
             .catch(error => {
+              console.error(error)
               this.loadGroupsError = error
               reject(error)
             })
       })
     },
+
+    async deleteSchema() {
+      try {
+        this.$store
+          .dispatch(DELETE_BYPASS_SHEETS_SCHEMA, this.schema.id)
+        this.$router.push({ path: '..', append: true })
+      } catch (error) {
+        console.error(error)
+      }
+    }
   },
 
   beforeMount() {
