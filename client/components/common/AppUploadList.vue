@@ -37,6 +37,8 @@
 </template>
 
 <script>
+import { BASE_URL } from '~/services/config'
+
 export default {
   name: 'AppUploadList',
 
@@ -64,10 +66,19 @@ export default {
         'small': this.small,
       }
     },
+
+    BASE_URL() {
+      return BASE_URL
+    },
   },
 
   methods: {
+    isLink(file) {
+      return !file.size
+    },
+
     createURL(file) {
+      if (this.isLink(file)) return this.BASE_URL + file.fullname
       return URL.createObjectURL(file)
     },
 
