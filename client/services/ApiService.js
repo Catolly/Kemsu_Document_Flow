@@ -89,9 +89,13 @@ export const BypassSheetsSchemasService = {
     ApiService.setHeader()
     return ApiService.post('bypass_sheets_schema/', params)
   },
-  patch(params) {
+  patch(id, params) {
     ApiService.setHeader()
-    return ApiService.patch(`bypass_sheets_schema/${params.id}/`, params)
+    return ApiService.patch(`bypass_sheets_schema/${id}/`, params)
+  },
+  delete(id) {
+    ApiService.setHeader()
+    return ApiService.delete(`bypass_sheets_schema/${id}/`)
   },
 }
 
