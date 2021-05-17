@@ -1,11 +1,23 @@
 <template>
-  <roleAdmin
-    :class="{'step-two': step == '2'}"
-    class="container"
-  >
-    <form @submit.prevent="">
+  <roleAdmin class="container">
+    <form
+      @submit.prevent=""
+      :class="{'step-two': step == '2'}"
+      class="form"
+    >
       <div class="form-wrapper">
-        <h1 class="header">Редактирование обходного листа</h1>
+        <div class="head">
+          <h1 class="header">Редактирование обходного листа</h1>
+
+          <app-button
+              plain
+              red
+              class="delete"
+              @click="deleteSchema"
+            >
+              Удалить шаблон
+          </app-button>
+        </div>
 
         <span
           v-if="loadError"
@@ -13,6 +25,14 @@
         >
           Не удалось загрузить форму
         </span>
+
+        <span
+          v-if="updateSuccess"
+          class="success-message"
+        >
+          Форма сохранена!
+        </span>
+
 
         <div
           v-if="!loadError"
@@ -31,7 +51,6 @@
           >
           Шаг 1
           </NuxtLink>
-
           <NuxtLink
             :class="{'current': step == '2'}"
             class="step"
@@ -121,6 +140,7 @@ import {
   FETCH_USERS,
   FETCH_GROUPS,
   UPDATE_BYPASS_SHEETS_SCHEMA,
+  DELETE_BYPASS_SHEETS_SCHEMA,
 } from "~/store/actions.type"
 
 import { initFilterService } from '~/services/FilterService'
@@ -149,6 +169,7 @@ export default {
     loadGroupsError: '',
     loadSchemaError: '',
     updateError: '',
+    updateSuccess: false,
 
     isInvalidForm: true,
 
@@ -263,16 +284,17 @@ export default {
       return await this.$store
         .dispatch(FETCH_BYPASS_SHEETS_SCHEMA, {id: this.$route.params.id})
           .catch(error => {
+            console.error(error)
             this.loadSchemaError = error
           })
     },
 
     async updateSchema() {
       this.updateError = ''
+      this.updateSuccess = false
       this.$store
         .dispatch(UPDATE_BYPASS_SHEETS_SCHEMA, {
-          // id: this.schema.id, в ответе get/schema/id не вкладывается id
-          id: this.$route.params.id,
+          id: this.schema.id,
           title: this.schema.title,
           description: this.schema.description,
           educationForm: this.schema.educationForm,
@@ -283,7 +305,9 @@ export default {
           points: this.schema.points
             .filter(point => point.checked),
         })
+          .then(() => this.updateSuccess = true)
           .catch(error => {
+            console.error(error)
             this.updateError = error
           })
     },
@@ -325,6 +349,7 @@ export default {
                 resolve()
             })
             .catch(error => {
+              console.error(error)
               this.loadDepartmentsError = error
               reject(error)
             })
@@ -353,6 +378,7 @@ export default {
                 resolve()
             })
             .catch(error => {
+              console.error(error)
               this.loadUsersError = error
               reject(error)
             })
@@ -365,23 +391,53 @@ export default {
           .dispatch(FETCH_GROUPS, this.groups)
             .then(() => resolve())
             .catch(error => {
+              console.error(error)
               this.loadGroupsError = error
               reject(error)
             })
       })
     },
+
+    async deleteSchema() {
+      try {
+        this.$store
+          .dispatch(DELETE_BYPASS_SHEETS_SCHEMA, this.schema.id)
+        this.$router.push({ path: '..', append: true })
+      } catch (error) {
+        console.error(error)
+      }
+    }
   },
 
-  beforeMount() {
-    this.fetchSchema()
-      .then(schema => {
-        this.schema = schema
-        this.fetchDepartments()
-        this.fetchUsers()
-          .then(() => this.checkAttachedStudents())
-        this.fetchGrops()
-          .then(() => this.FilterService = initFilterService(this.groups))
-      })
+  async beforeMount() {
+    this.schema = await this.fetchSchema()
+    this.schema.statements
+      .forEach(file => {
+          file.fullname = file.img
+          file.name = file.img
+            .split('/')
+            .slice(-1)
+            .join()
+        })
+    this.schema.points
+        .forEach(point => {
+          if (!point.uploadDocumentsFormat)
+            this.$set(point, 'uploadDocumentsFormat', [])
+          point.requiredDocuments
+            .forEach(file => {
+              file.fullname = file.img
+              file.name = file.img
+                .split('/')
+                .slice(-1)
+                .join()
+            })
+        })
+
+    this.fetchDepartments()
+    this.fetchUsers()
+      .then(() => this.checkAttachedStudents())
+    this.fetchGrops()
+      .then(() => this.FilterService = initFilterService(this.groups))
   },
 
   created() {
@@ -392,7 +448,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.container {
+.form {
   padding-bottom: 0;
 
   &.step-two {
@@ -406,14 +462,27 @@ export default {
   padding: 48px 0;
 }
 
-.error-message {
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.error-message,
+.success-message {
   margin-top: 8px;
+}
+
+.error-message {
   color: @red;
+}
+
+.success-message {
+  color: @green;
 }
 
 .steps {
   margin-top: 24px;
-
   display: flex;
   gap: 24px;
 }

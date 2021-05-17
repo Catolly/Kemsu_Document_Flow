@@ -1,9 +1,10 @@
 <template>
-  <roleAdmin
-    :class="{'step-two': step == '2'}"
-    class="container"
-  >
-    <form @submit.prevent="">
+  <roleAdmin class="container">
+    <form
+      @submit.prevent=""
+      :class="{'step-two': step == '2'}"
+      class="form"
+    >
       <div class="form-wrapper">
         <h1 class="header">Создание обходного листа</h1>
 
@@ -257,21 +258,24 @@ export default {
 
     async createSchema() {
       this.createError = ''
-      this.$store
-        .dispatch(CREATE_BYPASS_SHEETS_SCHEMA, {
-          title: this.schema.title,
-          description: this.schema.description,
-          educationForm: this.schema.educationForm,
-          statements: this.schema.statements,
-          studentList: this.studentList
-            .filter(student => student.checked)
-            .map(student => student.id),
-          points: this.schema.points
-            .filter(point => point.checked),
-        })
-          .catch(error => {
-            this.createError = error
+      try {
+        await this.$store
+          .dispatch(CREATE_BYPASS_SHEETS_SCHEMA, {
+            title: this.schema.title,
+            educationForm: this.schema.educationForm,
+            statements: this.schema.statements,
+            studentList: this.studentList
+              .filter(student => student.checked)
+              .map(student => student.id),
+            points: this.schema.points
+              .filter(point => point.checked),
           })
+        this.$router.push({ path: '..', append: true })
+      } catch (error) {
+        console.error(error)
+        this.createError = error
+        throw error
+      }
     },
 
     async fetchDepartments() {
@@ -297,6 +301,7 @@ export default {
                 resolve()
             })
             .catch(error => {
+              console.error(error)
               this.loadError = error
               reject()
             })
@@ -325,6 +330,7 @@ export default {
                 resolve()
             })
             .catch(error => {
+              console.error(error)
               this.loadError = error
               reject()
             })
@@ -337,6 +343,7 @@ export default {
           .dispatch(FETCH_GROUPS, this.groups)
             .then(() => resolve())
             .catch(error => {
+              console.error(error)
               this.loadError = error
               reject()
             })
@@ -362,8 +369,12 @@ export default {
 <style lang="less" scoped>
 .container {
   padding-bottom: 0;
+}
 
+.form {
   &.step-two {
+    height: 100vh;
+
     display: grid;
     grid-template-columns: 1fr 30%;
     grid-gap: 48px;

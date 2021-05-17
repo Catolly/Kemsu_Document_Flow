@@ -1,6 +1,7 @@
 export const CHECK_AUTH = "checkAuth"
 export const CHECK_ROLE = "checkRole"
 export const CREATE_BYPASS_SHEETS_SCHEMA = "createBypassSheetsSchema"
+export const DELETE_BYPASS_SHEETS_SCHEMA = "deleteBypassSheetsSchema"
 export const FETCH_ALL_DEPARTMENTS = "fetchAllDepartments"
 export const FETCH_BYPASS_SHEETS = "fetchBypassSheets"
 export const FETCH_BYPASS_SHEETS_SCHEMA = "fetchBypassSheetsSchema"

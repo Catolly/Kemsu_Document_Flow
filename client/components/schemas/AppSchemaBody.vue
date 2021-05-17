@@ -20,7 +20,7 @@
     </div>
 
     <div class="selected-info">
-      <span class="description">
+      <span v-if="selected.description" class="description">
         {{ selected.description }}
       </span>
 
