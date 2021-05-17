@@ -15,7 +15,7 @@
         append
         class="clear"
       >
-          <app-button blue filled class="create-btn">Добавить</app-button>
+        <app-button blue filled class="create-btn">Добавить</app-button>
       </NuxtLink>
       <app-search
         round
@@ -48,7 +48,7 @@
         :schema="schema"
         :URL="$nuxt.$route.path + '/'"
         class="schema"
-        @edit="edit"
+        @edit="$router.push({ path: `../schemas/${schema.id}`, append: true })"
       />
     </app-list>
 
@@ -90,69 +90,10 @@ export default {
   data:() => ({
     searchText: '',
 
-    loadError: '',
     itemsPerPage: 0,
     page: 0,
 
-    // bypassSheetsSchemas: [
-    //   {
-    //     id: 0,
-    //     title: 'Скидка на столовую',
-    //     educationForm: 'Очная',
-    //     points: [
-    //       {
-    //         title: 'Пункт 1',
-    //         description: "Сообщение, содержащее указания для определённого пункта. Сообщение, содержащее указания для определённого пункта. Сообщение, содержащее указания для определённого пункта.",
-    //         requiredDocuments: [],
-    //         gender: 'Мужской',
-    //         studentUploadDocuments: [
-    //           { title: 'Фото/скан паспорта', },
-    //           { title: 'Заполненный документ', },
-    //         ],
-    //       },
-    //       {
-    //         title: 'Пункт 2',
-    //         description: "Сообщение, содержащее указания для определённого пункта. Сообщение, содержащее указания для определённого пункта. Сообщение, содержащее указания для определённого пункта. Сообщение, содержащее указания для определённого пункта. Сообщение, содержащее указания для определённого пункта. Сообщение, содержащее указания для определённого пункта. Сообщение, содержащее указания для определённого пункта. Сообщение, содержащее указания для определённого пункта. Сообщение, содержащее указания для определённого пункта.",
-    //         requiredDocuments: [],
-    //         gender: 'Не указывать',
-    //         studentUploadDocuments: [],
-    //       },
-    //       {
-    //         title: 'Пункт 3',
-    //         description: '',
-    //         requiredDocuments: [],
-    //         gender: '',
-    //         studentUploadDocuments: [],
-    //       },
-    //       {
-    //         title: 'Пункт 4',
-    //         description: '',
-    //         requiredDocuments: [],
-    //         gender: '',
-    //         studentUploadDocuments: [],
-    //       },
-    //       {
-    //         title: 'Пункт 5',
-    //         description: '',
-    //         requiredDocuments: [],
-    //         gender: '',
-    //         studentUploadDocuments: [],
-    //       },
-    //     ],
-    //   },
-    //   {
-    //     id: 1,
-    //     title: 'Отчисление',
-    //     educationForm: 'Очная',
-    //     points: [
-    //       {
-    //         title: 'Пункт 1',
-    //         description: '',
-    //         requiredDocuments: [],
-    //       },
-    //     ],
-    //   },
-    // ],
+    loadError: '',
   }),
 
   computed: {
@@ -173,9 +114,10 @@ export default {
         schema.title.includes(this.searchText))
     },
 
-  methods: {
-    edit(id) {
-      this.$router.push($nuxt.$route.path + '/' + id)
+    schemas() {
+      return this.bypassSheetsSchemas
+      .slice()
+      .reverse()
     },
   },
 
