@@ -1,5 +1,5 @@
 <template>
-	<nav class="app-filter-nav">
+	<nav :class="{ 'hidden': !filterPathClear.length }" class="app-filter-nav">
   	<app-button
       icon
       blue
@@ -63,6 +63,8 @@ export default {
 .app-filter-nav {
   margin-top: 16px;
 
+  height: 1em;
+
   display: flex;
   align-items: center;
   gap: 24px;
@@ -81,5 +83,9 @@ export default {
 
 .filter-head {
 	color: @black;
+}
+
+.hidden {
+  visibility: hidden;
 }
 </style>

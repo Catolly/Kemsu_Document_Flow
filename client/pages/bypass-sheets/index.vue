@@ -15,6 +15,8 @@ import AppBypassSheetListStudent from '~/components/bypass-sheets/AppBypassSheet
 import AppBypassSheetListStaff from '~/components/bypass-sheets/AppBypassSheetListStaff'
 
 export default {
+  middleware: 'authenticated',
+
 	components: {
     roleStudentStaff,
     AppBypassSheetListStudent,

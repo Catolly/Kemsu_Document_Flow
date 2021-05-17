@@ -20,23 +20,22 @@ const getters = {
 }
 
 const actions = {
-  [FETCH_USERS](context, params) {
-    const {
-      users: prevUsers,
-      bypassSheetName,
-      pointName,
-      offset,
-      limit,
-    } = params
-    if (prevUsers.length !== 0) {
-      return context.commit(SET_USERS, prevUsers)
+  [FETCH_USERS](context, {
+      users=[],
+      bypassSheet='',
+      point='',
+      offset='',
+      limit='',
+    }) {
+    if (users.length !== 0) {
+      return context.commit(SET_USERS, users)
     }
     return new Promise((resolve, reject) => {
       context.dispatch(WAIT_FOR, 'checkingAuth')
         .then(() => {
           UsersService.get({
-            bypassSheetName,
-            pointName,
+            title: bypassSheet,
+            pointTitle: point,
             offset,
             limit,
           })

@@ -76,7 +76,6 @@ const actions = {
     return new Promise((resolve, reject) => {
       ApiService.post('signup/staff/', credentials)
         .then(({ data }) => {
-          context.commit(SET_AUTH, data)
           resolve(data)
         })
         .catch(errors => {
@@ -160,23 +159,19 @@ const actions = {
       }
     })
   },
-  [UPDATE_USER](context, payload) {
-    return new Promise((resolve, reject) => {
-      ApiService.setHeader()
-      const { fullname } = payload
-      const user = {
-        fullname
-      }
-      const currentUser = context.getters.currentUser
-      ApiService.patch(`users/${currentUser.id}`, user)
-        .then(data => {
-          resolve(data)
-        })
-        .catch(errors => {
-          context.commit(SET_ERROR, errors)
-          reject(errors)
-        })
-    })
+  async [UPDATE_USER](context, {fullname}) {
+    ApiService.setHeader()
+    const user = {
+      fullname
+    }
+    const currentUser = context.getters.currentUser
+    try {
+      await context.dispatch(CHECK_AUTH)
+      return await ApiService.patch(`users/${currentUser.id}/`, user)
+    } catch (error) {
+      context.commit(SET_ERROR, error)
+      throw error
+    }
   },
   [WAIT_FOR](context, getterName) {
     return new Promise(resolve => {

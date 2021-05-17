@@ -66,6 +66,8 @@ import AppSchema from '~/components/schemas/AppSchema'
 export default {
   name: 'index',
 
+  middleware: 'authenticated',
+
   components: {
     roleAdmin,
     AppButton,

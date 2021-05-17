@@ -20,7 +20,7 @@ const state = () => ({
     isAdmin: false,
 
     Student: 'Студент',
-    Staff: 'Сотрудник',
+    Staff: 'Работник',
     Admin: 'Администратор',
   },
 })

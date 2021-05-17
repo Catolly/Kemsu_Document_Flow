@@ -102,6 +102,8 @@ import AppDownloadFile from '~/components/common/AppDownloadFile'
 export default {
 	name: 'create',
 
+  middleware: 'authenticated',
+
 	components: {
     roleStudent,
 		AppButton,

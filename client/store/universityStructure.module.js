@@ -115,7 +115,7 @@ const actions = {
         .then(() => {
           GroupsService.get()
             .then(({ data }) => {
-              context.commit(SET_GROUPS, data.slice())
+              context.commit(SET_GROUPS, data)
               resolve(data)
             })
             .catch(errors => {

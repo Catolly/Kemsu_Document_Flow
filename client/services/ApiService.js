@@ -65,9 +65,9 @@ export const BypassSheetsService = {
     return ApiService.post('bypass_sheets/', bypassSheet)
   },
 
-  get() { //department=''
+  get(department='') {
     ApiService.setHeader()
-    return ApiService.get('bypass_sheets')
+    return ApiService.get('bypass_sheets' + (department ? `/?department=${department}` : ''))
   },
 
   patchMany(params) {
@@ -75,7 +75,6 @@ export const BypassSheetsService = {
       department,
       bypassSheets
     } = params
-    console.log(department, bypassSheets)
     ApiService.setHeader()
     return ApiService.patch(`bypass_sheets/${department}`, bypassSheets)
   },
@@ -100,8 +99,8 @@ export const DepartmentsService = {
   get(institute='', department='') {
     return ApiService.get(
       `departments`
-      + (institute ? `/${institute}` : '')
-      + (department ? `/?department="${department}"`: ''))
+      + (institute ? `?institute=${institute}`: '')
+      + (department ? `&departments=${department}`: ''))
   },
 }
 
@@ -112,13 +111,28 @@ export const GroupsService = {
 }
 
 export const UsersService = {
-  get(params) {
-    const resourseParams = params
-    ? Object.entries(params).map(([name, value]) =>
-      value ? `${name}=${value}&` : ''
-      ).join('')
-    : ''
-    // console.log(resourseParams)
-    return ApiService.get('users' + (resourseParams ? `/?${resourseParams.slice(0, -1)}` : ''))
+  get(data) {
+    const {
+      title='',
+      pointTitle='',
+      offset='',
+      limit='',
+    } = data
+
+    const params = Object.entries(data)
+      .map(([key, value]) =>
+        value ? `&${key}=${value}` : ''
+      )
+      .join('')
+      .slice(1)
+
+    return ApiService.query(
+      'users'
+      + (params ? `/?${params}` : '')
+    )
   },
+}
+
+export const errorCode = error => {
+  return error.toString().split(' ').reverse()[0]
 }

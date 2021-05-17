@@ -132,6 +132,8 @@ import AppFilter from '~/components/common/AppFilter'
 import AppButton from '~/components/common/AppButton'
 
 export default {
+  middleware: 'authenticated',
+
   components: {
     roleAdmin,
     AppSchemaEditForm,

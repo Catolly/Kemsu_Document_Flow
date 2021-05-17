@@ -1,8 +1,8 @@
 const bypassSheetStatus = {
-  Signed: 'signed',
-  Rejected: 'rejected',
-  Reviewing: 'reviewing',
-  NotSent: 'Not sent',
+  Signed: 'Подписано',
+  Rejected: 'Отказано',
+  Reviewing: 'На подписании',
+  NotSent: 'Не отправлено',
 }
 
 export default bypassSheetStatus

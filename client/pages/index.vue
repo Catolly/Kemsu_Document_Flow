@@ -9,6 +9,8 @@ import { ROLE_IS } from '~/store/actions.type'
 export default {
   name: 'index',
 
+  middleware: 'authenticated',
+
   async beforeMount() {
     try {
       await Promise.all([

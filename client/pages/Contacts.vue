@@ -30,6 +30,8 @@ import { FETCH_DEPARTMENT } from "~/store/actions.type"
 export default {
   name: 'settings',
 
+  middleware: 'authenticated',
+
   data:() => ({
     loadError: false,
 

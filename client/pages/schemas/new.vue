@@ -133,6 +133,8 @@ import AppButton from '~/components/common/AppButton'
 export default {
   name: 'new',
 
+  middleware: 'authenticated',
+
   components: {
     roleAdmin,
     AppSchemaEditForm,
