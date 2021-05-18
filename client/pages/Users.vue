@@ -27,40 +27,9 @@
         class="pagination"
       />
 
-      <app-list class="student-list">
-        <app-list-item
-          v-for="(student, index) in studentListInPage"
-          :key="index"
-          class="student"
-        >
-          <div class="student-info">
-            <span class="fullname">{{student.fullname}}</span>
-            <span class="about">
-              {{student.institute}},
-              {{student.group}},
-              {{student.courseNumber}} курс
-            </span>
-            <span
-              v-for="(bypassSheet, index) in student.bypassSheetList"
-              :key="index"
-              :class="{'signed': bypassSheet.status === 'signed'}"
-              class="bypass-sheets-status"
-            >
-              Обходной лист
-              "{{bypassSheet.name}}"
-              {{bypassSheet.status === 'signed' ? '' : ' не '}}
-              подписан
-            </span>
-          </div>
-          <app-button
-            red
-            class="ban"
-            @click="ban(student)"
-          >
-            Заблокировать аккаунт
-          </app-button>
-        </app-list-item>
-      </app-list>
+      <app-student-list
+        :studentList="studentListInPage"
+      />
     </div>
 
     <app-filter
@@ -81,9 +50,7 @@ import AppFilter from '~/components/common/AppFilter'
 import AppFilterNav from '~/components/common/AppFilterNav'
 import AppSearch from '~/components/common/AppSearch'
 import AppPagination from '~/components/common/AppPagination'
-import AppList from '~/components/common/AppList'
-import AppListItem from '~/components/common/AppListItem'
-import AppButton from '~/components/common/AppButton'
+import AppStudentList from '~/components/users/AppStudentList'
 
 export default {
   name: 'users',
@@ -95,9 +62,7 @@ export default {
     AppFilterNav,
     AppSearch,
     AppPagination,
-    AppList,
-    AppListItem,
-    AppButton,
+    AppStudentList,
     roleAdmin,
   },
 
@@ -296,29 +261,5 @@ export default {
 
 .pagination {
   justify-content: flex-end;
-}
-
-.student {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-}
-
-.student-info {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-
-  .about {
-    color: @grey-darkset;
-  }
-}
-
-.bypass-sheets-status {
-  font-size: @fz-small;
-  color: @grey-darkset;
-  &.signed {
-    color: @green;
-  }
 }
 </style>
