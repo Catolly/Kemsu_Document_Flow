@@ -27,40 +27,9 @@
         class="pagination"
       />
 
-      <app-list class="student-list">
-        <app-list-item
-          v-for="(student, index) in studentListInPage"
-          :key="index"
-          class="student"
-        >
-          <div class="student-info">
-            <span class="fullname">{{student.fullname}}</span>
-            <span class="about">
-              {{student.institute}},
-              {{student.group}},
-              {{student.courseNumber}} курс
-            </span>
-            <span
-              v-for="(bypassSheet, index) in student.bypassSheetList"
-              :key="index"
-              :class="{'signed': bypassSheet.status === 'signed'}"
-              class="bypass-sheets-status"
-            >
-              Обходной лист
-              "{{bypassSheet.name}}"
-              {{bypassSheet.status === 'signed' ? '' : ' не '}}
-              подписан
-            </span>
-          </div>
-          <app-button
-            red
-            class="ban"
-            @click="ban(student)"
-          >
-            Заблокировать аккаунт
-          </app-button>
-        </app-list-item>
-      </app-list>
+      <app-student-list
+        :studentList="studentListInPage"
+      />
     </div>
 
     <app-filter
@@ -73,6 +42,12 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex"
+import {
+  FETCH_USERS,
+  FETCH_GROUPS,
+} from "~/store/actions.type"
+
 import { initFilterService } from '~/services/FilterService'
 
 import roleAdmin from '~/components/roles/roleAdmin'
@@ -81,9 +56,7 @@ import AppFilter from '~/components/common/AppFilter'
 import AppFilterNav from '~/components/common/AppFilterNav'
 import AppSearch from '~/components/common/AppSearch'
 import AppPagination from '~/components/common/AppPagination'
-import AppList from '~/components/common/AppList'
-import AppListItem from '~/components/common/AppListItem'
-import AppButton from '~/components/common/AppButton'
+import AppStudentList from '~/components/users/AppStudentList'
 
 export default {
   name: 'users',
@@ -95,9 +68,7 @@ export default {
     AppFilterNav,
     AppSearch,
     AppPagination,
-    AppList,
-    AppListItem,
-    AppButton,
+    AppStudentList,
     roleAdmin,
   },
 
@@ -106,71 +77,17 @@ export default {
     itemsPerPage: 0,
     page: 0,
 
-    studentList: [
-      {
-        fullname: "Козырева Татьяна Андреевна",
-        courseNumber: '4',
-        group: "М-174",
-        institute: "ИФН",
-        bypassSheetList: [
-          {
-            name: 'Скидка на столовую',
-            status: 'signed',
-          },
-          {
-            name: 'Отчисление',
-            status: 'reviewing',
-          }
-        ],
-      },
-      {
-        fullname: "Сергиенко Анатолий Николаевич",
-        courseNumber: '4',
-        group: "М-174",
-        institute: "ИФН",
-        bypassSheetList: [
-          {
-            name: 'Скидка на столовую',
-            status: 'signed',
-          },
-        ],
-      },
-      {
-        fullname: "Люкшин Михаил Сергеевич",
-        courseNumber: '3',
-        group: "Ц-184",
-        institute: "ИЦ",
-        bypassSheetList: [
-          {
-            name: 'Скидка на столовую',
-            status: 'signed',
-          },
-        ],
-      },
-    ],
+    fetchStudentsError: '',
+    fetchGroupsError: '',
 
-    groups: [
-      {
-        name: "М-174",
-        institute: "ИФН",
-        courseNumber: '4',
-      },
-      {
-        name: "М-184",
-        institute: "ИФН",
-        courseNumber: '3',
-      },
-      {
-        name: "Ц-184",
-        institute: "ИЦ",
-        courseNumber: '3',
-      },
-    ],
+    studentList: [],
 
     FilterService: null,
   }),
 
   computed: {
+    ...mapGetters(['users', 'groups']),
+
     studentListInPage() {
       return this.searchingStudentList.slice(this.page * this.itemsPerPage,
                                             (this.page + 1) * this.itemsPerPage)
@@ -183,6 +100,9 @@ export default {
       )
     },
     filteredStudentList() {
+      if (!this.FilterService)
+        return this.studentList
+
       if (this.FilterService.filterList.every(filter => filter.value === ''))
         return this.studentList
 
@@ -195,6 +115,8 @@ export default {
     },
 
     filterList() {
+      if (!this.FilterService) return []
+
       return this.FilterService.filterList.map(filter => ({
         selected: filter.value,
         placeholder: filter.name,
@@ -204,6 +126,8 @@ export default {
     },
 
     filterPath() {
+      if (!this.FilterService) return []
+
       const selectedGroup = this.FilterService.get('Группа').value
       if (selectedGroup) {
         const postfix= this.FilterService.get('Курс').postfix
@@ -222,10 +146,6 @@ export default {
   },
 
   methods: {
-    ban(student) {
-      // делаем пост запрос на бан / разбан
-    },
-
     // Методы app-filter
     select(params) {
       const [value, filter] = params
@@ -248,10 +168,53 @@ export default {
       })
     },
     //
+
+    async fetchUsers() {
+      return new Promise((resolve, reject) => {
+        this.$store
+          .dispatch(FETCH_USERS, {
+            users: this.users,
+          })
+            .then(() => {
+              this.users
+                .forEach(user =>
+                  this.studentList.push({
+                    id: user.id,
+                    fullname: user.fullname,
+                    courseNumber: user.courseNumber,
+                    group: user.group,
+                    institute: user.institute,
+                    sheets: user.bypassSheets,
+                  })
+                )
+                resolve()
+            })
+            .catch(error => {
+              console.error(error)
+              this.loadError = error
+              reject()
+            })
+      })
+    },
+
+    async fetchGrops() {
+      return new Promise((resolve, reject) => {
+        this.$store
+          .dispatch(FETCH_GROUPS, this.groups)
+            .then(() => resolve())
+            .catch(error => {
+              console.error(error)
+              this.loadError = error
+              reject()
+            })
+      })
+    },
   },
 
-  created() {
-    this.FilterService = initFilterService(this.groups)
+  beforeMount() {
+    this.fetchUsers()
+    this.fetchGrops()
+      .then(() => this.FilterService = initFilterService(this.groups))
   },
 }
 </script>
@@ -296,29 +259,5 @@ export default {
 
 .pagination {
   justify-content: flex-end;
-}
-
-.student {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-}
-
-.student-info {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-
-  .about {
-    color: @grey-darkset;
-  }
-}
-
-.bypass-sheets-status {
-  font-size: @fz-small;
-  color: @grey-darkset;
-  &.signed {
-    color: @green;
-  }
 }
 </style>
