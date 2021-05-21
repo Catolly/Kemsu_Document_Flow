@@ -59,6 +59,11 @@ export default {
       }
 
       this.sheet = copy(sheet)
+      this.sheet.points
+        .forEach(point => {
+          console.log(point)
+          point.uploadedDocuments = []
+        })
     }
     catch (error) {
       console.error(error)
