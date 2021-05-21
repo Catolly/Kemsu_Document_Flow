@@ -421,25 +421,10 @@ export default {
   async beforeMount() {
     this.schema = await this.fetchSchema()
     this.schema.statements
-      .forEach(file => {
-          file.fullname = file.img
-          file.name = file.img
-            .split('/')
-            .slice(-1)
-            .join()
-        })
     this.schema.points
         .forEach(point => {
           if (!point.uploadDocumentsFormat)
             this.$set(point, 'uploadDocumentsFormat', [])
-          point.requiredDocuments
-            .forEach(file => {
-              file.fullname = file.img
-              file.name = file.img
-                .split('/')
-                .slice(-1)
-                .join()
-            })
         })
 
     this.fetchDepartments()
