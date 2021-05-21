@@ -1,20 +1,20 @@
 <template>
   <div class="app-upload-list">
     <div
-      v-for="(doc, index) in documentList"
+      v-for="(file, index) in documentList"
       :key="index"
-      :title="'Удалить ' + doc.name"
+      :title="'Удалить ' + file.name"
       :class="classObj"
       class="file"
     >
       <div
         :class="classObj"
         class="body"
-        @click="$emit('delete', doc)"
+        @click="$emit('delete', file)"
       >
         <img
-          v-if="previewIcon(doc)"
-          :src="previewIcon(doc)"
+          v-if="previewIcon(file)"
+          :src="previewIcon(file)"
           class="preview-icon"
         >
 
@@ -26,11 +26,12 @@
 
       <a
         class="header"
-        :title="'Скачать ' + doc.name"
-        :download="doc.name"
-        :href="createURL(doc)"
+        :title="'Открыть ' + file.name"
+        :download="file.name"
+        :href="createURL(file)"
+        target="_blank"
       >
-        {{doc.name}}
+        {{file.name}}
       </a>
     </div>
   </div>
@@ -69,6 +70,23 @@ export default {
 
     BASE_URL() {
       return BASE_URL
+    },
+  },
+
+  watch: {
+    documentList: {
+      handler() {
+        this.documentList.forEach(file => {
+          if (this.isLink(file)) {
+            this.$set(file, 'name', file.img.split('/')
+                                            .slice(-1)
+                                            .join())
+            this.$set(file, 'fullname', file.img)
+          }
+        })
+      },
+      deep: true,
+      immediate: true,
     },
   },
 
