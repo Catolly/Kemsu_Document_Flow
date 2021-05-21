@@ -1,42 +1,42 @@
 <template>
-	<div
-    class="app-select-wrapper"
-    :class="classObj"
-  >
+	<div :class="classObj" class="app-select-wrapper">
 		<div
   		@focusin="open"
   		@focusout="close"
+      :tabindex="isDisabled ? -1 : 0"
       ref="appSelect"
-      tabindex=0
-  		class="app-select"
+  		:class="{
+        'is-open': isOpen,
+        'disabled': isDisabled,
+      }"
+      class="app-select"
     >
-			<span class="selected">
+			<span :class="{'disabled': isDisabled}" class="selected">
   			{{value}}
-				<div class="arrow" />
+				<div :class="{'disabled': isDisabled}" class="arrow" />
 			</span>
 
 			<label
         v-if="placeholder"
-  			:class="{'small': value}"
+  			:class="{
+          'small': value,
+          'disabled': isDisabled,
+        }"
   			class="label"
       >
 				{{placeholder}}
 			</label>
 
-			<div
-			 v-show="isOpen"
-			 class="option-wrapper"
-      >
+			<div v-show="isOpen" class="option-wrapper">
 				<div
-				  v-for="option in options"
-				  :key="option"
+				  v-for="(option, index) in options"
+				  :key="index"
 				  @click="select(option)"
 				  class="option"
         >
 					{{option}}
 				</div>
 			</div>
-
 		</div>
 
     <app-message-list
@@ -105,6 +105,10 @@ export default {
 	},
 
   computed: {
+    isDisabled() {
+      return this.disabled || !this.options.length
+    },
+
     classObj() {
       return {
         'error': !!this.errorMessages.length,
@@ -123,15 +127,18 @@ export default {
 		},
 
     open() {
+      if (this.isDisabled) return
       this.isOpen = true
     },
 
 		select(option) {
+      if (this.isDisabled) return
 			this.$emit('input', option)
 			this.unfocus()
 		},
 
     focus() {
+      if (this.isDisabled) return
       this.$refs.appSelect.focus()
     },
 	},
