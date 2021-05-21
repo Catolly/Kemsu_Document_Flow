@@ -7,81 +7,85 @@
   		class="point-header"
       @click="isOpen = !isOpen"
     >
-			<h3 class="point-title">
-				{{point.title}}
-			</h3>
-			<span
-  			v-show="isOpen"
-  			v-if="point.status === bypassSheetStatus.Rejected"
-  			class="reason"
-      >
-				{{point.reason}}
-			</span>
+			<h3 class="point-title">{{point.title}}</h3>
 			<div class="arrow" />
 		</div>
 
-<!-- 		@click.stop="" -->
-		<div
-  		v-show="isOpen"
-  		class="point-body"
-    >
-			<div class="required-documents-wrapper">
-				<span class="required-document-header">
-					Необходимые документы
-				</span>
+		<div v-show="isOpen" class="point-body">
+			<div class="about">
+        <span
+          v-show="isOpen"
+          v-if="[
+            bypassSheetStatus.Rejected,
+            bypassSheetStatus.Reviewing
+          ].includes(point.status)"
+          :class="classObj"
+        >
+          {{point.rejectReason}}
+        </span>
 
-				<div class="required-documents">
-					<img
-  					v-for="(doc, index) in point.requiredDocuments"
-  					:key="index"
-  					:src="doc.src"
-  					class="required-document-img"
-          >
-				</div>
+        <div class="required-documents">
+          <template v-if="point.requiredDocuments.length">
+    				<span class="header">Необходимые документы:</span>
+    				<div class="download-list">
+              <app-download-file
+                v-for="(file, index) in point.requiredDocuments"
+                :key="index"
+                normal
+                :file="file"
+                class="download"
+              />
+    				</div>
+          </template>
+          <span class="header" v-else>Отправка документов не требуется</span>
+        </div>
 
-				<span class="worker">
-					Поставил отказ <b>{{point.worker}}</b>
-				</span>
-				<span class="contacts">
-					Телефон библиотеки <b>{{point.phone}}</b>
-				</span>
+        <div
+          v-if="[
+            bypassSheetStatus.Signed,
+            bypassSheetStatus.Rejected
+          ].includes(point.status)"
+          class="staff-about"
+        >
+  				<span class="name">
+  					Поставил {{
+              point.status === bypassSheetStatus.Signed
+              ? 'подпись'
+              : 'отказ'
+            }}:
+            <b>{{ staffShortname }}</b>
+  				</span>
+        </div>
 			</div>
 
-			<form
-  			v-if="[bypassSheetStatus.Rejected, bypassSheetStatus.NotSent].includes(point.status)"
-  			class="send-document-form"
+      <h2
+        class="not-required"
+        v-if="point.status === bypassSheetStatus.Signed"
       >
-				<h2>Отправить документы</h2>
+        Заявление подписано
+      </h2>
 
-				<div class="app-document-upload-section">
-					<div
-  					v-for="(doc, index) in point.requiredDocuments"
-  					:key="index"
-  					class="app-document-upload-wrapper"
-          >
-						<span class="document-title">
-							{{doc.title}}
-						</span>
+      <app-bypass-sheet-point-form
+        v-else-if="[
+          bypassSheetStatus.Rejected,
+          bypassSheetStatus.NotSent
+        ].includes(point.status)"
+        :point="point"
+        @success="point.status = bypassSheetStatus.Reviewing"
+        class="send-form"
+      />
 
-						<div class="app-document-upload">
-							<app-image-upload class="document-image-upload" />
-							<img class="document-image-uploaded">
-						</div>
-					</div>
-				</div>
-
-				<app-button class="blue filled submit">
-					Отправить
-				</app-button>
-			</form>
-
-			<div
-  			v-else
-  			class="document-sent"
-      >
+			<div v-else class="sent">
 				<p>
-					Ваши документы на проверке, вы можете
-					<NuxtLink class="document-cancel-link" to="#">отменить отправку</NuxtLink>
+					Ваши документы на проверке,
+          <br>
+          вы можете
+					<a
+            @click="point.status = bypassSheetStatus.NotSent"
+            class="cancel-link"
+          >
+            переотправить их
+          </a>
 				</p>
 			</div>
 		</div>
@@ -92,16 +96,16 @@
 import bypassSheetStatus from '~/services/bypassSheetStatus'
 
 import AppListItem from '~/components/common/AppListItem'
-import AppImageUpload from '~/components/bypass-sheets/AppImageUpload'
-import AppButton from '~/components/common/AppButton'
+import AppDownloadFile from '~/components/common/AppDownloadFile'
+import AppBypassSheetPointForm from '~/components/bypass-sheets/AppBypassSheetPointForm'
 
 export default {
 	name: 'AppBypassSheetPoint',
 
 	components: {
 		AppListItem,
-		AppImageUpload,
-		AppButton,
+		AppDownloadFile,
+    AppBypassSheetPointForm,
 	},
 
 	data:() => ({
@@ -117,21 +121,25 @@ export default {
         type: String,
         required: true,
       },
-
       title: {
         type: String,
         required: true,
       },
-
-      reason: {
+      requiredDocuments: {
+        type: Array,
+        required: true,
+      },
+      uploadedDocuments: {
+        type: Array,
+      },
+      uploadDocumentsFormat: {
+        type: Array,
+      },
+      rejectReason: {
         type: String,
         default: '',
       },
-      requiredDocuments: {
-        type: Array,
-        default: [],
-      },
-      worker: {
+      staff: {
         type: String,
         default: '',
       },
@@ -143,6 +151,11 @@ export default {
 	},
 
   computed: {
+    staffShortname() {
+      const [firstname, lastname, middlename] = this.point.staff.split(' ')
+      return firstname + ' ' + lastname[0] + '.' + (middlename ? middlename[0] + '.' : '')
+    },
+
     classObj() {
       return {
         'green': this.point.status === bypassSheetStatus.Signed,
@@ -156,10 +169,6 @@ export default {
       return bypassSheetStatus
     },
   },
-
-	methods: {
-
-	},
 }
 </script>
 
