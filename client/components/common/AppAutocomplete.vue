@@ -37,10 +37,10 @@
 		v-if="filteredOptions.length"
 		class="option-list">
 			<div
-			v-for="(option, i) in filteredOptions"
-			:key="option.id"
+			v-for="(option, index) in filteredOptions"
+			:key="index"
 			@click="selectOption(option)"
-			:class="{'active': arrowPosition === i}"
+			:class="{'active': arrowPosition === index}"
 			class="option"
 			tabindex="0">
 				{{option.value}}
