@@ -2,60 +2,79 @@
   <roleStaff class="container">
     <div class="sign-main">
       <div class="head">
-        <h1 class="header">{{title}}</h1>
+        <h1 v-if="bypassSheetsSchema" class="header">{{bypassSheetsSchema.title}}</h1>
+        <span
+          v-if="
+            fetchGroupsError
+            || fetchUsersError
+            || fetchSchemaError
+            || updateBypassSheetsError"
+          class="error-message"
+        >
+          {{ fetchGroupsError ? 'Не удалось загрузить список групп'  : '' }}
+          {{ fetchUsersError ? 'Не удалось загрузить список студентов'  : '' }}
+          {{ fetchSchemaError ? 'Не удалось загрузить обходной лист'  : '' }}
+          {{ updateBypassSheetsError ? 'Не удалось сохранить обходной лист'  : '' }}
+        </span>
         <app-filter-nav
+          v-if="filterPath"
           :filterPath="filterPath"
           @setFilterDepth="setFilterDepth"
         />
       </div>
 
-      <app-sign-topbar
-        :checkedPointsCount="checkedStudentList.length"
-        @signChecked="signChecked"
-        @checkAll="checkAll"
-        @uncheckAll="uncheckAll"
+      <h2 v-if="!studentList.length">Обходных листов на подпись ещё нет</h2>
 
-        :searchText="searchText"
-        @search="search"
+      <template v-if="studentList.length && !fetchUsersError && !fetchSchemaError">
+        <app-sign-topbar
+          :checkedPointsCount="checkedStudentList.length"
+          @signChecked="signChecked"
+          @checkAll="checkAll"
+          @uncheckAll="uncheckAll"
 
-        class="topbar"
-      />
+          :searchText="searchText"
+          @search="search"
 
-      <app-pagination
-        v-if="searchingStudentList.length > 0"
-        :itemsAmount="searchingStudentList.length"
-        :page="page"
-        @updateItemsPerPage="itemsPerPage = $event"
-        @updatePage="page = $event"
-
-        class="pagination"
-      />
-
-      <app-student-list
-        :studentList="studentListInPage"
-        @check="check"
-        @uncheck="uncheck"
-        @sign="sign"
-        @reject="openRejectForm"
-      />
-
-      <app-modal
-        v-show="rejectForm.isOpen"
-      >
-        <app-reject-form
-          v-if="rejectForm.student"
-          :student="rejectForm.student"
-          @close="closeRejectForm"
-          @reject="reject"
+          class="topbar"
         />
-      </app-modal>
+
+        <app-pagination
+          v-if="searchingStudentList.length"
+          :itemsAmount="searchingStudentList.length"
+          :page="page"
+          @updateItemsPerPage="itemsPerPage = $event"
+          @updatePage="page = $event"
+
+          class="pagination"
+        />
+
+        <app-student-list
+          :studentList="studentListInPage"
+          @check="check"
+          @uncheck="uncheck"
+          @sign="sign"
+          @reject="openRejectForm"
+        />
+
+        <app-modal
+          v-show="rejectForm.isOpen"
+        >
+          <app-reject-form
+            v-if="rejectForm.student"
+            :student="rejectForm.student"
+            @close="closeRejectForm"
+            @reject="reject"
+          />
+        </app-modal>
+      </template>
     </div>
 
     <app-filter
-      class="filter"
+      v-if="studentList.length && !fetchGroupsError && FilterService"
       :filterList="filterList"
       @select="select"
       @clear="clear"
+      class="filter"
     />
   </roleStaff>
 </template>
