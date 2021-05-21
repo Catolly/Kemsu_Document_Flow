@@ -24,14 +24,14 @@
           v-if="loadError"
           class="error-message"
         >
-          Не удалось загрузить форму
+          Не удалось загрузить шаблон
         </span>
 
         <span
           v-if="updateSuccess"
           class="success-message"
         >
-          Форма сохранена!
+          Шаблон сохранен!
         </span>
 
 
