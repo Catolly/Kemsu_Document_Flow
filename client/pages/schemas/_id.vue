@@ -10,12 +10,13 @@
           <h1 class="header">Редактирование обходного листа</h1>
 
           <app-button
-              plain
-              red
-              class="delete"
-              @click="deleteSchema"
-            >
-              Удалить шаблон
+            v-if="!loadError && schema"
+            plain
+            red
+            class="delete"
+            @click="deleteSchema"
+          >
+            Удалить шаблон
           </app-button>
         </div>
 
