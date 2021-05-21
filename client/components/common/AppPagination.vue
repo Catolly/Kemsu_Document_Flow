@@ -75,6 +75,7 @@ export default {
   watch: {
     selectedItemsPerPage() {
       this.$emit('updateItemsPerPage', this.selectedItemsPerPage)
+      this.$emit('updatePage', 0)
     },
   },
 
