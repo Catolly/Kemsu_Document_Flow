@@ -149,6 +149,7 @@ const actions = {
 
       data.points = data.points
         .map(point => ({
+          id: point.id,
           title: point.title,
           description: point.description,
           requiredDocuments: point.requiredDocuments,
@@ -175,6 +176,10 @@ const actions = {
 
       data.points.
         forEach((point, index) => {
+          formData.append(
+            `points[${index}]id`,
+            point.id
+          )
           formData.append(
             `points[${index}]title`,
             point.title
