@@ -69,28 +69,48 @@ export default {
 
 <style lang="less" scoped>
 .app-download-file {
-  height: 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
   width: 60px;
+  &.big {
+    width: 200px;
+  }
+  &.normal {
+    width: 100px;
+  }
+}
+
+.preview {
+  position: relative;
+
+  width: 100%;
+  height: 60px;
+  &.big {
+    height: 200px;
+  }
+  &.normal {
+    height: 100px;
+  }
 
   background: @white;
   border: 1px solid @grey-light;
   border-radius: 5px;
 
-  display: inline-block;
-  position: relative;
-
   &:focus-visible,
   &:hover {
     border-color: @blue;
-
-    .icon-download {
-      fill: @blue;
-    }
   }
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .preview-icon {
   position: absolute;
+
   top: 10%;
   bottom: 10%;
   left: 10%;
@@ -110,9 +130,14 @@ export default {
 
   height: @size;
   width: @size;
+}
 
-  position: absolute;
-  top: calc(50% - .5*@size);
-  left: calc(50% - .5*@size);
+.header {
+  width: 100%;
+
+  font-size: @fz-small;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 </style>

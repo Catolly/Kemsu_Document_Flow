@@ -105,10 +105,6 @@ export default {
   margin-top: 48px;
 }
 
-.error-message {
-  color: @red;
-}
-
 .topbar {
   display: flex;
   justify-content: flex-end;

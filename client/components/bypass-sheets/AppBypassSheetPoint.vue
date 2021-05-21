@@ -164,7 +164,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-
 .green {
 	color: @green;
 	border-color: @green;
@@ -177,37 +176,46 @@ export default {
 
 .disabled {
 	color: @text-grey;
-	border-color: #F3F3F3;
+	border-color: @grey-light;
+}
+
+.point,
+.point-header,
+.about,
+.required-documents,
+.staff-about {
+  display: flex;
+  flex-direction: column;
 }
 
 .point {
   padding: 0;
-
-  display: flex;
-  flex-direction: column;
   justify-content: space-between;
-
 	position: relative;
 
-	&.is-open .arrow {
-		transform: rotate(180deg);
-	}
+	&.is-open {
+    .arrow {
+  		transform: rotate(180deg);
+  	}
+    .point-header {
+      padding-bottom: 8px;
+    }
 
-	&.is-open:hover {
-		background: #FDFDFD;
-	}
+    &:hover {
+      background: @grey-bright;
+    }
+    &:before {
+      .absolute();
+      top: 0;
+      right: 0;
 
-	&.is-open:before {
-		.absolute();
-		top: 0;
-		right: 0;
+      height: 100%;
+      width: 50%;
 
-		height: 100%;
-		width: 50%;
-
-		background-color: #F5F5F5;
-		border-radius: 0 12px 12px 0;
-	}
+      background-color: @grey-light;
+      border-radius: 0 12px 12px 0;
+    }
+  }
 }
 
 .point-header,
@@ -221,16 +229,11 @@ export default {
 
 	position: relative;
 
-  display: flex;
-  flex-direction: column;
+  gap: 8px;
 }
 
 .arrow {
 	.arrow();
-}
-
-.reason {
-	margin-top: 8px;
 }
 
 .point-body {
@@ -245,97 +248,61 @@ export default {
 	color: @black;
 	font-weight: @fw-light;
 	cursor: default;
+}
 
-	.required-documents-wrapper {
-    display: flex;
-    flex-direction: column;
+.about {
+  gap: 24px;
+}
 
-		.required-documents {
-			margin-top: 24px;
+.required-documents {
+  gap: 16px;
+}
 
-      display: flex;
-		}
+.download-list {
+	display: flex;
+  flex-flow: wrap;
+  gap: 16px;
+}
 
-		.required-document-img {
-			width: 116px;
-			height: 116px;
-			margin-right: 16px;
-		}
+.staff-about {
+  gap: 8px;
+}
 
-		.worker {
-			margin-top: 24px;
-		}
+.not-required {
+  margin-left: auto;
+  margin-right: auto;
+}
 
-		.contacts {
-			margin-top: 16px;
-		}
-	}
+.send-form {
+	z-index: 0;
+	padding-left: 64px;
+}
 
-	.send-document-form {
-		z-index: 0;
-		padding-left: 64px;
+.not-required,
+.sent {
+  position: absolute;
+  top: calc(50% - 24px);
+  right: 0;
+  width: 50%;
 
-		.app-document-upload-section {
-			margin-top: 24px;
+	display: flex;
+  justify-content: center;
+  align-items: center;
 
-      display: flex;
+  p {
+    max-width: 380px;
+  }
+}
 
-			.app-document-upload-wrapper {
-				margin-right: 32px;
-			}
+.cancel-link {
+	color: @black;
 
-			.app-document-upload {
-				margin-top: 12px;
-
-        display: flex;
-			}
-
-			.document-image-upload,
-			.document-image-uploaded {
-				width: 100px;
-				height: 100px;
-			}
-
-			.document-image-upload {
-				margin-right: 16px;
-			}
-
-			.document-image-uploaded {
-				background: #C4C4C4;
-
-				&:not(:last-child) {
-					margin-right: 16px;
-				}
-			}
-		}
-
-		.submit {
-			margin-top: 24px;
-		}
-	}
-
-	.document-sent {
-		display: flex;
-    justify-content: center;
-    align-items: center;
-
-		p {
-			display: inline-block;
-			width: 300px;
-		}
-
-		.document-cancel-link {
-			color: #000;
-
-			&:after {
-				border-color: #000;
-			}
-		}
-	}
-
-	b {
-		font-weight: @fw-medium;
+	&:after {
+		border-color: @black;
 	}
 }
 
+b {
+	font-weight: @fw-medium;
+}
 </style>

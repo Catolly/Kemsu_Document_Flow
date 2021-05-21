@@ -241,10 +241,6 @@ export default {
   max-width: 500px;
 }
 
-.error-message {
-  color: @red;
-}
-
 .upload-section {
 	padding-top: 48px;
 

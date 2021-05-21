@@ -56,7 +56,7 @@
           :rows="3"
           class="reason-text-field"
         />
-        <div class="possible-reason-crisps">
+        <div class="common-reason-crisps">
           <app-chips
             v-for="(reason, index) in possibleReasons"
             :key="index"
@@ -223,7 +223,7 @@ export default {
     flex-shrink: 0;
   }
 
-  .possible-reason-crisps {
+  .common-reason-crisps {
     display: flex;
     flex-flow: row wrap;
     gap: 8px;

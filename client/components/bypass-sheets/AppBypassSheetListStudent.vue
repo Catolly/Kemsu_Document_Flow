@@ -106,12 +106,19 @@ export default {
   align-items: center;
 }
 
-.error-message {
-  color: @red;
+.empty-message {
+  margin-top: 48px;
 }
 
 .bypass-sheet-list {
 	margin-top: 32px;
+}
+
+.bypass-sheet {
+  &.signed {
+    border-color: @green;
+    color: @green;
+  }
 }
 
 .bypass-sheet-title {

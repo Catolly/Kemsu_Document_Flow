@@ -387,7 +387,6 @@ export default {
 
 .error-message {
   margin-top: 8px;
-  color: @red;
 }
 
 .steps {

@@ -6,7 +6,7 @@
 		<h1 class="header">Личные данные</h1>
     <span
       v-if="updated && !updateError"
-      class="updated"
+      class="success-message"
     >
       Данные успешно обновлены!
     </span>
@@ -260,14 +260,6 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-}
-
-.updated {
-  color: @green;
-}
-
-.error-message {
-  color: @red;
 }
 
 .personal-data {

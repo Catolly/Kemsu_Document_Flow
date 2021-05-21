@@ -60,7 +60,8 @@
             <app-button
               big
               square
-              class="delete-document-btn"
+              filled
+              class="delete-btn"
               @click="deleteUploadDocumentsFormat(doc)"
             >
               <div class="minus" />
@@ -70,7 +71,7 @@
         <app-button
           big
           round
-          class="add-document-btn"
+          class="add-btn"
           @click="addUploadDocumentsFormat"
         >
           <div class="plus" />
@@ -188,39 +189,62 @@ export default {
   max-width: 500px;
 }
 
-.student-upload-documents {
-  .document {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
+.document {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
 
-  .document-body {
-    display: flex;
-    gap: 8px;
-  }
+.chipses {
+  flex-flow: wrap;
+  max-width: 500px;
+}
 
-  .add-document-btn,
-  .delete-document-btn {
-    background: @grey-bright;
-    border: 1px solid @grey-light;
-  }
+.document-body,
+.new-reason,
+.chipses {
+  display: flex;
+  gap: 8px;
+}
 
-  .add-document-btn {
-    &:hover {
-      background: @grey-light;
-      border-color: @blue;
+.add-btn,
+.delete-btn {
+  background: @grey-bright;
+  border: 1px solid @grey-light;
+}
+
+.add-btn {
+  &:hover {
+    background: @grey-light;
+    border-color: @blue;
+  }
+}
+
+.delete-btn {
+  &:hover {
+    border-color: @red;
+
+    .minus:before,
+    .minus:after {
+      background: @red;
     }
   }
+}
 
-  .delete-document-btn {
-    &:hover {
-      border-color: @red;
+.chips {
+  display: flex;
+  gap: 8px;
+  transition: 0.1s;
 
-      .minus:before,
-      .minus:after {
-        background: @red;
-      }
+  .delete-chips-btn {
+    position: relative;
+    height: 24px;
+    width: 24px;
+  }
+  &:hover {
+    .minus:before,
+    .minus:after {
+      background: @white;
     }
   }
 }

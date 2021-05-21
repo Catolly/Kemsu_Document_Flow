@@ -129,8 +129,4 @@ export default {
     border-color: @green;
   }
 }
-
-.error-message {
-  color: @red;
-}
 </style>

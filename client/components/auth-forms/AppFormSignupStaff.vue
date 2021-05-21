@@ -253,9 +253,17 @@ export default {
   }
 }
 
+.signup-success,
 .signup-error {
   margin-top: 16px;
   margin-bottom: -16px;
+}
+
+.signup-error {
   color: @red;
+}
+
+.signup-success {
+  color: @green;
 }
 </style>

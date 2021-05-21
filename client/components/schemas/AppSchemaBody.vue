@@ -142,10 +142,11 @@ export default {
 
   display: grid;
   grid-template-columns: 1fr max-content;
-  grid-row-gap: 8px;
+  grid-row-gap: .5em;
+  grid-column-gap: 1em;
   grid-template-areas:
-    "description description"
-    "required-documents edit-link";
+    "description edit-link"
+    "required-documents .";
 }
 
 .description {
@@ -159,8 +160,8 @@ export default {
   grid-area: required-documents;
 
   align-self: flex-end;
-
   display: flex;
+  flex-flow: wrap;
   gap: 8px;
 }
 
@@ -174,7 +175,7 @@ export default {
 .edit-link {
   grid-area: edit-link;
 
-  align-self: flex-end;
+  align-self: flex-start;
 
   font-size: @fz-large;
   font-weight: @fw-medium;

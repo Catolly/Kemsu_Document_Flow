@@ -456,10 +456,14 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.form {
+.container {
   padding-bottom: 0;
+}
 
+.form {
   &.step-two {
+    height: 100vh;
+
     display: grid;
     grid-template-columns: 1fr 30%;
     grid-gap: 48px;
@@ -479,14 +483,6 @@ export default {
 .error-message,
 .success-message {
   margin-top: 8px;
-}
-
-.error-message {
-  color: @red;
-}
-
-.success-message {
-  color: @green;
 }
 
 .steps {

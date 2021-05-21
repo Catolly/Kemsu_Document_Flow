@@ -158,11 +158,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-
-.error-message {
-  color: @red;
-}
-
 .form {
   .header {
     text-align: center;
@@ -191,5 +186,4 @@ export default {
     }
   }
 }
-
 </style>

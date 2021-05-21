@@ -39,7 +39,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-
 .app-message-list {
   padding-top: 8px;
   padding-left: 24px;
@@ -60,9 +59,4 @@ export default {
 .message {
   color: @grey-darkset;
 }
-
-.error-message {
-  color: @red;
-}
-
 </style>

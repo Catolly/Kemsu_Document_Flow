@@ -63,7 +63,19 @@ export default {
 
 <style lang="less" scoped>
 .container,
-.point-list {
-	margin-top: 48px;
+.head {
+  display: flex;
+  flex-direction: column;
+}
+
+.container {
+	padding-top: 48px;
+
+  gap: 48px;
+}
+
+.head {
+  gap: .5em;
 }
 </style>
+

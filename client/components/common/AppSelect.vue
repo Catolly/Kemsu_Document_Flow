@@ -139,7 +139,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-
 .app-select-wrapper {
 	position: relative;
   font-size: @fz-large;
@@ -168,27 +167,32 @@ export default {
     cursor: pointer;
   }
 
+  .disabled {
+    cursor: default;
+  }
+
   .app-select {
     position: relative;
 
-    &:focus .selected {
-      border-color: @blue;
-      border-radius: 10px 10px 0 0;
+    &.is-open {
+      .selected {
+        border-color: @blue;
+        border-radius: 10px 10px 0 0;
+      }
+      .label {
+        color: @blue;
+      }
+      .arrow {
+        transform: rotate(180deg);
+      }
     }
 
-    &:focus .label {
-      color: @blue;
-    }
-    &:focus .label,
+    &.is-open .label,
     .label.small {
       font-size: @fz-small;
       top: -0.875em;
       left: 1.5em;
       padding: 0.25em 0.5em;
-    }
-
-    &:focus .arrow {
-      transform: rotate(180deg);
     }
   }
 
@@ -224,6 +228,10 @@ export default {
     background: @grey-bright;
     border: 1px solid @grey-light;
     border-radius: 10px;
+
+    &.disabled {
+      background: @grey-medium;
+    }
   }
 
   .option-wrapper {
@@ -262,15 +270,22 @@ export default {
     top: 1.2em;
     left: 1.2em;
 
+    user-select: none;
+
     color: @grey-darkset;
     background: linear-gradient(to top, @grey-bright 50%, transparent 0);
+
+    &.disabled {
+      background: @grey-medium;
+    }
   }
 
   .arrow {
     .arrow();
-
     cursor: pointer;
+    &.disabled {
+      cursor: default;
+    }
   }
 }
-
 </style>

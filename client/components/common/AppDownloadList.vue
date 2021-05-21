@@ -165,40 +165,6 @@ export default {
   }
 }
 
-.file {
-  height: 60px;
-  width: 60px;
-
-  background: @white;
-  border: 1px solid @grey-light;
-  border-radius: 5px;
-
-  display: inline-block;
-  position: relative;
-
-  &:focus-visible,
-  &:hover {
-    border-color: @blue;
-
-    .icon-download {
-      fill: @blue;
-    }
-  }
-}
-
-.preview-icon {
-  position: absolute;
-  top: 10%;
-  bottom: 10%;
-  left: 10%;
-  right: 10%;
-
-  height: 80%;
-  width: 80%;
-
-  opacity: .5;
-}
-
 .btns {
   display: flex;
   gap: 4px;
@@ -222,17 +188,6 @@ export default {
       fill: @blue;
     }
   }
-}
-
-.icon-download {
-  @size: 16px;
-
-  height: @size;
-  width: @size;
-
-  position: absolute;
-  top: calc(50% - .5*@size);
-  left: calc(50% - .5*@size);
 }
 
 .icon-arrow {

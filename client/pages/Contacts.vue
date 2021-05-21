@@ -64,24 +64,45 @@ export default {
 }
 
 .contacts {
-  padding-top: 48px;
-  gap: 48px;
+  padding-top: 3em;
+  gap: 3em;
 }
 
 .contacts-head {
-  gap: 8px;
+  gap: .5em;
+}
+
+.department {
+  display: grid;
+  grid-template-rows: repeat(auto, 1fr);
+  grid-template-columns: minmax(200px, 270px) 1fr;
+  grid-gap: 1em;
+}
+
+.department-head {
+  display: flex;
+  flex-direction: column;
+  gap: .5em;
+
+  font-size: @fz-large;
+  font-weight: @fw-light;
+  color: @grey-darkset;
+}
+
+.department-address {
+  font-size: @fz-small;
 }
 
 .contacts-body {
   display: grid;
   grid-template-rows: repeat(auto, 1fr);
-  grid-template-columns: repeat(3, minmax(min-content, 360px));
+  grid-template-columns: repeat(2, minmax(min-content, 400px));
   grid-auto-flow: row dense;
-  grid-gap: 24px;
+  grid-gap: 1.5em;
 }
 
 .contact {
-  gap: 8px;
+  gap: .5em;
 
   &-name {
     font-weight: @fw-normal;
@@ -89,19 +110,22 @@ export default {
   }
 }
 
-.error-message {
-  color: @red;
-}
+@media all and (max-width: 1300px) {
+  .department {
+    display: grid;
+    grid-template-rows: repeat(auto, 1fr);
+    grid-template-columns: 1fr;
+    grid-gap: 1.5em;
+  }
 
-@media all and (max-width: 1250px) {
-  .contacts-body {
-    grid-template-columns: repeat(2, minmax(min-content, 360px));
+  .department-head {
+    max-width: 350px;
   }
 }
 
 @media all and (max-width: 1000px) {
   .contacts-body {
-    grid-template-columns: repeat(1, minmax(min-content, 360px));
+    grid-template-columns: 1fr;
   }
 }
 </style>

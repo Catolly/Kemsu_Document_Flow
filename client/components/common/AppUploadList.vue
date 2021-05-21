@@ -5,7 +5,7 @@
       :key="index"
       :title="'Удалить ' + doc.name"
       :class="classObj"
-      class="doc"
+      class="file"
     >
       <div
         :class="classObj"
@@ -113,7 +113,7 @@ export default {
   gap: 16px;
 }
 
-.doc {
+.file {
   display: flex;
   flex-direction: column;
   gap: 8px;

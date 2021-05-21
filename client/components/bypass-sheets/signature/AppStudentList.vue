@@ -95,10 +95,13 @@ export default {
 <style lang="less" scoped>
 .student {
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-start;
   align-items: center;
 
   position: relative;
+
+  padding-top: 24px;
+  padding-bottom: 24px;
 }
 
 .student-info {

@@ -155,8 +155,4 @@ export default {
 .pagination {
   margin-left: auto;
 }
-
-.error-message {
-  color: @red;
-}
 </style>
