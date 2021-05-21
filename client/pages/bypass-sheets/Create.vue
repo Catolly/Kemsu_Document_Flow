@@ -6,11 +6,13 @@
     >
       <div class="form-body">
   			<h1 class="header">Обходной лист</h1>
-        <p
-          v-if="errors"
-          class="error-message"
-        >
+
+        <p v-if="createError" class="error-message">
           Не удалось создать обходной лист. Попробуйте позже
+        </p>
+
+        <p v-if="fetchSchemasTitlesError" class="error-message">
+          Не удалось загрузить список обходных листов. Попробуйте позже
         </p>
 
   			<app-select
@@ -46,7 +48,6 @@
                 />
               </div>
             </div>
-
             <div class="upload-subsection">
               <span class="subheader">Заявление</span>
               <div class="upload-wrapper">
@@ -117,6 +118,7 @@ export default {
     selectedReason: '',
     statements: [],
 
+    createError: '',
     fetchSchemasTitlesError: '',
 	}),
 
@@ -182,24 +184,18 @@ export default {
       this.create()
     },
 
-    create() {
-      const formData = new FormData()
-      formData.append('statements', this.statements)
-      formData.append('title', this.selectedReason)
-
-      // for (const [key, value] of formData) {
-      //   console.log(key, value)
-      // }
-
-      BypassSheetsService.post(formData)
-        .then(() => this.back())
-        .catch(errors => this.errors = errors)
+    async create() {
+      try {
+        await this.$store.dispatch(CREATE_BYPASS_SHEET, {
+          title,
+          statements,
+        })
+        this.$router.push({ path: '..', append: true })
+      } catch (error) {
+        console.error(createError)
+        this.createError = createError
+      }
     },
-
-    back() {
-      const path = this.$route.path
-      this.$router.push(path.substring(0, path.lastIndexOf('/')))
-    }
   },
 }
 </script>
