@@ -66,13 +66,14 @@
         />
       </div>
 
-      <p
-        v-if="signupError"
-        class="signup-error"
-      >
+      <p v-if="error" class="signup-error">
         Не удалось зарегистрироваться
         <br>
         Повторите попытку позже
+      </p>
+
+      <p v-if="conflictError" class="signup-error">
+        Пользователь с таким Email уже зарегистрирован
       </p>
 
       <div class="btns">
@@ -107,6 +108,7 @@
 
 <script>
 import { adminEmail } from "~/services/config"
+import { errorCode } from "~/services/ApiService"
 
 import { mapGetters } from "vuex"
 import { SIGNUP_STUDENT, FETCH_UNREGISTERED_STUDENTS } from "~/store/actions.type"
@@ -141,7 +143,8 @@ export default {
 
     minPasswordLength: minPasswordLength,
 
-    signupError: '',
+    error: '',
+    conflictError: '',
     fetchUnregisteredStudentsError: '',
 
     dialog: false,
@@ -167,7 +170,7 @@ export default {
     ...mapGetters(['unregisteredStudents']),
 
     unregisteredStudentsOptionList() {
-      return this.unregisteredStudents.slice(0, 5).map(user => ({
+      return this.unregisteredStudents.slice(0, 4).map(user => ({
         id: user.id,
         value: user.fullname + this.divider + user.group,
       }))
@@ -203,6 +206,8 @@ export default {
     },
 
     signup() {
+      this.error = ''
+      this.conflictError = ''
       this.$store
         .dispatch(SIGNUP_STUDENT, {
           'fullname': this.fullname,
@@ -211,7 +216,12 @@ export default {
           'password': this.password,
         })
         .then(() => this.$router.push('/'))
-        .catch(error => this.signupError = error)
+        .catch(error => {
+          console.error(error)
+          if (errorCode(error === '409'))
+            this.conflictError = error
+          else this.error = error
+        })
     },
   },
 

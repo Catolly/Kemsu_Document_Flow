@@ -55,6 +55,13 @@
           Неверный логин или пароль
         </p>
 
+        <p
+          v-if="error"
+          class="error-message"
+        >
+          Произошла ошибка
+        </p>
+
   			<app-button
           class="login-btn blue big filled fluid"
           :disabled="$v.$invalid"
@@ -81,6 +88,7 @@
 
 <script>
 import { adminEmail } from "~/services/config"
+import { errorCode } from "~/services/ApiService"
 
 import { LOGIN } from "~/store/actions.type"
 
@@ -107,6 +115,7 @@ export default {
     minPasswordLength: minPasswordLength,
 
     loginError: '',
+    error: '',
 
     dialog: false,
     adminEmail: adminEmail,
@@ -145,13 +154,20 @@ export default {
     },
 
     login() {
+      this.loginError = ''
+      this.error = ''
       this.$store
         .dispatch(LOGIN, {
           'email': this.email,
           'password': this.password,
         })
         .then(() => this.$router.push('/'))
-        .catch(error => this.loginError = error)
+        .catch(error => {
+          console.error(error)
+          if (errorCode(error === '400'))
+            this.loginError = error
+          else this.error = error
+        })
     },
   },
 }

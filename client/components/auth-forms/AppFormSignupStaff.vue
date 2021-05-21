@@ -74,13 +74,20 @@
         />
       </div>
 
-      <p
-        v-if="sugnupError"
-        class="signup-error"
-      >
+      <p v-if="error" class="signup-error">
         Не удалось зарегистрироваться
         <br>
         Повторите попытку позже
+      </p>
+
+      <p v-if="conflictError" class="signup-error">
+        Пользователь с таким Email уже зарегистрирован
+      </p>
+
+      <p v-if="signupSuccess" class="signup-success">
+        Заявка на регистрацию успешно отправлена!
+        <br>
+        Аккаунт станет доступен после рассмотрения заявки
       </p>
 
       <div class="btns">
@@ -115,6 +122,7 @@
 
 <script>
 import { adminEmail } from "~/services/config"
+import { errorCode } from "~/services/ApiService"
 
 import { mapGetters } from "vuex"
 import { SIGNUP_STAFF, FETCH_ALL_DEPARTMENTS } from "~/store/actions.type"
@@ -169,7 +177,9 @@ export default {
 
     minPasswordLength: minPasswordLength,
 
-    sugnupError: '',
+    error: '',
+    conflictError: '',
+    signupSuccess: false,
 
     dialog: false,
     adminEmail: adminEmail,
@@ -201,6 +211,9 @@ export default {
     },
 
     signup() {
+      this.error = ''
+      this.conflictError = ''
+      this.signupSuccess = false
       this.$store
         .dispatch(SIGNUP_STAFF, {
           'fullname': this.fullname,
@@ -208,8 +221,13 @@ export default {
           'department': this.department,
           'password': this.password,
         })
-        .then(() => this.$router.push('/'))
-        .catch(error => this.sugnupError = error)
+        .then(() => this.signupSuccess = true)
+        .catch(error => {
+          console.error(error)
+          if (errorCode(error === '409'))
+            this.conflictError = error
+          else this.error = error
+        })
     },
 
     fetchAllDepartments() {
