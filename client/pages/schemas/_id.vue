@@ -241,7 +241,7 @@ export default {
 
   watch: {
     '$route.query.step'() {
-      this.step = this.$route.query.step
+      this.step = this.$route.query.step || 1
     },
   },
 
