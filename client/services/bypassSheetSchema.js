@@ -1,4 +1,6 @@
 const bypassSheetSchema = {
+  Signed: 'Подписан',
+  NotSigned: 'Не подписан',
   educationFormList: {
     Fulltime: 'Очная',
     Parttime: 'Очно-заочная',
