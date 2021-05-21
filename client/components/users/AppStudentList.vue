@@ -15,18 +15,18 @@
         <span
           v-for="(bypassSheet, index) in student.sheets"
           :key="index"
-          :class="{'signed': bypassSheet.status === 'signed'}"
+          :class="{'signed': bypassSheet.status === bypassSheetSchema.Signed}"
           class="bypass-sheets-status"
         >
           Обходной лист
           "{{bypassSheet.name}}"
-          {{bypassSheet.status === 'signed' ? '' : ' не '}}
+          {{bypassSheet.status === bypassSheetSchema.Signed ? '' : ' не '}}
           подписан
         </span>
       </div>
+
       <app-button
         red
-        class="ban"
         @click="student.isActive ? ban(student) : unban(student)"
       >
         Заблокировать аккаунт
@@ -40,6 +40,8 @@ import {
   BAN_USER,
   UNBAN_USER,
 } from "~/store/actions.type"
+
+import bypassSheetSchema from '~/services/bypassSheetSchema'
 
 import AppList from '~/components/common/AppList'
 import AppListItem from '~/components/common/AppListItem'
@@ -67,6 +69,12 @@ export default {
     studentList: {
       type: Array,
       default: () => [],
+    },
+  },
+
+  computed: {
+    bypassSheetSchema() {
+      return bypassSheetSchema
     },
   },
 
