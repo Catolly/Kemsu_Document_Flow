@@ -31,7 +31,7 @@
               ? ['Поле должно быть заполнено']
               : [],
           ... $v.lastname.required
-              && !lastname.match(/^[а-яА-ЯЁё]+$/)
+              && !$v.lastname.cyrillic
               ? ['Поле должно содержать только символы кириллицы']
               : [],
           ]"
@@ -49,7 +49,7 @@
               ? ['Поле должно быть заполнено']
               : [],
           ... $v.firstname.required
-              && !firstname.match(/^[а-яА-ЯЁё]+$/)
+              && !$v.firstname.cyrillic
               ? ['Поле должно содержать только символы кириллицы']
               : [],
           ]"
@@ -62,12 +62,8 @@
     			placeholder="Отчество"
     			class="input"
           :errorMessages="[
-          ... $v.middlename.$dirty
-              && !$v.middlename.required
-              ? ['Поле должно быть заполнено']
-              : [],
-          ... $v.middlename.required
-              && !middlename.match(/^[а-яА-ЯЁё]+$/)
+          ...
+              !$v.middlename.cyrillicOrEmpty
               ? ['Поле должно содержать только символы кириллицы']
               : [],
           ]"
@@ -162,12 +158,14 @@ export default {
   validations:() => ({
     lastname: {
       required,
+      cyrillic: (value, vm) => !!value.match(/^[а-яА-ЯЁё]+$/)
     },
     firstname: {
       required,
+      cyrillic: (value, vm) => !!value.match(/^[а-яА-ЯЁё]+$/)
     },
     middlename: {
-      required,
+      cyrillicOrEmpty: (value, vm) => !value || !!value.match(/^[а-яА-ЯЁё]+$/)
     },
   }),
 
