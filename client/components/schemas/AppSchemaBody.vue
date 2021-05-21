@@ -47,6 +47,8 @@
 </template>
 
 <script>
+import { copy } from '~/store/methods'
+
 import AppList from '~/components/common/AppList'
 import AppListItem from '~/components/common/AppListItem'
 
@@ -76,6 +78,12 @@ export default {
     points: {
       type: Array,
       required: true,
+    },
+  },
+
+  methods: {
+    copy(state) {
+      return copy(state)
     },
   },
 
