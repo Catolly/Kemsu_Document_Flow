@@ -58,7 +58,7 @@
         />
         <div class="common-reason-crisps">
           <app-chips
-            v-for="(reason, index) in possibleReasons"
+            v-for="(reason, index) in commonReasons"
             :key="index"
             class="chips"
             @click="rejectReason = rejectReason + reason"
@@ -79,6 +79,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 import AppButton from '~/components/common/AppButton'
 import IconClose from '~/components/icons/IconClose'
 import AppTextField from '~/components/common/AppTextField'
@@ -100,12 +102,6 @@ export default {
   },
 
   data:() => ({
-    possibleReasons: [ // bypassSheetSchema.possibleReasons
-      'Необходимо сдать ключ от комнаты',
-      'Необходимо сдать койко-место коменданту',
-      'Необходимо сдать койко-место коменданту',
-    ],
-
     rejectReason: '',
     requiredDocuments: [],
   }),
@@ -131,18 +127,17 @@ export default {
     },
   },
 
-  watch: {
-    student() {
-      this.setFormData()
-    },
+  computed: {
+    ...mapGetters(['bypassSheetsSchema', 'currentUser']),
+
+    commonReasons() {
+      return this.bypassSheetsSchema.points
+        .find(point => point.title === this.currentUser.department)
+        .commonReasons
+    }
   },
 
   methods: {
-    setFormData() {
-      this.rejectReason = this.student.point.rejectReason
-      this.requiredDocuments = this.student.point.requiredDocuments
-    },
-
     clearFormData() {
       this.rejectReason = ''
       this.requiredDocuments = []
@@ -158,7 +153,6 @@ export default {
 
     close() {
       this.$emit('close')
-      this.setFormData()
     },
 
     setRequiredDocuments(requiredDocuments) {
@@ -169,10 +163,6 @@ export default {
       this.requiredDocuments = this.requiredDocuments.filter(doc =>
         doc != deletingDoc)
     },
-  },
-
-  beforeMount() {
-    this.setFormData()
   },
 }
 </script>
