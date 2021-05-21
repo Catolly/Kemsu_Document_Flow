@@ -19,7 +19,7 @@
       </app-list>
     </div>
 
-    <div class="selected-info">
+    <div v-if="selected" class="selected-info">
       <span v-if="selected.description" class="description">
         {{ selected.description }}
       </span>
