@@ -17,9 +17,10 @@ import {
   PURGE_AUTH,
   PURGE_ROLES,
   SET_AUTH,
-  SET_TOKEN,
   SET_CHECKING,
   SET_ERROR,
+  SET_FULLNAME,
+  SET_TOKEN,
 } from './mutations.type'
 
 const state = () => ({
@@ -167,6 +168,7 @@ const actions = {
     const currentUser = context.getters.currentUser
     try {
       await context.dispatch(CHECK_AUTH)
+      context.commit(SET_FULLNAME, fullname)
       return await ApiService.patch(`users/${currentUser.id}/`, user)
     } catch (error) {
       context.commit(SET_ERROR, error)
@@ -190,6 +192,9 @@ const actions = {
 }
 
 const mutations = {
+  [SET_FULLNAME](state, fullname) {
+    state.user.fullname = fullname
+  },
   [SET_ERROR](state, error) {
     state.errors = error
   },

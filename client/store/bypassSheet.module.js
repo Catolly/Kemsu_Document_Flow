@@ -1,7 +1,9 @@
 import { BypassSheetsService } from '~/services/ApiService'
 import {
   CHECK_AUTH,
+  CREATE_BYPASS_SHEET,
   FETCH_BYPASS_SHEETS,
+  UPDATE_BYPASS_SHEET,
   UPDATE_BYPASS_SHEETS,
   WAIT_FOR,
 } from './actions.type'
@@ -18,6 +20,28 @@ const getters = {
 }
 
 const actions = {
+  async [UPDATE_BYPASS_SHEET](context, {
+    point,
+    id, //id листа
+  }) {
+    try {
+      await context.dispatch(CHECK_AUTH)
+
+      const formData = new FormData()
+      formData.append('title', point.title)
+      if (!point.uploadedDocuments.length)
+        formData.append('uploadedDocuments', [])
+      else
+        point.uploadedDocuments.forEach(file => {
+          formData.append('uploadedDocuments', file)
+        })
+
+      return await BypassSheetsService.patch(id, formData)
+    } catch (error) {
+      context.commit(SET_ERROR, error)
+      throw error
+    }
+  },
   async [FETCH_BYPASS_SHEETS](context, {
     bypassSheets=[],
     department=''
@@ -42,10 +66,49 @@ const actions = {
     }) {
     try {
       await context.dispatch(CHECK_AUTH)
+
+      const formData = new FormData()
+      bypassSheets.forEach((sheet, index) => {
+        [
+          'status',
+          'rejectReason',
+          'staff',
+        ].forEach(propName => {
+          formData.append(
+            ` [${index}]${propName}`, sheet[propName])
+        })
+        formData.append(
+          ` [${index}]id`, sheet.bypassSheetId)
+        if (sheet.requiredDocuments)
+          sheet.requiredDocuments.forEach((file, fileIndex) => {
+            formData.append(
+              ` [${index}]requiredDocuments[${fileIndex}]`, file)
+          })
+      })
+
       return await BypassSheetsService.patchMany({
         department,
-        bypassSheets,
+        data: formData,
       })
+    } catch (error) {
+      context.commit(SET_ERROR, error)
+      throw error
+    }
+  },
+  async [CREATE_BYPASS_SHEET](context, {
+      title,
+      statements
+    }) {
+    try {
+      await context.dispatch(CHECK_AUTH)
+
+      const formData = new FormData()
+      statements.forEach(file => {
+        formData.append('statements', file)
+      })
+      formData.append('title', title)
+
+      return await BypassSheetsService.post(formData)
     } catch (error) {
       context.commit(SET_ERROR, error)
       throw error
