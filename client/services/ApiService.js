@@ -75,6 +75,10 @@ export const BypassSheetsService = {
       department,
       bypassSheets
     } = params
+  patch(id, data) {
+    ApiService.setHeader()
+    return ApiService.patch(`bypass_sheets/${id}/`, data)
+  },
     ApiService.setHeader()
     return ApiService.patch(`bypass_sheets/${department}`, bypassSheets)
   },
@@ -84,6 +88,16 @@ export const BypassSheetsSchemasService = {
   get(id='') { //department=''
     ApiService.setHeader()
     return ApiService.get('bypass_sheets_schema', id)
+  },
+  getMany(department='') {
+    ApiService.setHeader()
+    return ApiService.get(
+      'bypass_sheets_schema' + (department ? `?department=${department}` : '')
+    )
+  },
+  getTitles(educationForm) { //department=''
+    ApiService.setHeader()
+    return ApiService.get(`bypass_sheets_schema`, `titles?educationForm=${educationForm}`)
   },
   post(params) {
     ApiService.setHeader()
