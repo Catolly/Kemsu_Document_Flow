@@ -5,6 +5,7 @@
       @click="$router.push('/')"
     >
       <icon-logo />
+      <h3 class="logo-title">Mydoc</h3>
     </div>
 
     <div class="nav">
@@ -52,7 +53,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="less" scoped>
 
 .logo {
   z-index: 1;
@@ -61,6 +62,15 @@ export default {
   position: fixed;
   top: 25px;
   left: 60px;
+
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.logo-title {
+  font-size: @fz-large;
+  margin-bottom: 4px;
 }
 
 .nav {

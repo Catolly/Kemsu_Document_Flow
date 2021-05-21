@@ -1,6 +1,9 @@
 <template>
 	<div v-if="!isAuthenticated" class="empty container">
-		<icon-logo class="logo big" />
+		<div class="logo">
+      <icon-logo class="big" />
+      <h3 class="logo-title">Mydoc</h3>
+    </div>
 		<Nuxt />
 	</div>
 </template>
@@ -44,5 +47,13 @@ export default {
   position: fixed;
   top: 25px;
   left: 60px;
+
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.logo-title {
+  margin-bottom: 4px;
 }
 </style>
