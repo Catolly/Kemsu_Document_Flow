@@ -20,7 +20,6 @@ const getters = {
 
 const actions = {
   [FETCH_USERS](context, {
-      users=[],
       bypassSheet='',
       point='',
       offset='',
@@ -48,7 +47,8 @@ const actions = {
   },
   async [BAN_USER](context, id) {
     try {
-      await ApiService.post('ban/', id)
+      await context.dispatch(CHECK_AUTH)
+      await ApiService.post(`ban/${id}/`)
     } catch (error) {
       context.commit(SET_ERROR, error)
       throw error
@@ -56,7 +56,8 @@ const actions = {
   },
   async [UNBAN_USER](context, id) {
     try {
-      await ApiService.post('unban/', id)
+      await context.dispatch(CHECK_AUTH)
+      await ApiService.post(`unban/${id}`)
     } catch (error) {
       context.commit(SET_ERROR, error)
       throw error
