@@ -170,16 +170,7 @@ export default {
   }),
 
   computed: {
-    ...mapGetters(['departments']),
-    // ...mapGetters(['departments', 'currentUser']),
-
-    // удалить позже
-    currentUser() {
-      return {
-        fullname: 'Козырева Татьяна Андреевна',
-      }
-    },
-    //
+    ...mapGetters(['departments', 'currentUser']),
   },
 
 	methods: {
@@ -217,7 +208,10 @@ export default {
           ].join(' ')
         })
         .then(() => this.updated = true)
-        .catch(error => this.updateError = error)
+        .catch(error => {
+          console.error(error)
+          this.updateError = error
+        })
     },
 
 		logout() {
@@ -228,20 +222,19 @@ export default {
 	},
 
   created() {
-    this.lastname = 'Козырева' // удалить позже
-    this.firstname = 'Татьяна' // удалить позже
-    this.middlename = 'Андреевна' // удалить позже
-
-    // this.lastname = return this.currentUser.fullname.split(' ')[0]
-    // this.firstname = return this.currentUser.fullname.split(' ')[1]
-    // this.middlename = return this.currentUser.fullname.split(' ')[2] || ''
+    this.lastname = this.$store.getters.currentUser.fullname.split(' ')[0]
+    this.firstname = this.$store.getters.currentUser.fullname.split(' ')[1]
+    this.middlename = this.$store.getters.currentUser.fullname.split(' ')[2] || ''
 
     this.$store
       .dispatch(FETCH_DEPARTMENTS, {
-        departments: this.departments,
-        institute: 'ИФН' //currentUser.institute
+        departments: this.$store.getters.departments,
+        institute: this.$store.getters.currentUser.institute || ''
       })
-      .catch(error => this.loadError = error)
+      .catch(error => {
+        console.error(error)
+        this.loadError = error
+      })
   },
 }
 </script>
