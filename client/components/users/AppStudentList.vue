@@ -26,10 +26,18 @@
       </div>
 
       <app-button
+        v-if="!student.isBaned"
         red
-        @click="student.isActive ? ban(student) : unban(student)"
+        @click="ban(student)"
       >
         Заблокировать аккаунт
+      </app-button>
+      <app-button
+        v-else
+        cancel
+        @click="unban(student)"
+      >
+        Разблокировать аккаунт
       </app-button>
     </app-list-item>
   </app-list>
@@ -83,7 +91,7 @@ export default {
       this.banError = ''
       try {
         await this.$store.dispatch(BAN_USER, user.id)
-        user.isActive = false
+        user.isBaned = false
       } catch (error) {
         console.error(error)
         this.banError = error
@@ -94,7 +102,7 @@ export default {
       this.unbanError = ''
       try {
         await this.$store.dispatch(UNBAN_USER, user.id)
-        user.isActive = true
+        user.isBaned = true
       } catch (error) {
         console.error(error)
         this.unbanError = error
