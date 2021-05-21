@@ -1,8 +1,5 @@
 <template>
-  <div
-    v-if="files.length"
-    class="app-download-list"
-  >
+  <div class="app-download-list">
     <div class="short-file-list">
       <div class="file-list">
         <app-download-file
@@ -13,7 +10,7 @@
         />
       </div>
 
-      <div class="btns">
+      <div v-if="files.length > 3" class="btns">
         <app-button
           square
           class="toggle btn"
@@ -91,33 +88,6 @@ export default {
     files: {
       type: Array,
       default:() => [],
-    },
-  },
-
-  methods: {
-    createURL(file) {
-      return URL.createObjectURL(file)
-    },
-
-    previewIcon(file) {
-      const fileType = file.name.split('.').reverse()[0].toLowerCase()
-
-      switch(fileType) {
-        case 'doc':
-          return require('~/assets/icons/AppImageUpload/doc.svg')
-        case 'docx':
-          return require('~/assets/icons/AppImageUpload/doc.svg')
-        case 'pdf':
-          return require('~/assets/icons/AppImageUpload/pdf.svg')
-        case 'png':
-          return require('~/assets/icons/AppImageUpload/png.svg')
-        case 'jpg':
-          return require('~/assets/icons/AppImageUpload/jpg.svg')
-        case 'jpeg':
-          return require('~/assets/icons/AppImageUpload/jpg.svg')
-        default:
-          return
-      }
     },
   },
 }
