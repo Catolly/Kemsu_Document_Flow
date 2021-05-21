@@ -1,7 +1,7 @@
 <template>
   <roleAdminStaff class="contacts">
     <div class="contacts-head">
-      <h1 class="header">Личные данные</h1>
+      <h1 class="header">Контакты</h1>
       <span
         v-if="loadError"
         class="error-message"
@@ -10,14 +10,32 @@
       </span>
     </div>
 
-    <div class="contacts-body">
-      <div
-        v-for="(contact, index) in currentDepartment.contacts"
-        :key="index"
-        class="contact"
-      >
-        <span class="contact-name">{{contact.fullname}}</span>
-        <span class="contact-email">{{contact.email}}</span>
+    <div
+      v-for="(department, index) in allDepartments"
+      :key="index"
+      class="department"
+    >
+      <div class="department-head">
+        <span v-if="department.staff.length" class="department-title">
+          {{
+            (department.title
+            + (department.institute ? (' ' + department.institute) : ''))
+              .toUpperCase()
+          }}
+        </span>
+        <span v-if="department.staff.length" class="department-address">
+          Адрес: {{department.address}}
+        </span>
+      </div>
+      <div class="contacts-body">
+        <div
+          v-for="(staff, index) in department.staff"
+          :key="index"
+          class="contact"
+        >
+          <span class="contact-name">{{staff.fullname}}</span>
+          <span class="contact-email">{{staff.email}}</span>
+        </div>
       </div>
     </div>
   </roleAdminStaff>
