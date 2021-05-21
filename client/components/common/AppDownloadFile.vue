@@ -1,21 +1,32 @@
 <template>
   <a
-    :title="'Скачать ' + file.name"
+    v-if="hasFile"
+    :title="'Открыть ' + file.name"
     :download="file.name"
+    :href="createURL()"
+    :class="classObj"
     class="app-download-file clear"
+    target="_blank"
   >
-    <!-- :href="createURL(file)" -->
-    <img
-      v-if="previewIcon(file)"
-      :src="previewIcon(file)"
-      class="preview-icon"
+    <span
+      :class="classObj"
+      class="preview"
     >
+      <img
+        v-if="previewIcon()"
+        :src="previewIcon()"
+        class="preview-icon"
+      >
+      <icon-download class="icon-download" />
+    </span>
 
-    <icon-download class="icon-download" />
+    <a class="header">{{file.name}}</a>
   </a>
 </template>
 
 <script>
+import { BASE_URL } from '~/services/config'
+
 import IconArrow from '~/components/icons/IconArrow'
 import IconDownload from '~/components/icons/IconDownload'
 
@@ -36,15 +47,62 @@ export default {
       type: Object,
       required: true,
     },
+
+    normal: {
+      type: Boolean,
+      default: false,
+    },
+
+    small: {
+      type: Boolean,
+      default: false,
+    },
+  },
+
+  computed: {
+    isLink() {
+      return !this.file.size
+    },
+
+    hasFile() {
+      return !this.isLink || this.file.img
+    },
+
+    BASE_URL() {
+      return BASE_URL
+    },
+
+    classObj() {
+      return {
+        'big': this.big,
+        'normal': this.normal,
+      }
+    },
+  },
+
+  watch: {
+    file: {
+      handler() {
+        if (this.isLink && this.hasFile) {
+          this.$set(this.file, 'name', this.file.img.split('/')
+                                                    .slice(-1)
+                                                    .join())
+          this.$set(this.file, 'fullname', this.file.img)
+        }
+      },
+      immediate: true,
+    },
   },
 
   methods: {
-    createURL(file) {
-      return URL.createObjectURL(file)
+    createURL() {
+      if (!this.hasFile) return ''
+      if (this.isLink) return this.BASE_URL + this.file.fullname
+      return URL.createObjectURL(this.file)
     },
 
-    previewIcon(file) {
-      const fileType = file.name.split('.').reverse()[0].toLowerCase()
+    previewIcon() {
+      const fileType = this.file.name.split('.').reverse()[0].toLowerCase()
 
       switch(fileType) {
         case 'doc':
