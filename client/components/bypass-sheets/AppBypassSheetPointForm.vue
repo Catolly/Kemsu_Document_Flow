@@ -1,6 +1,6 @@
 <template>
   <form class="upload-form" @submit.prevent="submit">
-    <template v-if="point.requiredDocuments.length">
+    <template v-if="point.uploadDocumentsFormat.length">
       <h2>Отправить документы</h2>
       <div class="upload-section">
         <div
@@ -109,12 +109,9 @@ export default {
 
   beforeMount() {
     if (
-      typeof this.point.uploadDocumentsFormat === 'undefined'
-      || !this.point.uploadDocumentsFormat.length
+      !this.point.uploadDocumentsFormat
     ) {
-      this.$set(this.point, 'uploadDocumentsFormat', [
-          { title: 'Необходимые документы' },
-        ])
+      this.$set(this.point, 'uploadDocumentsFormat', [])
     }
 
     this.point.uploadDocumentsFormat.forEach(format => {
