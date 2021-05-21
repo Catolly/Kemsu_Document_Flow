@@ -330,30 +330,6 @@ export default {
       }
     },
 
-    updateBypassSheets: _.debounce(function () {
-      const updatingBypassSheets = this.studentList
-      .filter(student =>
-        [
-          bypassSheetStatus.Rejected,
-          bypassSheetStatus.Signed
-        ]
-        .includes(student.point.status)
-      )
-      .map(student => {
-        const requiredDocuments = new FormData()
-
-        student.point.requiredDocuments
-        .forEach(doc =>
-          requiredDocuments.append('requiredDocuments', doc)
-        )
-
-        return {
-          id: student.point.bypassSheetId, //id листа
-          title: student.point.name,
-          status: student.point.status, // 'rejected' или "signed"
-          rejectReason: student.point.rejectReason, // сообщение отказа (опционально)
-          staff: student.point.staff, // Инициалы сотрудника
-          requiredDocuments: Array.from(requiredDocuments), // Загруженные сотрудником документы
     async fetchSchema() {
       try {
         this.fetchSchemaError = ''
@@ -366,11 +342,24 @@ export default {
         }
     },
 
+    updateBypassSheets: _.debounce(async function () {
+      try {
+        this.updateBypassSheetsError = ''
+        await this.$store.dispatch(UPDATE_BYPASS_SHEETS, {
+          department: this.currentUser.department,
+          bypassSheets: Array.from(this.updatingBypassSheets),
+        })
+        this.updatingBypassSheets = new Set()
+      } catch (error) {
+        console.error(error)
+        this.updateBypassSheetsError = error
+      }
     }, debounceDelay)
   },
 
   beforeDestroy() {
-    this.updateBypassSheets()
+    if (this.updatingBypassSheets.length)
+      this.updateBypassSheets()
   },
 }
 </script>
