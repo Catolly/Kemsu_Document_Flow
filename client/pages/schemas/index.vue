@@ -122,11 +122,13 @@ export default {
   },
 
   beforeMount() {
-    this.$store
-      .dispatch(FETCH_BYPASS_SHEETS_SCHEMAS, {
-        bypassSheetsSchemas: this.bypassSheetsSchemas
-      })
-      .catch(error => this.loadError = error)
+    try {
+      this.$store
+        .dispatch(FETCH_BYPASS_SHEETS_SCHEMAS)
+    } catch (error) {
+      console.error(error)
+      this.loadError = error
+    }
   },
 }
 </script>

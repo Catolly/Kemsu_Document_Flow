@@ -82,15 +82,16 @@ export default {
   },
 
   beforeMount() {
-    this.$store
-      .dispatch(FETCH_BYPASS_SHEETS_SCHEMAS, {
-        bypassSheetsSchemas: this.bypassSheetsSchemas,
-        // department: 'ИФН' //currentUser.department
-      })
-      .catch(error => {
-        console.error(error)
-        this.loadError = error
-      })
+    try {
+      this.$store
+        .dispatch(
+          FETCH_BYPASS_SHEETS_SCHEMAS,
+          this.$store.getters.currentUser.department
+        )
+    } catch (error) {
+      console.error(error)
+      this.loadError = error
+    }
   },
 }
 </script>

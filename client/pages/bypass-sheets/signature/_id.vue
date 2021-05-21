@@ -65,10 +65,16 @@ import _ from "lodash"
 import { debounceDelay } from "~/services/config"
 
 import { mapGetters } from "vuex"
-import { FETCH_USERS, UPDATE_BYPASS_SHEETS } from "~/store/actions.type"
+import {
+  FETCH_USERS,
+  FETCH_GROUPS,
+  FETCH_BYPASS_SHEETS_SCHEMA,
+  UPDATE_BYPASS_SHEETS
+} from "~/store/actions.type"
+import { copy } from "~/store/methods"
 
 import bypassSheetStatus from '~/services/bypassSheetStatus'
-import FilterService from '~/services/FilterService'
+import { initFilterService } from '~/services/FilterService'
 
 import roleStaff from '~/components/roles/roleStaff'
 
@@ -104,134 +110,32 @@ export default {
       student: null,
     },
 
-    title: 'Скидка на столовую',
+    studentList: [],
+    updatingBypassSheets: new Set(),
 
+    fetchGroupsError: '',
     fetchUsersError: '',
+    fetchSchemaError: '',
     updateBypassSheetsError: '',
-
-    studentList: [
-      {
-        id: 1,
-        fullname: "Козырева Татьяна Андреевна",
-        email: "example1@gmail.com",
-        recruitmentForm: "Бюджет",
-        educationForm: "Заочная",
-        status: "Учится",
-        checked: false,
-        courseNumber: '4',
-        group: "М-174",
-        institute: "ИФН",
-        point: {
-          bypassSheetId: 1,
-          name: "Библиотека",
-          status: "reviewing", // или "rejected" или "signed"
-          documentList: [
-            {
-              name: "Фото/скан паспорта",
-              // file: type File",
-            },
-            {
-              name: "Заполненный документ",
-              // file: type File",
-            },
-          ],
-          staff: "Иванов И.И.",
-          rejectReason: "Сообщение 1", // если status="rejected"
-          requiredDocuments: [],
-        },
-      },
-      {
-        id: 2,
-        fullname: "Сергиенко Анатолий Николаевич",
-        email: "exmaple2@gmail.com",
-        recruitmentForm: "Бюджет",
-        educationForm: "Очная",
-        status: "Учится",
-        checked: false,
-        courseNumber: '4',
-        group: "М-174",
-        institute: "ИФН",
-        point: {
-          bypassSheetId: 2,
-          name: "Библиотека",
-          status: "reviewing", // или "rejected" или "signed"
-          documentList: [
-            {
-              name: "Фото/скан паспорта",
-              // file: type File",
-            },
-            {
-              name: "Заполненный документ",
-              // file: type File",
-            },
-          ],
-          staff: "Иванов И.И.",
-          rejectReason: "Сообщение 2", // если status="rejected"
-          requiredDocuments: [],
-        },
-      },
-      {
-        id: 3,
-        fullname: "Люкшин Михаил Сергеевич",
-        email: "example3@gmail.com",
-        recruitmentForm: "Бюджет",
-        educationForm: "Очная",
-        status: "В академ. отпуске",
-        checked: false,
-        courseNumber: '3',
-        group: "Ц-184",
-        institute: "ИЦ",
-        point: {
-          bypassSheetId: 3,
-          name: "Библиотека",
-          status: "rejected", // или "rejected" или "signed"
-          documentList: [
-            {
-              name: "Фото/скан паспорта",
-              // file: type File",
-            },
-            {
-              name: "Заполненный документ",
-              // file: type File",
-            },
-          ],
-          staff: "Иванов И.И.",
-          rejectReason: "Сообщение 3", // если status="rejected"
-          requiredDocuments: [],
-        },
-      },
-    ],
-
-    groups: [
-      {
-        name: "М-174",
-        institute: "ИФН",
-        courseNumber: '4',
-      },
-      {
-        name: "М-184",
-        institute: "ИФН",
-        courseNumber: '3',
-      },
-      {
-        name: "Ц-184",
-        institute: "ИЦ",
-        courseNumber: '3',
-      },
-    ],
 
     FilterService: null,
   }),
 
+  async fetch() {
+    try {
+      await this.fetchSchema()
+      await Promise.all([
+        this.fetchStudentList(),
+        this.fetchGroups(),
+      ])
+      this.FilterService = initFilterService(this.groups)
+    } catch (error) {
+      console.error(error)
+    }
+  },
+
   computed: {
-    ...mapGetters(['users']),
-
-
-    staff() {
-      // const [firstname, lastname, middlename] = currentUser.fullname.split(' ')
-      // return firstname + lastname[0] + '.' + (middlename ? middlename + '.' : '')
-      return 'Неиванов И.И.'
-    },
+    ...mapGetters(['currentUser', 'users', 'groups', 'bypassSheetsSchema']),
 
     studentListInPage() {
       return this.searchingStudentList.slice(this.page * this.itemsPerPage,
@@ -248,8 +152,10 @@ export default {
       )
     },
     filteredStudentList() {
-      if (this.FilterService.filterList.every(filter => filter.value === ''))
-        return this.studentList
+      if (
+        !this.FilterService ||
+        this.FilterService.filterList.every(filter => filter.value === '')
+      ) return this.studentList
 
       return this.studentList
       .filter(student => this.FilterService.filterList
@@ -260,6 +166,8 @@ export default {
     },
 
     filterList() {
+      if (!this.FilterService) return []
+
       return this.FilterService.filterList.map(filter => ({
         selected: filter.value,
         placeholder: filter.name,
@@ -269,6 +177,8 @@ export default {
     },
 
     filterPath() {
+      if (!this.FilterService) return []
+
       return this.FilterService.filterList.map(filter =>
         filter.value + (filter.value ? filter.postfix : '')
       )
@@ -356,16 +266,41 @@ export default {
     //
 
     async fetchStudentList() {
-      this.$store
-        .dispatch(FETCH_USERS, {
-          users: this.users,
-        })
-        .then(() => this.studentList = this.users)
-        .catch(error => this.fetchUsersError = error)
+      try {
+        this.fetchUsersError = ''
+        await this.$store
+          .dispatch(FETCH_USERS, {
+            users: this.users,
+            bypassSheet: this.bypassSheetsSchema.title,
+            point: this.currentUser.department,
+          })
+          this.studentList = copy(this.users)
+            .filter(student => Object.values(student.point)
+              .some(value => value))
+            .filter(student =>
+              student.point.status
+              && (student.point.status != bypassSheetStatus.NotSent))
+          this.studentList
+            .forEach(student => {
+              this.$set(student, 'checked', false)
+            })
+      } catch (error) {
+        console.error(error)
+        this.fetchUsersError = error
+        throw error
+      }
     },
 
     async fetchGroups() {
-
+      try {
+        this.fetchGroupsError = ''
+        await this.$store
+          .dispatch(FETCH_GROUPS, this.groups)
+      } catch (error) {
+        console.error(error)
+        this.fetchGroupsError = error
+        throw error
+      }
     },
 
     updateBypassSheets: _.debounce(function () {
@@ -392,8 +327,17 @@ export default {
           rejectReason: student.point.rejectReason, // сообщение отказа (опционально)
           staff: student.point.staff, // Инициалы сотрудника
           requiredDocuments: Array.from(requiredDocuments), // Загруженные сотрудником документы
+    async fetchSchema() {
+      try {
+        this.fetchSchemaError = ''
+        return await this.$store
+          .dispatch(FETCH_BYPASS_SHEETS_SCHEMA, {id: this.$route.params.id})
+        } catch (error) {
+          console.error(error)
+          this.fetchSchemaError = error
+          throw error
         }
-      })
+    },
 
       this.$store
         .dispatch(UPDATE_BYPASS_SHEETS, {
@@ -402,13 +346,6 @@ export default {
           })
         .catch(error => this.updateBypassSheetsError = error)
     }, debounceDelay)
-  },
-
-  created() {
-    this.fetchStudentList()
-    this.fetchGroups()
-    // .then(() => this.initFilterService())
-    this.FilterService = initFilterService(this.groups)
   },
 
   beforeDestroy() {

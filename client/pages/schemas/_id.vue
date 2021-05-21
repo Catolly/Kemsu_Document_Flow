@@ -144,6 +144,7 @@ import {
 } from "~/store/actions.type"
 
 import { initFilterService } from '~/services/FilterService'
+import bypassSheetSchema from '~/services/bypassSheetSchema'
 
 import roleAdmin from '~/components/roles/roleAdmin'
 
@@ -315,18 +316,22 @@ export default {
     async fetchDepartments() {
       return new Promise((resolve, reject) => {
         this.$store
-          .dispatch(FETCH_DEPARTMENTS, {
-            institute: 'ИФН' //currentUser.institute
-          })
+          .dispatch(FETCH_DEPARTMENTS)
             .then(departments => {
               this.departments = departments
 
               // Установка checked=true у подключенных к шаблону отделов
               this.schema.points
-                .forEach(point => this.$set(
-                  point, 'checked', true
-                ))
+                .forEach(point => {
+                  this.$set(point, 'checked', true)
+                  point.uploadDocumentsFormat = point.uploadDocumentsFormat
+                    .map(format => ({
+                      title: format
+                    }))
+                  point.gender = bypassSheetSchema.genderList[point.gender]
+                })
 
+              const departmentTitles = []
               // Установка checked=false у остальных отделов
               this.departments
                 .filter(department =>
@@ -335,7 +340,9 @@ export default {
                       department.title === point.title
                     )
                 )
-                .forEach(department =>
+                .forEach(department => {
+                  if (departmentTitles.includes(department.title)) return
+                  departmentTitles.push(department.title)
                   this.schema.points.push({
                     title: department.title,
                     description: '',
@@ -343,9 +350,10 @@ export default {
                     studentUploadDocuments: [],
                     requiredDocuments: [],
                     uploadDocumentsFormat: [],
+                    commonReasons: [],
                     checked: false,
                   })
-                )
+                })
                 resolve()
             })
             .catch(error => {

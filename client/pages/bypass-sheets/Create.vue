@@ -85,8 +85,8 @@
 </template>
 
 <script>
-import { BypassSheetsService } from '~/services/ApiService'
-// import { CHECK_AUTH } from '~/store/actions.type'
+import { mapGetters } from 'vuex'
+import { FETCH_BYPASS_SHEETS_SCHEMAS_TITLES, CREATE_BYPASS_SHEET } from '~/store/actions.type'
 
 import { required } from "vuelidate/lib/validators"
 
@@ -117,8 +117,19 @@ export default {
     selectedReason: '',
     statements: [],
 
-    errors: null,
+    fetchSchemasTitlesError: '',
 	}),
+
+  async fetch() {
+    try {
+      await this.$store.dispatch(FETCH_BYPASS_SHEETS_SCHEMAS_TITLES, {
+        educationForm: this.$store.getters.currentUser.educationForm
+      })
+    } catch (error) {
+      console.error(error)
+      this.fetchSchemasTitlesError = error
+    }
+  },
 
   validations:() => ({
     selectedReason: {
@@ -134,6 +145,7 @@ export default {
       if (this.selectedReason === '') return null
       return this.bypassSheetsSchemas.find(schema => schema.title === this.selectedReason)
     },
+    ...mapGetters(['bypassSheetsSchemasTitles']),
 
     bypassSheetsSchemas() {
       return [

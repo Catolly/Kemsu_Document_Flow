@@ -16,8 +16,8 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex"
-import { LOGOUT, FETCH_BYPASS_SHEETS } from "~/store/actions.type"
+import { WAIT_FOR } from "~/store/actions.type"
+import { copy } from "~/store/methods"
 
 import roleStudent from '~/components/roles/roleStudent'
 
@@ -32,100 +32,31 @@ export default {
 	},
 
 	data:() => ({
-		id: 0,
-		title: 'Скидка на столовую',
-
-		points: [
-			{
-				id: 0,
-				title: 'Библиотека',
-				status: 'signed',
-				requiredDocuments: [
-					{
-						index: 0,
-						title: 'Фото/скан паспорта',
-						src: require('~/assets/img/document_example.png')
-					},
-					{
-						id: 1,
-						title: 'Заполненный документ',
-						src: require('~/assets/img/document_example.png')
-					},
-				],
-				worker: 'И.В.Иванов',
-				phone: '7 920 392 57 51',
-			},
-			{
-				id: 1,
-				title: 'Общежитие',
-				status: 'rejected',
-				reason: 'Нет книги Н.В.Гоголя и части документов',
-				requiredDocuments: [
-					{
-						id: 0,
-						title: 'Фото/скан паспорта',
-						src: require('~/assets/img/document_example.png')
-					},
-					{
-						id: 1,
-						title: 'Заполненный документ',
-						src: require('~/assets/img/document_example.png')
-					},
-				],
-				worker: 'И.В.Иванов',
-				phone: '7 920 392 57 51',
-			},
-			{
-				id: 2,
-				title: 'Библиотека',
-				status: 'reviewing',
-				requiredDocuments: [
-					{
-						id: 0,
-						title: 'Фото/скан паспорта',
-						src: require('~/assets/img/document_example.png')
-					},
-					{
-						id: 1,
-						title: 'Заполненный документ',
-						src: require('~/assets/img/document_example.png')
-					},
-				],
-				worker: 'И.В.Иванов',
-				phone: '7 920 392 57 51',
-			},
-			{
-				id: 3,
-				title: 'Общежитие',
-				status: 'not sent',
-				requiredDocuments: [
-					{
-						id: 0,
-						title: 'Фото/скан паспорта',
-						src: require('~/assets/img/document_example.png')
-					},
-					{
-						id: 1,
-						title: 'Заполненный документ',
-						src: require('~/assets/img/document_example.png')
-					},
-				],
-				worker: 'И.В.Иванов',
-				phone: '7 920 392 57 51',
-			},
-		]
+    sheet: null,
+    fetchSheetError: '',
 	}),
 
-  computed: {
-    // ...mapGetters(['currentUser']),
-  },
+  async beforeMount() {
+    try {
+      this.fetchSheetError = ''
+      await this.$store.dispatch(WAIT_FOR, 'checkingAuth')
 
-  created() { // Достаем обходные листы либо через fetch, либо через currentUser.bypassSheets
-    // this.$store
-    //   .dispatch(FETCH_BYPASS_SHEETS, {
-    //     departments: this.departments,
-    //     institute: 'ИФН' //currentUser.institute
-    //   })
+      const id = this.$route.params.id
+      const sheet = this.$store.getters
+        .currentUser
+        .bypassSheets
+          .find(sheet => sheet.id == id)
+
+      if (!sheet) {
+        return this.$nuxt.error({ statusCode: 404 })
+      }
+
+      this.sheet = copy(sheet)
+    }
+    catch (error) {
+      console.error(error)
+      this.fetchSheetError = error
+    }
   },
 }
 </script>

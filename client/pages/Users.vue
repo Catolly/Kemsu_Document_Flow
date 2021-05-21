@@ -47,6 +47,7 @@ import {
   FETCH_USERS,
   FETCH_GROUPS,
 } from "~/store/actions.type"
+import { copy } from '~/store/methods'
 
 import { initFilterService } from '~/services/FilterService'
 
@@ -86,7 +87,7 @@ export default {
   }),
 
   computed: {
-    ...mapGetters(['users', 'groups']),
+    ...mapGetters(['groups']),
 
     studentListInPage() {
       return this.searchingStudentList.slice(this.page * this.itemsPerPage,
@@ -170,48 +171,27 @@ export default {
     //
 
     async fetchUsers() {
-      return new Promise((resolve, reject) => {
-        this.$store
-          .dispatch(FETCH_USERS, {
-            users: this.users,
-          })
-            .then(() => {
-              this.users
-                .forEach(user =>
-                  this.studentList.push({
-                    id: user.id,
-                    fullname: user.fullname,
-                    courseNumber: user.courseNumber,
-                    group: user.group,
-                    institute: user.institute,
-                    sheets: user.bypassSheets,
-                  })
-                )
-                resolve()
-            })
-            .catch(error => {
-              console.error(error)
-              this.loadError = error
-              reject()
-            })
-      })
+      try {
+        const users = await this.$store
+          .dispatch(FETCH_USERS, {})
+        this.studentList = copy(users)
+      } catch (error) {
+        console.error(error)
+        this.loadError = error
+      }
     },
 
     async fetchGrops() {
-      return new Promise((resolve, reject) => {
-        this.$store
-          .dispatch(FETCH_GROUPS, this.groups)
-            .then(() => resolve())
-            .catch(error => {
-              console.error(error)
-              this.loadError = error
-              reject()
-            })
-      })
+      try {
+        return await this.$store.dispatch(FETCH_GROUPS, this.$store.getters.groups)
+      } catch (error) {
+        console.error(error)
+        this.loadError = error
+      }
     },
   },
 
-  beforeMount() {
+  async beforeMount() {
     this.fetchUsers()
     this.fetchGrops()
       .then(() => this.FilterService = initFilterService(this.groups))

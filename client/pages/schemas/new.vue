@@ -274,20 +274,19 @@ export default {
       } catch (error) {
         console.error(error)
         this.createError = error
-        throw error
       }
     },
 
     async fetchDepartments() {
       return new Promise((resolve, reject) => {
         this.$store
-          .dispatch(FETCH_DEPARTMENTS, {
-            departments: this.departments,
-            institute: 'ИФН' //currentUser.institute
-          })
+          .dispatch(FETCH_DEPARTMENTS)
             .then(() => {
+              const departmentTitles = []
               this.departments
-                .forEach(department =>
+                .forEach(department => {
+                  if (departmentTitles.includes(department.title)) return
+                  departmentTitles.push(department.title)
                   this.schema.points.push({
                     title: department.title,
                     description: '',
@@ -295,9 +294,10 @@ export default {
                     studentUploadDocuments: [],
                     requiredDocuments: [],
                     uploadDocumentsFormat: [],
+                    commonReasons: [],
                     checked: false,
                   })
-                )
+                })
                 resolve()
             })
             .catch(error => {

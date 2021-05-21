@@ -25,7 +25,7 @@
 
 <script>
 import { mapGetters } from "vuex"
-import { FETCH_DEPARTMENT } from "~/store/actions.type"
+import { FETCH_ALL_DEPARTMENTS } from "~/store/actions.type"
 
 export default {
   name: 'settings',
@@ -35,45 +35,22 @@ export default {
   data:() => ({
     loadError: false,
 
-    // Удалить позже
-    currentDepartment: {
-      contacts: [
-        {
-          fullname: 'Иванов Иван Иванович',
-          email: 'example@example.com',
-        },
-        {
-          fullname: 'Иванов Иван Иванович',
-          email: 'example@example.com',
-        },
-        {
-          fullname: 'Иванов Иван Иванович',
-          email: 'example@example.com',
-        },
-      ],
-    },
-    //
+    contacts: [],
   }),
 
-  computed: {
-    // ...mapGetters(['currentDepartment, currentUser']),
-
-    // удалить позже
-    currentUser() {
-      return {
-        department: 'Библиотека',
-      }
-    },
-    //
+  async beforeMount() {
+    const currentUser = this.$store.getters.currentUser
+    try {
+      await this.$store
+        .dispatch(FETCH_ALL_DEPARTMENTS)
+    } catch (error) {
+      console.error(error)
+      this.loadError = error
+    }
   },
 
-  created() {
-    this.$store
-      .dispatch(FETCH_DEPARTMENT, {
-        department: this.currentDepartment,
-        institute: this.currentUser.institute,
-      })
-      .catch(error => this.loadError = error)
+  computed: {
+    ...mapGetters(['allDepartments', 'currentUser']),
   },
 }
 </script>
