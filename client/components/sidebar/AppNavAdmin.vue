@@ -7,9 +7,6 @@
     to="/users"
     class="nav-link">Пользователи</NuxtLink>
     <NuxtLink
-    to="/bypass-sheets"
-    class="nav-link">Подписи</NuxtLink>
-    <NuxtLink
     to="/settings"
     class="nav-link">Настройки</NuxtLink>
     <NuxtLink
