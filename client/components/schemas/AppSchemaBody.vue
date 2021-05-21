@@ -25,14 +25,13 @@
       </span>
 
       <div class="required-documents-wrapper">
-        <div class="required-documents">
-          <img
-            v-for="doc in selected.requiredDocuments"
-            :key="doc.img"
-            :src="doc.img"
-            :title="doc.title"
-            class="document-img"
-          >
+        <div v-if="selected" class="required-documents">
+          <app-download-file
+            v-for="(file, index) in copy(selected.requiredDocuments)"
+            :key="index"
+            :file="file"
+            class="example-document"
+          />
         </div>
       </div>
 
@@ -51,6 +50,7 @@ import { copy } from '~/store/methods'
 
 import AppList from '~/components/common/AppList'
 import AppListItem from '~/components/common/AppListItem'
+import AppDownloadFile from '~/components/common/AppDownloadFile'
 
 export default {
   name: 'AppSchemaBody',
@@ -58,6 +58,7 @@ export default {
   components: {
     AppList,
     AppListItem,
+    AppDownloadFile,
   },
 
   data:() => ({
