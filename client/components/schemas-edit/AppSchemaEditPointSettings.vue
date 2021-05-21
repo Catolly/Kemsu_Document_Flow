@@ -38,6 +38,40 @@
         />
       </div>
 
+      <div class="common-reasons">
+        <span class="header">Частые причины отказа</span>
+        <div class="new-reason">
+          <app-input
+            v-model="commonReason"
+            :placeholder="'Например, вы сдали не все документы'"
+            class="field"
+          />
+          <app-button
+            big
+            square
+            class="add-btn"
+            @click="addCommonReason(commonReason)"
+          >
+            <div class="plus" />
+          </app-button>
+        </div>
+        <div class="chipses">
+          <app-chips
+            v-for="(reason, index) in point.commonReasons"
+            :key="index"
+            small
+            semi-round
+            class="chips"
+            @click="deleteCommonReason(reason)"
+          >
+            {{reason}}
+            <div class="delete-chips-btn">
+              <div class="minus" />
+            </div>
+          </app-chips>
+        </div>
+      </div>
+
       <div class="student-upload-documents">
         <span class="header">Загружаемые студентом документы</span>
         <span v-if="!point.uploadDocumentsFormat.length">
@@ -88,6 +122,7 @@ import AppUploadList from '~/components/common/AppUploadList'
 import AppRadioGroup from '~/components/common/AppRadioGroup'
 import AppInput from '~/components/common/AppInput'
 import AppButton from '~/components/common/AppButton'
+import AppChips from '~/components/common/AppChips'
 
 export default {
   name: 'AppSchemaEditPointSettings',
@@ -99,7 +134,12 @@ export default {
     AppRadioGroup,
     AppButton,
     AppInput,
+    AppChips,
   },
+
+  data:() => ({
+    commonReason: '',
+  }),
 
   props: {
     point: {
@@ -114,6 +154,17 @@ export default {
   },
 
   methods: {
+    deleteCommonReason(commonReason) {
+      this.point.commonReasons = this.point.commonReasons
+        .filter(reason => reason !== commonReason)
+    },
+
+    addCommonReason(commonReason) {
+      if (!commonReason) return
+      this.point.commonReasons.push(commonReason)
+      this.commonReason = ''
+    },
+
     deleteUploadDocumentsFormat(deletingDoc) {
       this.point.uploadDocumentsFormat =
       this.point.uploadDocumentsFormat
