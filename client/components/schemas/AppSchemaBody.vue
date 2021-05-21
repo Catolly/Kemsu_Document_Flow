@@ -79,8 +79,9 @@ export default {
     },
   },
 
-  created() {
-    this.selected = this.points[0]
+  beforeMount() {
+    if (this.points.length)
+      this.selected = this.points[0]
   },
 }
 </script>
