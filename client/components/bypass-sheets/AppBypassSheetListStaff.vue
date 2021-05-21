@@ -3,7 +3,7 @@
 		<h1 class="header">Обходные листы</h1>
 
     <h2
-      v-if="bypassSheetsSchemas.length === 0 && !loadError"
+      v-if="!loadError && (schemas.length === 0)"
       class="empty-message"
     >
       Нет обходных листов
@@ -18,8 +18,8 @@
 
     <div class="topbar">
       <app-pagination
-        v-if="bypassSheetsSchemas.length > 0"
-        :itemsAmount="bypassSheetsSchemas.length"
+        v-show="schemas.length > 0"
+        :itemsAmount="schemas.length"
         :page="page"
         @updateItemsPerPage="itemsPerPage = $event"
         @updatePage="page = $event"
@@ -27,20 +27,20 @@
     </div>
 
 		<app-list	class="bypass-sheet-list">
-			<app-list-item
-  			v-for="(bypassSheetsSchemas, index) in bypassSheetSchemasInPage"
-  			:key="index"
-  			@click="$router.push('/bypass-sheets/signature/' + bypassSheetsSchemas.id)"
-  			class="bypass-sheet"
+      <template
+        v-for="(schema, index) in schemasInPage"
       >
-				<div class="bypass-sheet-title">
-					{{ bypassSheetsSchemas.title }}
-				</div>
-
-				<div class="bypass-sheet-count">
-					{{ bypassSheetsSchemas.count }}
-				</div>
-			</app-list-item>
+  			<app-list-item
+          :key="index"
+          v-if="schema.studentList.length"
+    			@click="$router.push('/bypass-sheets/signature/' + schema.id)"
+    			class="bypass-sheet"
+        >
+  				<div class="bypass-sheet-title">
+  					{{ schema.title }}
+  				</div>
+  			</app-list-item>
+      </template>
 		</app-list>
 	</div>
 </template>
@@ -72,12 +72,19 @@ export default {
   computed: {
     ...mapGetters(['bypassSheetsSchemas']),
 
-    bypassSheetSchemasInPage() {
-      return this.bypassSheetsSchemas
+    schemasInPage() {
+      return this.schemas
       .slice(
         this.page * this.itemsPerPage,
         (this.page + 1) * this.itemsPerPage
       )
+    },
+
+    schemas() {
+      return this.bypassSheetsSchemas
+      .slice()
+      .filter(schema => schema.points.length)
+      .reverse()
     },
   },
 
