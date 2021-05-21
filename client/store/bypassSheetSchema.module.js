@@ -176,10 +176,11 @@ const actions = {
 
       data.points.
         forEach((point, index) => {
-          formData.append(
-            `points[${index}]id`,
-            point.id
-          )
+          if (point.id)
+            formData.append(
+              `points[${index}]id`,
+              point.id
+            )
           formData.append(
             `points[${index}]title`,
             point.title
