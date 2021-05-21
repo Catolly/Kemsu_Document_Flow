@@ -19,12 +19,13 @@
           {{student.status}}
         </span>
         <app-download-list
-          :files="student.point.requiredDocuments"
+          v-if="student.point"
+          :files="student.point.uploadedDocuments"
           class="student-documents"
         />
       </div>
 
-      <div class="sign-btns">
+      <div v-if="student.point" class="sign-btns">
         <div
           v-if="student.point.status != bypassSheetStatus.Reviewing"
           class="staff"
@@ -32,7 +33,7 @@
           <span>
             {{student.point.status === bypassSheetStatus.Signed ? 'Подписал' : 'Отказал'}}
             <br>
-            {{student.point.staff}}
+            {{staffShortname(student.point.staff)}}
           </span>
         </div>
 
@@ -67,7 +68,7 @@ import AppButton from '~/components/common/AppButton'
 import AppDownloadList from '~/components/common/AppDownloadList'
 
 export default {
-  name: 'AppSignPointList',
+  name: 'AppStudentList',
 
   components: {
     AppList,
@@ -80,7 +81,7 @@ export default {
   props: {
     studentList: {
       type: Array,
-      default: () => [],
+      required: true,
     },
   },
 
@@ -89,6 +90,13 @@ export default {
       return bypassSheetStatus
     },
   },
+
+  methods: {
+    staffShortname(staff) {
+      const [firstname, lastname, middlename] = staff.split(' ')
+      return firstname + ' ' + lastname[0] + '.' + (middlename ? middlename[0] + '.' : '')
+    },
+  }
 }
 </script>
 
