@@ -15,13 +15,13 @@
 
   			<app-select
           v-model="selectedReason"
-    			:options="bypassSheetsSchemas.map(schema => schema.title)"
+    			:options="bypassSheetsSchemasTitles.map(schema => schema.title)"
     			placeholder="Причина"
     			class="reason"
         />
 
         <div
-          v-if="selectedSchema && selectedSchema.statements.length"
+          v-if="selectedSchema.statements && selectedSchema.statements.length"
           class="upload-section"
         >
           <div class="upload-section-head">
@@ -34,7 +34,7 @@
             </p>
           </div>
 
-          <div class="upload-section-body">
+          <div v-if="selectedSchema" class="upload-section-body">
             <div class="example-subsection">
               <span class="subheader">Образец</span>
               <div class="example-documents">
@@ -141,28 +141,13 @@ export default {
   }),
 
   computed: {
-    selectedSchema() {
-      if (this.selectedReason === '') return null
-      return this.bypassSheetsSchemas.find(schema => schema.title === this.selectedReason)
-    },
     ...mapGetters(['bypassSheetsSchemasTitles']),
 
-    bypassSheetsSchemas() {
-      return [
-        {
-          title: 'Скидка на столовую',
-          statements: [ // здесь лежат файлы
-            { name: 'Скидка на столовую.pdf' },
-          ]
-        },
-        {
-          title: 'Отчисление',
-          statements: [ // здесь лежат файлы
-            { name: 'Отчисление1.pdf' },
-            { name: 'Отчисление2.pdf' },
-          ]
-        },
-      ]
+    selectedSchema() {
+      if (this.selectedReason === '') return {
+        statements: []
+      }
+      return this.bypassSheetsSchemasTitles.find(schema => schema.title === this.selectedReason)
     },
   },
 
