@@ -43,9 +43,10 @@ const getters = {
 }
 
 const actions = {
-  async [FETCH_ALL_DEPARTMENTS](context, prevDepartments) {
-    if (prevDepartments.length !== 0) {
-      return context.commit(SET_ALL_DEPARTMENTS, prevDepartments)
+  async [FETCH_ALL_DEPARTMENTS](context) {
+    const departments = context.getters.allDepartments
+    if (departments.length !== 0) {
+      return context.commit(SET_ALL_DEPARTMENTS, departments)
     }
     return new Promise((resolve, reject) => {
       DepartmentsService.get()
@@ -59,18 +60,18 @@ const actions = {
         })
     })
   },
-  async [FETCH_DEPARTMENTS](context, params) {
+  async [FETCH_DEPARTMENTS](context, params={}) {
     const {
-      departments: prevDepartments = [],
-      institute,
+      departments=[],
+      institute='',
     } = params
-    if (prevDepartments.length !== 0) {
-      return context.commit(SET_DEPARTMENTS, prevDepartments)
+    if (departments.length !== 0) {
+      return context.commit(SET_DEPARTMENTS, departments)
     }
     return new Promise((resolve, reject) => {
       context.dispatch(WAIT_FOR, 'checkingAuth')
         .then(() => {
-          DepartmentsService.get(institute)
+          DepartmentsService.get({institute})
             .then(({ data }) => {
               context.commit(SET_DEPARTMENTS, data.slice())
               resolve(data)
@@ -82,21 +83,13 @@ const actions = {
       })
     })
   },
-  async [FETCH_DEPARTMENT](context, params) {
-    const {
-      department: prevDepartment,
-      institute,
-    } = params
-    if (prevDepartment != {}) {
-      context.commit(SET_DEPARTMENT_CONTACTS, prevDepartment)
-      return prevDepartment
-    }
+  async [FETCH_DEPARTMENT](context, params={}) {
     return new Promise((resolve, reject) => {
       context.dispatch(WAIT_FOR, 'checkingAuth')
         .then(() => {
-          DepartmentsService.get(institute, department.title)
+          DepartmentsService.get(params)
             .then(({ data }) => {
-              context.commit(SET_DEPARTMENT_CONTACTS, data.slice())
+              context.commit(SET_DEPARTMENT, data.slice())
               resolve(data)
             })
             .catch(errors => {
