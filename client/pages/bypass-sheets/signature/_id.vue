@@ -217,20 +217,28 @@ export default {
       student.checked = false
     },
     sign(student) {
+      this.uncheck(student)
       const point = student.point
+
+      if (point.status === bypassSheetStatus.Signed) return
+
       point.status = bypassSheetStatus.Signed
       point.rejectReason = ''
       point.requiredDocuments = []
-      point.staff = this.staff
-      this.uncheck(student)
+      point.staff = this.currentUser.fullname
+      this.updatingBypassSheets.add(student.point)
 
       this.updateBypassSheets()
     },
     reject(student) {
-      const point = student.point
-      point.status = bypassSheetStatus.Rejected
-      point.staff = this.staff
       this.uncheck(student)
+      const point = student.point
+
+      if (point.status === bypassSheetStatus.Rejected) return
+
+      point.status = bypassSheetStatus.Rejected
+      point.staff = this.currentUser.fullname
+      this.updatingBypassSheets.add(student.point)
       this.closeRejectForm()
 
       this.updateBypassSheets()
@@ -358,12 +366,6 @@ export default {
         }
     },
 
-      this.$store
-        .dispatch(UPDATE_BYPASS_SHEETS, {
-            department: 'Библиотека', // currentUser.department
-            bypassSheets: updatingBypassSheets,
-          })
-        .catch(error => this.updateBypassSheetsError = error)
     }, debounceDelay)
   },
 
