@@ -3,6 +3,7 @@
     <app-input
       :value="value"
       @input="updateValue($event)"
+      @change="$emit('change', $event)"
       :type="type"
       :required="required"
       :disabled="disabled"
@@ -12,10 +13,7 @@
       class="app-search"
     />
 
-    <icon-search
-      v-show="!value"
-      class="icon-search"
-    />
+    <icon-search class="icon-search"/>
   </div>
 </template>
 
