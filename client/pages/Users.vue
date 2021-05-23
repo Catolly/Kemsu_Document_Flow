@@ -12,14 +12,15 @@
         <app-search
           round
           small
-          v-model="searchText"
+          :value="searchText"
+          @change="searchText = $event"
           class="search"
         />
       </div>
 
       <app-pagination
-        v-if="searchingStudentList.length > 0"
-        :itemsAmount="searchingStudentList.length"
+        v-show="studentList.length > 0"
+        :itemsAmount="usersAmount"
         :page="page"
         @updateItemsPerPage="itemsPerPage = $event"
         @updatePage="page = $event"
@@ -28,7 +29,7 @@
       />
 
       <app-student-list
-        :studentList="studentListInPage"
+        :studentList="studentList"
       />
     </div>
 
@@ -87,33 +88,7 @@ export default {
   }),
 
   computed: {
-    ...mapGetters(['groups']),
-
-    studentListInPage() {
-      return this.searchingStudentList.slice(this.page * this.itemsPerPage,
-                                            (this.page + 1) * this.itemsPerPage)
-    },
-    searchingStudentList() {
-      if (this.searchText === '') return this.filteredStudentList
-
-      return this.filteredStudentList.filter(student =>
-        student.fullname.toLowerCase().includes(this.searchText.toLowerCase())
-      )
-    },
-    filteredStudentList() {
-      if (!this.FilterService)
-        return this.studentList
-
-      if (this.FilterService.filterList.every(filter => filter.value === ''))
-        return this.studentList
-
-      return this.studentList
-      .filter(student => this.FilterService.filterList
-        .filter(filter => filter.value != '')
-        .every(filter => {
-          return student[filter.filteringPropName] === filter.value
-        }))
-    },
+    ...mapGetters(['groups', 'users', 'usersAmount']),
 
     filterList() {
       if (!this.FilterService) return []
@@ -146,6 +121,25 @@ export default {
     },
   },
 
+  watch: {
+    filterPath() {
+      this.page = 0
+      this.findUsers()
+    },
+    searchText() {
+      this.page = 0
+      this.findUsers()
+    },
+    page() {
+      this.findUsers()
+    },
+    itemsPerPage() {
+      if (this.itemsPerPage) {
+        this.findUsers()
+      }
+    },
+  },
+
   methods: {
     // Методы app-filter
     select(params) {
@@ -170,11 +164,23 @@ export default {
     },
     //
 
-    async fetchUsers() {
+    async findUsers() {
       try {
-        const users = await this.$store
-          .dispatch(FETCH_USERS, {})
-        this.studentList = copy(users)
+        const [
+          institute,
+          course,
+          group
+        ] = this.FilterService.filterList.map(filter => filter.value)
+        await this.$store
+          .dispatch(FETCH_USERS, {
+            search: this.searchText,
+            institute,
+            course,
+            group,
+            offset: this.page * this.itemsPerPage,
+            limit: this.itemsPerPage
+          })
+        this.studentList = copy(this.$store.getters.users)
       } catch (error) {
         console.error(error)
         this.loadError = error
@@ -192,9 +198,8 @@ export default {
   },
 
   async beforeMount() {
-    this.fetchUsers()
-    this.fetchGrops()
-      .then(() => this.FilterService = initFilterService(this.groups))
+    await this.fetchGrops()
+    this.FilterService = initFilterService(this.groups)
   },
 }
 </script>

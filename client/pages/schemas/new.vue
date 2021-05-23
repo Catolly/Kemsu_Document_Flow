@@ -46,11 +46,11 @@
         </div>
 
         <app-schema-edit-form
-          v-if="!loadError"
+          v-if="!loadError && FilterService"
           :step="step"
-          :studentList="filteredStudentList"
           :schema="schema"
           :filterPath="filterPath"
+          :filters="FilterService.filterList.map(filter => filter.value)"
           @setFilterDepth="setFilterDepth"
           @changeStep="step = $event"
           @touch="isInvalidForm = $event"
@@ -118,7 +118,6 @@
 import { mapGetters } from "vuex"
 import {
   FETCH_DEPARTMENTS,
-  FETCH_USERS,
   FETCH_GROUPS,
   CREATE_BYPASS_SHEETS_SCHEMA,
 } from "~/store/actions.type"
@@ -152,7 +151,6 @@ export default {
     isInvalidForm: true,
 
     points: [],
-    studentList: [],
 
     schema: {
       title: '',
@@ -166,22 +164,7 @@ export default {
   }),
 
   computed: {
-    ...mapGetters(['departments', 'users', 'groups']),
-
-    filteredStudentList() {
-      if (!this.FilterService)
-        return this.studentList
-
-      if (this.FilterService.filterList.every(filter => filter.value === ''))
-        return this.studentList
-
-      return this.studentList
-      .filter(student => this.FilterService.filterList
-        .filter(filter => filter.value != '')
-        .every(filter => {
-          return student[filter.filteringPropName] === filter.value
-        }))
-    },
+    ...mapGetters(['departments', 'groups']),
 
     filterList() {
       if (!this.FilterService) return []
@@ -250,12 +233,6 @@ export default {
     },
     //
 
-    checkAttachedStudents() {
-      this.studentList.forEach(student => {
-        this.$set(student, 'checked', this.schema.studentList.includes(student.id))
-      })
-    },
-
     async createSchema() {
       this.createError = ''
       try {
@@ -264,9 +241,7 @@ export default {
             title: this.schema.title,
             educationForm: this.schema.educationForm,
             statements: this.schema.statements,
-            studentList: this.studentList
-              .filter(student => student.checked)
-              .map(student => student.id),
+            studentList: this.schema.studentList,
             points: this.schema.points
               .filter(point => point.checked),
           })
@@ -308,35 +283,6 @@ export default {
       })
     },
 
-    async fetchUsers() {
-      return new Promise((resolve, reject) => {
-        this.$store
-          .dispatch(FETCH_USERS, {
-            users: this.users,
-            // offset: 0,
-            // limit: 20,
-          })
-            .then(() => {
-              this.users
-                .forEach(user =>
-                  this.studentList.push({
-                    id: user.id,
-                    fullname: user.fullname,
-                    courseNumber: user.courseNumber,
-                    group: user.group,
-                    institute: user.institute,
-                  })
-                )
-                resolve()
-            })
-            .catch(error => {
-              console.error(error)
-              this.loadError = error
-              reject()
-            })
-      })
-    },
-
     async fetchGrops() {
       return new Promise((resolve, reject) => {
         this.$store
@@ -353,8 +299,6 @@ export default {
 
   beforeMount() {
     this.fetchDepartments()
-    this.fetchUsers()
-      .then(() => this.checkAttachedStudents())
     this.fetchGrops()
       .then(() => this.FilterService = initFilterService(this.groups))
   },

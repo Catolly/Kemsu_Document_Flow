@@ -121,9 +121,13 @@ export default {
       this.$emit('touch', this.isInvalidForm)
     },
 
-    points() {
-      if (!this.points.find(point => point === this.selectedPoint))
-        this.selectedPoint = this.points[0]
+    points: {
+      handler() {
+        if (!this.points.find(point => point === this.selectedPoint)) {
+          this.selectedPoint = this.points[0]
+        }
+      },
+      immediate: true,
     },
   },
 }

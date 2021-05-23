@@ -9,15 +9,10 @@
         <div class="head">
           <h1 class="header">Редактирование обходного листа</h1>
 
-          <app-button
-            v-if="!loadError && schema"
-            plain
-            red
+          <app-delete-schema-dialog
             class="delete"
-            @click="deleteSchema"
-          >
-            Удалить шаблон
-          </app-button>
+            @delete="deleteSchema"
+          />
         </div>
 
         <span
@@ -65,11 +60,11 @@
         </div>
 
         <app-schema-edit-form
-          v-if="schema && filteredStudentList && !loadError"
+          v-if="schema && FilterService && !loadError"
           :step="step"
-          :studentList="filteredStudentList"
           :schema="schema"
           :filterPath="filterPath"
+          :filters="FilterService.filterList.map(filter => filter.value)"
           @setFilterDepth="setFilterDepth"
           @changeStep="step = $event"
           @touch="isInvalidForm = $event"
@@ -138,7 +133,6 @@ import { mapGetters } from "vuex"
 import {
   FETCH_BYPASS_SHEETS_SCHEMA,
   FETCH_DEPARTMENTS,
-  FETCH_USERS,
   FETCH_GROUPS,
   UPDATE_BYPASS_SHEETS_SCHEMA,
   DELETE_BYPASS_SHEETS_SCHEMA,
@@ -150,6 +144,7 @@ import bypassSheetSchema from '~/services/bypassSheetSchema'
 import roleAdmin from '~/components/roles/roleAdmin'
 
 import AppSchemaEditForm from '~/components/schemas-edit/AppSchemaEditForm'
+import AppDeleteSchemaDialog from '~/components/schemas-edit/AppDeleteSchemaDialog'
 import AppFilter from '~/components/common/AppFilter'
 import AppButton from '~/components/common/AppButton'
 
@@ -159,6 +154,7 @@ export default {
   components: {
     roleAdmin,
     AppSchemaEditForm,
+    AppDeleteSchemaDialog,
     AppFilter,
     AppButton,
   },
@@ -175,7 +171,6 @@ export default {
 
     isInvalidForm: true,
 
-    studentList: [],
     schema: null,
     departments: [],
 
@@ -183,28 +178,13 @@ export default {
   }),
 
   computed: {
-    ...mapGetters(['users', 'groups', 'bypassSheetsSchema']),
+    ...mapGetters(['groups', 'bypassSheetsSchema']),
 
     loadError() {
       return this.loadDepartmentsError
       && this.loadUsersError
       && this.loadGroupsError
       && this.loadSchemaError
-    },
-
-    filteredStudentList() {
-      if (!this.FilterService)
-        return this.studentList
-
-      if (this.FilterService.filterList.every(filter => filter.value === ''))
-        return this.studentList
-
-      return this.studentList
-      .filter(student => this.FilterService.filterList
-        .filter(filter => filter.value != '')
-        .every(filter => {
-          return student[filter.filteringPropName] === filter.value
-        }))
     },
 
     filterList() {
@@ -274,14 +254,6 @@ export default {
     },
     //
 
-    checkAttachedStudents() {
-      this.studentList.forEach(student => {
-        this.$set(student, 'checked',
-          this.schema.studentList
-          && this.schema.studentList.includes(student.id))
-      })
-    },
-
     async fetchSchema() {
       return await this.$store
         .dispatch(FETCH_BYPASS_SHEETS_SCHEMA, {id: this.$route.params.id})
@@ -301,9 +273,7 @@ export default {
           description: this.schema.description,
           educationForm: this.schema.educationForm,
           statements: this.schema.statements,
-          studentList: this.studentList
-            .filter(student => student.checked)
-            .map(student => student.id),
+          studentList: this.schema.studentList,
           points: this.schema.points
             .filter(point => point.checked),
         })
@@ -365,35 +335,6 @@ export default {
       })
     },
 
-    async fetchUsers() {
-      return new Promise((resolve, reject) => {
-        this.$store
-          .dispatch(FETCH_USERS, {
-            users: this.users,
-            // offset: 0,
-            // limit: 20,
-          })
-            .then(() => {
-              this.users
-                .forEach(user =>
-                  this.studentList.push({
-                    id: user.id,
-                    fullname: user.fullname,
-                    courseNumber: user.courseNumber,
-                    group: user.group,
-                    institute: user.institute,
-                  })
-                )
-                resolve()
-            })
-            .catch(error => {
-              console.error(error)
-              this.loadUsersError = error
-              reject(error)
-            })
-      })
-    },
-
     async fetchGrops() {
       return new Promise((resolve, reject) => {
         this.$store
@@ -428,8 +369,6 @@ export default {
         })
 
     this.fetchDepartments()
-    this.fetchUsers()
-      .then(() => this.checkAttachedStudents())
     this.fetchGrops()
       .then(() => this.FilterService = initFilterService(this.groups))
   },

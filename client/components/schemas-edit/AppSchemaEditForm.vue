@@ -9,10 +9,11 @@
         @touch="isInvalidForm = $event"
       />
       <app-schema-edit-student-list
-        v-if="studentList"
+        v-if="filters && schema"
         v-show="step === '2'"
+        :schemaStudentList="schema.studentList"
         :filterPath="filterPath"
-        :studentList="studentList"
+        :filters="filters"
         @setFilterDepth="$emit('setFilterDepth', $event)"
         class="edit-student-list"
       />
@@ -43,17 +44,17 @@ export default {
       required: true,
     },
 
-    studentList: {
-      type: Array,
-      default:() => [],
-    },
-
     schema: {
       type: Object,
       required: true,
     },
 
     filterPath: {
+      type: Array,
+      required: true,
+    },
+
+    filters: {
       type: Array,
       required: true,
     },

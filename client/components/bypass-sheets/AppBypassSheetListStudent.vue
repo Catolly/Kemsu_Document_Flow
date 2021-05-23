@@ -13,14 +13,6 @@
       >
   			Добавить заявление
   		</app-button>
-
-      <app-pagination
-        v-if="sheets.length > 0"
-        :itemsAmount="sheets.length"
-        :page="page"
-        @updateItemsPerPage="itemsPerPage = $event"
-        @updatePage="page = $event"
-      />
     </div>
 
     <h2 v-if="!sheets.length && !loadError" class="empty-message">
@@ -29,7 +21,7 @@
 
 		<app-list	class="bypass-sheet-list">
 			<app-list-item
-  			v-for="(sheet, index) in sheetsInPage"
+  			v-for="(sheet, index) in sheets"
   			:key="index"
   			@click="$router.push('/bypass-sheets/' + sheet.id)"
         :class="{'signed': sheet.status === bypassSheetSchema.Signed}"
@@ -52,7 +44,6 @@ import { FETCH_BYPASS_SHEETS } from "~/store/actions.type"
 import AppButton from '~/components/common/AppButton'
 import AppList from '~/components/common/AppList'
 import AppListItem from '~/components/common/AppListItem'
-import AppPagination from '~/components/common/AppPagination'
 
 export default {
   name: 'AppBypassSheetListStudent',
@@ -61,26 +52,14 @@ export default {
 		AppButton,
 		AppList,
     AppListItem,
-    AppPagination,
 	},
 
 	data:() => ({
-    itemsPerPage: 0,
-    page: 0,
-
     loadError: '',
 	}),
 
   computed: {
     ...mapGetters(['bypassSheets']),
-
-    sheetsInPage() {
-      return this.sheets
-      .slice(
-        this.page * this.itemsPerPage,
-        (this.page + 1) * this.itemsPerPage
-      )
-    },
 
     sheets() {
       return this.bypassSheets

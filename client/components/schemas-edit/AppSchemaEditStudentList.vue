@@ -9,7 +9,8 @@
       <app-search
         round
         small
-        v-model="searchText"
+        :value="searchText"
+        @change="searchText = $event"
         class="search"
       />
 
@@ -31,8 +32,8 @@
         </app-button>
       </div>
       <app-pagination
-        v-if="searchingStudentList.length > 0"
-        :itemsAmount="searchingStudentList.length"
+        v-show="studentList.length > 0"
+        :itemsAmount="usersAmount"
         :page="page"
         @updateItemsPerPage="itemsPerPage = $event"
         @updatePage="page = $event"
@@ -43,11 +44,17 @@
 
     <app-student-list
       :studentList="studentList"
+      @check="check($event)"
+      @uncheck="uncheck($event)"
     />
   </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+import { FETCH_USERS } from "~/store/actions.type"
+import { copy } from "~/store/methods"
+
 import AppFilterNav from '~/components/common/AppFilterNav'
 import AppSearch from '~/components/common/AppSearch'
 import AppButton from '~/components/common/AppButton'
@@ -66,12 +73,17 @@ export default {
   },
 
   props: {
+    schemaStudentList: {
+      type: Array,
+      required: true,
+    },
+
     filterPath: {
       type: Array,
       required: true,
     },
 
-    studentList: {
+    filters: {
       type: Array,
       required: true,
     },
@@ -81,39 +93,92 @@ export default {
     searchText: '',
     page: 0,
     itemsPerPage: 0,
+
+    studentList: [],
+    checkedStudents: []
   }),
 
   computed: {
-    studentListInPage() {
-      return this.searchingStudentList.slice(this.page * this.itemsPerPage,
-                                            (this.page + 1) * this.itemsPerPage)
-    },
-    checkedStudentList() {
-      return this.searchingStudentList.filter(student => student.checked)
-    },
-    searchingStudentList() {
-      if (this.searchText === '') return this.studentList
+    ...mapGetters(['users', 'usersAmount']),
+  },
 
-      return this.studentList.filter(student =>
-        student.fullname.toLowerCase().includes(this.searchText.toLowerCase())
-      )
+  watch: {
+    filterPath() {
+      this.page = 0
+      this.findUsers()
+    },
+    searchText() {
+      this.page = 0
+      this.findUsers()
+    },
+    page() {
+      this.findUsers()
+    },
+    itemsPerPage() {
+      if (this.itemsPerPage) {
+        this.findUsers()
+      }
+    },
+    studentList() {
+      this.checkAttachedStudents()
+      this.checkedStudents = []
     },
   },
 
   methods: {
     check(student) {
-      // student.checked = true
       this.$set(student, 'checked', true)
+      this.checkedStudents.push(student)
+      this.schemaStudentList.push(student.id)
     },
-    uncheck(student) {
-      // student.checked = false
-      this.$set(student, 'checked', false)
+    uncheck(unckechingStudent) {
+      this.$set(unckechingStudent, 'checked', false)
+      this.checkedStudents = this.checkedStudents.filter(student => student !== unckechingStudent)
+      this.schemaStudentList
+        .splice(this.schemaStudentList.indexOf(unckechingStudent.id), 1)
     },
     checkAll() {
-      this.searchingStudentList.forEach(this.check)
+      this.studentList.forEach(student => {
+        if (!this.schemaStudentList.includes(student.id)) {
+          this.check(student)
+        }
+      })
     },
     uncheckAll() {
-      this.checkedStudentList.forEach(this.uncheck)
+      this.checkedStudents.forEach(student => {
+        this.$set(student, 'checked', false)
+      })
+      this.checkedStudents = []
+      this.schemaStudentList.splice(0)
+      this.checkAttachedStudents()
+    },
+    checkAttachedStudents() {
+      this.studentList.forEach(student => {
+        this.$set(student, 'checked', this.schemaStudentList.includes(student.id))
+      })
+    },
+
+    async findUsers() {
+      try {
+        const [
+          institute,
+          course,
+          group
+        ] = this.filters.map(filter => filter)
+        await this.$store
+          .dispatch(FETCH_USERS, {
+            search: this.searchText,
+            institute,
+            course,
+            group,
+            offset: this.page * this.itemsPerPage,
+            limit: this.itemsPerPage
+          })
+        this.studentList = copy(this.$store.getters.users)
+      } catch (error) {
+        console.error(error)
+        this.loadError = error
+      }
     },
   },
 }
