@@ -158,9 +158,11 @@ export default {
         return
       }
 
-      this.FilterService.filterList.forEach((filter, index) => {
-        if (index > depth) filter.value = ''
-      })
+      if (this.FilterService.filterList)
+        this.FilterService.filterList
+          .forEach((filter, index) => {
+            if (index > depth) filter.value = ''
+          })
     },
     //
 
@@ -170,7 +172,10 @@ export default {
           institute,
           course,
           group
-        ] = this.FilterService.filterList.map(filter => filter.value)
+        ] = (this.FilterService && this.FilterService.filterList)
+        ? this.FilterService.filterList
+          .map(filter => filter.value)
+        : ['', '', '']
         await this.$store
           .dispatch(FETCH_USERS, {
             search: this.searchText,
