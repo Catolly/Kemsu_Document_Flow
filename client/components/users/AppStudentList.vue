@@ -91,7 +91,7 @@ export default {
       this.banError = ''
       try {
         await this.$store.dispatch(BAN_USER, user.id)
-        user.isBaned = false
+        user.isBaned = true
       } catch (error) {
         console.error(error)
         this.banError = error
@@ -102,7 +102,7 @@ export default {
       this.unbanError = ''
       try {
         await this.$store.dispatch(UNBAN_USER, user.id)
-        user.isBaned = true
+        user.isBaned = false
       } catch (error) {
         console.error(error)
         this.unbanError = error
