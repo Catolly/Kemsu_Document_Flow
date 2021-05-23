@@ -23,6 +23,8 @@ import {
   SET_TOKEN,
 } from './mutations.type'
 
+import _ from 'lodash'
+
 const state = () => ({
   errors: null,
   user: {},
@@ -113,52 +115,39 @@ const actions = {
         })
     })
   },
-  [CHECK_AUTH](context) {
-    return new Promise((resolve, reject) => {
+  async [CHECK_AUTH](context) {
+    try {
       context.commit(SET_CHECKING, true)
       const tokens = JwtService.getToken()
       const id = UserService.getId()
       if (tokens && id) {
-        if (tokens.access) {
-          if (tokens.expiresIn > Date.now()) {
-            context.dispatch(FETCH_USER, id)
-              .then(data => {
-                if (data) {
-                  context.commit(SET_AUTH, data)
-                }
-                else
-                  context.commit(SET_TOKEN, tokens)
-                resolve(data)
-              })
-              .catch(errors => {
-                context.commit(SET_ERROR, errors)
-                reject(errors)
-              })
-              .finally(() => {
-                context.commit(SET_CHECKING, false)
-              })
-
-          } else {
-            context.dispatch(REFRESH, JwtService.getToken().refresh)
-              .then(data => {
-                resolve(data)
-              })
-              .catch(errors => {
-                context.commit(SET_ERROR, errors)
-                reject(errors)
-              })
-              .finally(() => {
-                context.commit(SET_CHECKING, false)
-              })
+        if (!tokens.access || (tokens.expiresIn < Date.now())) {
+          const newTokens = await context.dispatch(REFRESH, JwtService.getToken().refresh)
+          if (newTokens) {
+            context.commit(SET_TOKEN, newTokens)
           }
         }
-      } else {
-        context.commit(PURGE_AUTH)
-        context.commit(PURGE_ROLES)
-        resolve()
+        if (_.isEmpty(context.getters.currentUser)) {
+          const user = await context.dispatch(FETCH_USER, id)
+          if (user) {
+            context.commit(SET_AUTH, user)
+          }
+        }
         context.commit(SET_CHECKING, false)
       }
-    })
+      else {
+        context.commit(PURGE_AUTH)
+        context.commit(PURGE_ROLES)
+        context.commit(SET_CHECKING, false)
+      }
+    } catch (error) {
+      console.error(error)
+      context.commit(SET_ERROR, error)
+      context.commit(PURGE_AUTH)
+      context.commit(PURGE_ROLES)
+      context.commit(SET_CHECKING, false)
+      throw error
+    }
   },
   async [UPDATE_USER](context, {fullname}) {
     ApiService.setHeader()
