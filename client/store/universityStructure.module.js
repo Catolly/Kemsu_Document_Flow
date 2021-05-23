@@ -1,4 +1,4 @@
-import ApiService, { DepartmentsService, GroupsService } from "~/services/ApiService"
+import { UsersService, DepartmentsService, GroupsService } from "~/services/ApiService"
 import {
   FETCH_ALL_DEPARTMENTS,
   FETCH_DEPARTMENTS,
@@ -118,21 +118,21 @@ const actions = {
         })
     })
   },
-  async [FETCH_UNREGISTERED_STUDENTS](context, prevUnregisteredStudents) {
-    if (prevUnregisteredStudents.length !== 0) {
-      return context.commit(SET_UNREGISTERED_STUDENTS, prevUnregisteredStudents)
+  async [FETCH_UNREGISTERED_STUDENTS](context, {
+    search = '',
+    limit = 0,
+  }) {
+    try {
+      const { data } = await UsersService.getUnregistered({
+        search,
+        limit,
+      })
+      context.commit(SET_UNREGISTERED_STUDENTS, data.students)
+    } catch(error) {
+      context.commit(SET_ERROR, errors)
+      console.error(error)
+      throw error
     }
-    return new Promise((resolve, reject) => {
-      ApiService.get('unregistered_students')
-        .then(unregisteredStudents => {
-          context.commit(SET_UNREGISTERED_STUDENTS, unregisteredStudents.data.slice())
-          resolve(unregisteredStudents.data)
-        })
-        .catch(errors => {
-          context.commit(SET_ERROR, errors)
-          reject(errors)
-        })
-    })
   },
 }
 

@@ -136,28 +136,27 @@ export const GroupsService = {
 }
 
 export const UsersService = {
-  get(data) {
-    const {
-      title='',
-      pointTitle='',
-      offset='',
-      limit='',
-    } = data
-
-    const params = Object.entries(data)
-      .map(([key, value]) =>
-        value ? `&${key}=${value}` : ''
-      )
-      .join('')
-      .slice(1)
-
+  get(params) {
+    ApiService.setHeader()
+    const paramsURL = URLfromParams(params)
     return ApiService.query(
       'users'
-      + (params ? `/?${params}` : '')
+      + (paramsURL ? `/?${paramsURL}` : '')
     )
   },
+
+  getUnregistered(params) {
+    const paramsURL = URLfromParams(params)
+    return ApiService.query(
+      'unregistered_students'
+      + (paramsURL ? `/?${paramsURL}` : '')
+    )
+  }
 }
 
-export const errorCode = error => {
-  return error.toString().split(' ').reverse()[0]
-}
+export const errorCode = error => error.toString().split(' ').reverse()[0]
+
+const URLfromParams = params => Object.entries(params)
+  .map(([key, value]) => value ? `&${key}=${value}` : '')
+  .join('')
+  .slice(1)
