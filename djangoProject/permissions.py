@@ -1,6 +1,6 @@
 from rest_framework import permissions
 
-from Kemsu_Document.models import Staff
+from Kemsu_Document.models import Staff, Student
 
 
 class PermissionIsStudent(permissions.BasePermission):
@@ -39,8 +39,8 @@ class UserViewPermission(permissions.BasePermission):
         if request.user.is_authenticated:
             if request.method == "GET":
                 return bool((request.user and request.user.status == "Студент" and request.user.id == view.kwargs['pk'])
-                            or (request.user and request.user.status == "Администратор")
-                            or (request.user and request.user.status == "Работник" and request.user.id == view.kwargs['pk']))
+                            or(request.user and request.user.status == "Администратор")
+                            or (request.user and request.user.status == "Работник"))
             elif request.method == "PATCH":
                 return bool((request.user and request.user.status == "Студент" and request.user.id == view.kwargs['pk'])
                             or (request.user and request.user.status == "Администратор")
@@ -61,8 +61,6 @@ class BypassSheetsViewPermission(permissions.BasePermission):
                 return bool(request.user and request.user.status == "Студент")
          elif request.method == "PATCH":
              if request.user.is_authenticated:
-                 print(Staff.objects.get(user=request.user).department.title)
-                 # print()
                  return bool(request.user and request.user.status == "Работник" and
                              Staff.objects.get(user=request.user).department.title == request.GET.get('department', ''))
 
@@ -80,3 +78,40 @@ class UsersViewPermission(permissions.BasePermission):
         if request.user.is_authenticated:
             return bool((request.user and request.user.status == "Администратор")
                         or (request.user and request.user.status == "Работник"))
+
+class BanUnbanPermission(permissions.BasePermission):
+
+    def has_permission(self, request, view):
+        if request.user.is_authenticated:
+            return bool(request.user and request.user.status == "Администратор")
+
+class UploadDocumentsPermission(permissions.BasePermission):
+
+    def has_permission(self, request, view):
+        if request.user.is_authenticated:
+            return bool(request.user and request.user.status == "Студент")
+
+class DepartmentViewPermission(permissions.BasePermission):
+
+    def has_permission(self, request, view):
+        if request.user.is_authenticated:
+            return bool((request.user and request.user.status == "Студент")
+                        or (request.user and request.user.status == "Работник")
+                        or (request.user and request.user.status == "Администратор"))
+
+class GroupViewPermission(permissions.BasePermission):
+
+    def has_permission(self, request, view):
+        if request.user.is_authenticated:
+            return bool((request.user and request.user.status == "Работник")
+                        or (request.user and request.user.status == "Администратор"))
+
+class BypassSheetTemplateViewPermission(permissions.BasePermission):
+
+    def has_permission(self, request, view):
+        if request.method == "GET":
+            if request.user.is_authenticated:
+                return bool(request.user)
+        else:
+            if request.user.is_authenticated:
+                return bool(request.user and request.user.status == "Администратор")

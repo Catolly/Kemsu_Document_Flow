@@ -2,6 +2,7 @@ from datetime import time, datetime
 import json
 
 import jwt
+from django.core.mail import send_mail
 from psycopg2.compat import text_type
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
@@ -14,11 +15,12 @@ from django.utils.text import gettext_lazy as _
 import time
 
 from .exceptions import GroupNotFoundError, ThisUserIsAlreadyExistException, ThisEmailIsAlreadyExistError, \
-    DepartmentNotFoundException, UserWithThisFullNameDoesNotExistException, UserWithThisEmailDoesNotExistException
+    DepartmentNotFoundException, UserWithThisFullNameDoesNotExistException, UserWithThisEmailDoesNotExistException, \
+    BypassSheetTemplateExistException
 from .models import (
     User, Department, Group, Institute,
     BypassSheet, Point, Statement, UploadedDocuments, RequiredDocuments, Staff, Student, BypassSheetTemplate,
-    StatementsTemplate, PointTemplate, UploadDocumentsFormat,
+    StatementsTemplate, PointTemplate, UploadDocumentsFormat, RequiredDocumentsTemplate,
 )
 
 class RegistrationStaffSerializer(serializers.ModelSerializer):
@@ -105,6 +107,7 @@ class RegistrationStudentSerializer(serializers.ModelSerializer):
         return attrs
 
     def create(self, validated_data):
+
         group = Group.objects.filter(name=validated_data['group']).first()
 
         student_data = Student.objects.filter(group=group)
@@ -113,6 +116,9 @@ class RegistrationStudentSerializer(serializers.ModelSerializer):
             user = User.objects.filter(fullname=validated_data['fullname'], id=student.user.id).first()
             if user:
                 break
+
+        if user.is_active == True:
+            raise ValidationError("Пользователь с таким ФИО уже зарегестрирован")
 
         user_email = User.objects.filter(email=validated_data['email']).first()
         if user_email:
@@ -168,10 +174,14 @@ class StaffSerializer(serializers.ModelSerializer):
     fullname = serializers.SerializerMethodField()
     email = serializers.SerializerMethodField()
     department = serializers.SlugRelatedField(slug_field='title', read_only=True)
+    isBaned = serializers.SerializerMethodField()
 
     class Meta:
         model = Staff
-        fields = ('id', 'fullname', 'email', 'department', 'contactNumber')
+        fields = ('id', 'fullname', 'email', 'department', 'isBaned')
+
+    def get_isBaned(self, staff):
+        return staff.user.is_baned
 
     def get_id(self, staff):
         return staff.user.id
@@ -184,13 +194,71 @@ class StaffSerializer(serializers.ModelSerializer):
 
 class PointSerializer(serializers.ModelSerializer):
 
-    uploadedDocuments = UploadedDocumentSerializer(many=True, read_only=True)
-    staff = StaffSerializer(read_only=True)
-    requiredDocuments = RequiredDocumentsSerializer(many=True, read_only=True)
+    uploadedDocuments = serializers.SerializerMethodField()
+    staff = serializers.SerializerMethodField()
+    requiredDocuments = serializers.SerializerMethodField()
+    uploadDocumentsFormat = serializers.SerializerMethodField()
+    commonReasons = serializers.SerializerMethodField()
+    bypassSheetId = serializers.SerializerMethodField()
 
     class Meta:
         model = Point
-        fields = ("title", "status", "uploadedDocuments", "staff", "rejectReason", 'requiredDocuments')
+        fields = ("bypassSheetId", "title", "status", "uploadedDocuments", "staff", "rejectReason", 'requiredDocuments', 'uploadDocumentsFormat', 'commonReasons')
+
+    def get_uploadedDocuments(self, point):
+        uploaded_documents = UploadedDocuments.objects.filter(point=point)
+
+        files = []
+
+        for uploaded_document in uploaded_documents:
+            files.append(uploaded_document.img.url)
+
+        return files
+
+    def get_requiredDocuments(self, point):
+        required_documents = RequiredDocuments.objects.filter(point=point)
+
+        files = []
+
+        for required_document in required_documents:
+            files.append(required_document.img.url)
+
+        return files
+
+    def get_staff(self, point):
+        try:
+            return point.staff.user.fullname
+        except AttributeError:
+            return ""
+
+    def get_bypassSheetId(self, point):
+        return point.bypass_sheet.id
+
+    def get_commonReasons(self, point):
+        point_template = point.point_template
+
+        common_reasons_in_string = point_template.commonReasons
+
+        if common_reasons_in_string == "" or common_reasons_in_string == None:
+            return []
+
+        common_reasons_in_list = common_reasons_in_string.split('<separator>')
+
+        common_reasons_in_list.pop()
+
+        return common_reasons_in_list
+
+    def get_uploadDocumentsFormat(self, point):
+        point_template = point.point_template
+
+        upload_documents_format = UploadDocumentsFormat.objects.filter(point_template=point_template)
+
+        titles = []
+
+        for upload_document_format in upload_documents_format:
+            titles.append({'title': upload_document_format.title})
+
+        return titles
 
 class UserSerializer(serializers.ModelSerializer):
 
@@ -206,12 +274,22 @@ class StatementSerializer(serializers.ModelSerializer):
 
 class BypassSheetsSerializer(serializers.ModelSerializer):
 
-    statements = StatementSerializer(many=True, read_only=True)
+    statements = serializers.SerializerMethodField()
     points = PointSerializer(many=True, read_only=True)
 
     class Meta:
         model = BypassSheet
         fields = ("id", "title", "statements", "points", "status")
+
+    def get_statements(self, bypass_sheet):
+        statements = Statement.objects.filter(bypass_sheet=bypass_sheet)
+
+        files = []
+
+        for statement in statements:
+            files.append(statement.file.url)
+
+        return files
 
 class StudentSerializer(serializers.ModelSerializer):
     id = serializers.SerializerMethodField()
@@ -221,11 +299,15 @@ class StudentSerializer(serializers.ModelSerializer):
     institute = serializers.SerializerMethodField()
     courseNumber = serializers.SerializerMethodField()
     bypassSheets = BypassSheetsSerializer(required=False, read_only=True, many=True)
+    isBaned = serializers.SerializerMethodField()
 
     class Meta:
         model = Student
         fields = ('id', 'fullname', 'email', 'recruitmentForm', 'status', 'group',
-                  'institute', 'courseNumber', 'bypassSheets')
+                  'institute', 'courseNumber', 'bypassSheets', 'isBaned', 'educationForm')
+
+    def get_isBaned(self, student):
+        return student.user.is_baned
 
     def get_id(self, student):
         return student.user.id
@@ -246,13 +328,15 @@ class StudentSerializer(serializers.ModelSerializer):
 
 class PostStatementsSerializer(serializers.ModelSerializer):
 
+    file = serializers.ListField()
+
     class Meta:
         model = Statement
         fields = ('file',)
 
 class PostByPassSheetsSerializer(serializers.ModelSerializer):
 
-    statements = PostStatementsSerializer(many=True, write_only=True)
+    statements = serializers.ListField()
 
     title = serializers.CharField(max_length=50, write_only=True)
 
@@ -262,12 +346,28 @@ class PostByPassSheetsSerializer(serializers.ModelSerializer):
 
     def statementsCreate(self, statements_data, module):
 
-        for statement_data in statements_data:
+        statement_data = dict()
+
+        for file in statements_data:
             statement_data['bypass_sheet'] = module
+            statement_data['file'] = file
             Statement.objects.create(**statement_data)
+            statement_data = dict()
+
+    def __createRequiredDocuments(self, required_documents_template, point):
+
+        required_documents_data = dict()
+
+        for required_document_template in required_documents_template:
+            required_documents_data['img'] = required_document_template.img
+            required_documents_data['point'] = point
+            required_documents_data['requiredDocumentsTemplate'] = required_document_template
+
+            RequiredDocuments.objects.create(**required_documents_data)
+
 
     def __createPoints(self, bypass_sheet, student):
-        bypass_sheet_template = BypassSheetTemplate.objects.filter(title=bypass_sheet.title, educationForm=student.educationForm).first()
+        bypass_sheet_template = BypassSheetTemplate.objects.get(title=bypass_sheet.title, educationForm=student.educationForm)
 
         bypass_sheet_template.studentList.add(student.user.id)
 
@@ -275,16 +375,24 @@ class PostByPassSheetsSerializer(serializers.ModelSerializer):
 
         point_data = dict()
 
-        for point in points_template:
-            point_data['title'] = point.title
-            point_data['description'] = point.description
-            point_data['gender'] = point.gender
-            point_data['department'] = point.department
-            point_data['bypass_sheet'] = bypass_sheet
+        for point_template in points_template:
+            if student.user.gender != point_template.gender and point_template.gender != 'None':
+                continue
 
-            Point.objects.create(**point_data)
+            point_data['title'] = point_template.title
+            point_data['description'] = point_template.description
+            point_data['gender'] = point_template.gender
+            point_data['department'] = point_template.department
+            point_data['bypass_sheet'] = bypass_sheet
+            point_data['point_template'] = point_template
+
+            point = Point.objects.create(**point_data)
 
             point_data = dict()
+
+            required_documents_template = RequiredDocumentsTemplate.objects.filter(point_template=point_template)
+
+            self.__createRequiredDocuments(required_documents_template, point)
 
     def create(self, validated_data):
         user = None
@@ -298,11 +406,16 @@ class PostByPassSheetsSerializer(serializers.ModelSerializer):
         statements_data = []
 
         for statement_data in statements_data_ordered_dict:
-            statements_data.append(dict(statement_data))
+            statements_data.append(statement_data)
 
         student = Student.objects.get(user=user.id)
 
+        bypass_sheet_template = BypassSheetTemplate.objects.get(title=validated_data['title'],
+                                                                educationForm=student.educationForm)
+
         validated_data['student_id'] = student
+        validated_data['educationForm'] = student.educationForm
+        validated_data['bypass_sheet_template'] = bypass_sheet_template
 
         bypass_sheet = BypassSheet.objects.create(**validated_data)
 
@@ -329,16 +442,18 @@ class TokenEmailSerializer(Serializer):
         self.user = self.getUser(attrs)
 
         if not self.user:
-            raise ValidationError('The user is not valid.')
+            raise ValidationError('Аккаунта с таким email не существует')
 
         if self.user:
             if not self.user.check_password(attrs['password']):
-                raise ValidationError('Incorrect credentials.')
+                raise ValidationError('Введен неверный пароль.')
 
         if self.user is None:
             raise ValidationError('No active account found with the given credentials')
         if not self.user.is_active:
             raise ValidationError('Your account has not been verified by the administrator')
+        if self.user.is_baned:
+            raise ValidationError('Your was baned in this system')
 
         return {}
 
@@ -395,20 +510,519 @@ class UpdateStatementSerializer(serializers.ModelSerializer):
         model = Statement
         fields = ('file', )
 
-class UpdateBypassSheetSerializer(serializers.ModelSerializer):
+class SigningPointSerializer(serializers.ModelSerializer):
 
-    statements = UpdateStatementSerializer(write_only=True, many=True)
+    id = serializers.IntegerField()
+    status = serializers.CharField(write_only=True, required=False)
+    rejectReason = serializers.CharField(required=False, write_only=True)
+    requiredDocuments = serializers.ListField(write_only=True, allow_empty=True, required=False)
 
     class Meta:
         model = BypassSheet
+        fields = ('id', 'status', 'rejectReason', 'requiredDocuments')
+
+    def __updateRequiredDocuments(self, data, point):
+
+        for file in data:
+
+            if isinstance(file, str):
+                file_arr = file.split('/')
+
+                file = file_arr[-2]+'/'+file_arr[-1]
+
+                print(file)
+            obj, statement = RequiredDocuments.objects.update_or_create(img=file,
+                                                                        point=point,
+                                                                        defaults={
+                                                                            'img': file
+                                                                        })
+
+    def __checkSigningPoints(self, bypass_sheet):
+
+        points = Point.objects.filter(bypass_sheet=bypass_sheet)
+
+        for point in points:
+            if point.status != 'Подписано':
+                return False
+        return True
+
+    def __updatePoint(self, data):
+
+        bypass_sheet = BypassSheet.objects.filter(id=data['id']).first()
+
+        point = Point.objects.filter(bypass_sheet=bypass_sheet, title=self.department_name).first()
+
+        point.status = data.get('status', point.status)
+
+        point.rejectReason = data.get('rejectReason', point.rejectReason)
+
+        point.staff = Staff.objects.get(user=self.user)
+
+        point.save()
+
+        if point.rejectReason == "Отказано":
+            student = bypass_sheet.student_id
+
+            user = student.user
+
+            send_mail('MyDoc', 'Вам было отказанно в подписании. Пожалуйста, проверьте ваш личный кабинет', 'mydockemsu@gmail.com', [user.email])
+
+        try:
+            self.__updateRequiredDocuments(data['requiredDocuments'], point)
+        except KeyError:
+            self.__updateRequiredDocuments([], point)
+
+        if self.__checkSigningPoints(bypass_sheet):
+            bypass_sheet.status = 'Подписан'
+            bypass_sheet.save()
+            student = bypass_sheet.student_id
+
+            user = student.user
+
+            send_mail('MyDoc', 'Ваш обходной лист был успешно подписан', 'mydockemsu@gmail.com', [user.email])
+
+        else:
+            bypass_sheet.status = 'Не подписан'
+            bypass_sheet.save()
+
+    def create(self, validated_data):
+
+        self.department_name = self.context['department_name']
+        self.user = self.context['user']
+
+        self.__updatePoint(validated_data)
+
+        return 1
+
+class BypassSheetTemplateTitleSerializer(serializers.ModelSerializer):
+
+    statements = serializers.SerializerMethodField()
+
+    class Meta:
+        model = BypassSheetTemplate
         fields = ('title', 'statements')
 
-    def update(self, instance, validated_data):
-        for key in validated_data:
-            setattr(instance, key, validated_data.get(key, getattr(instance, key)))
-        instance.save()
+    def get_statements(self, bypass_sheet_template):
+        statements_template = StatementsTemplate.objects.filter(bypass_sheet_template=bypass_sheet_template)
 
-        return instance
+        statement_list = []
+
+        for statement in statements_template:
+            statement_list.append(statement.img.url)
+
+        return statement_list
+
+class PostUploadDocumentsFormatSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = UploadDocumentsFormat
+        fields = ('title',)
+
+    def validate(self, attrs):
+        return attrs
+
+class PostPointTemplateSerializer(serializers.ModelSerializer):
+
+    id = serializers.IntegerField(required=False)
+    requiredDocuments = serializers.ListField(write_only=True, allow_empty=True, required=False)
+    uploadDocumentsFormat = serializers.ListField(required=False,
+                                                  child=PostUploadDocumentsFormatSerializer(write_only=True))
+    commonReasons = serializers.ListField(write_only=True, allow_empty=True, required=False)
+
+    class Meta:
+        model = PointTemplate
+        fields = ('id', 'title', 'description', 'requiredDocuments', 'gender', 'uploadDocumentsFormat', 'commonReasons')
+
+    def validate(self, attrs):
+        return attrs
+
+class UpdateBypassSheetTemplateSerializer(serializers.ModelSerializer):
+    statements = serializers.ListField(write_only=True, allow_empty=True, required=False)
+
+    points = serializers.ListField(child=PostPointTemplateSerializer(write_only=True))
+
+    studentList = serializers.ListField(write_only=True, allow_empty=True, allow_null=True, required=False)
+
+    class Meta:
+        model = BypassSheetTemplate
+        fields = ('title', 'educationForm', 'statements', 'points', 'studentList')
+
+    def update_statements_template(self, bypass_sheet_template, data):
+        statements_template = data.pop('statements')
+
+        statements_data = []
+
+        for statement_data in statements_template:
+            statements_data.append(statement_data)
+
+        statement_template_data = dict()
+
+        StatementsTemplate.objects.filter(bypass_sheet_template=bypass_sheet_template).delete()
+
+        for file in statements_data:
+
+            if isinstance(file, str):
+                file_arr = file.split('/')
+
+                file = file_arr[-2]+'/'+file_arr[-1]
+
+            statement_template_data['img'] = file
+            statement_template_data['bypass_sheet_template'] = bypass_sheet_template
+            StatementsTemplate.objects.create(**statement_template_data)
+            statement_template_data = dict()
+
+    def update_required_documents_template(self, point_template, point_data):
+        RequiredDocumentsTemplate.objects.filter(point_template=point_template).delete()
+
+        try:
+            required_documents = point_data.pop('requiredDocuments')
+        except KeyError:
+            required_documents = []
+
+        required_documents_data = dict()
+
+        files = []
+
+        for statement_data in required_documents:
+            files.append(statement_data)
+
+        for file in files:
+
+            if isinstance(file, str):
+                file_arr = file.split('/')
+
+                file = file_arr[-2]+'/'+file_arr[-1]
+
+                print(file)
+
+            required_documents_data['point_template'] = point_template
+            required_documents_data['img'] = file
+
+            RequiredDocumentsTemplate.objects.create(**required_documents_data)
+
+            required_documents_data = dict()
+
+    def update_upload_documents_format(self, point_template, point_data):
+
+        UploadDocumentsFormat.objects.filter(point_template=point_template).delete()
+
+        try:
+            upload_documents_format = point_data.pop('uploadDocumentsFormat')
+        except KeyError:
+            upload_documents_format = []
+
+        for upload_document_format in upload_documents_format:
+
+            UploadDocumentsFormat.objects.update_or_create(title=dict(upload_document_format)['title'], point_template=point_template,
+                                                           defaults={
+                                                               'title': dict(upload_document_format)['title'],
+                                                               'point_template': point_template
+                                                           })
+
+    def update_common_reasons(self, point_template, common_reasons):
+        common_reasons_in_string = ""
+
+        for common_reason in common_reasons:
+            common_reasons_in_string += common_reason + "<separator>"
+
+        point_template.commonReasons = common_reasons_in_string
+
+        point_template.save()
+
+    def delete_points_template(self, bypass_sheet_template, points_template):
+
+        old_points_template = PointTemplate.objects.filter(bypass_sheet_template=bypass_sheet_template)
+
+        old_ids = []
+        new_ids = []
+
+        for old_point_template in old_points_template:
+            old_ids.append(old_point_template.id)
+
+        for point_template in points_template:
+            new_ids.append(point_template['id'])
+
+        old_ids = set(old_ids)
+        new_ids = set(new_ids)
+
+        old_ids = old_ids.difference(new_ids)
+
+        for old_id in old_ids:
+            PointTemplate.objects.get(id=old_id).delete()
+
+    def update_points_template(self, bypass_sheet_template, validated_data):
+        points_template = validated_data.pop('points')
+
+        for point_data in points_template:
+            try:
+                PointTemplate.objects.update_or_create(id=point_data['id'],
+                                                               defaults={
+                                                                   'title':point_data['title'],
+                                                                   'description':point_data['description'],
+                                                                   'gender':point_data['gender'],
+                                                                   'bypass_sheet_template':bypass_sheet_template,
+                                                                   'department':Department.objects.get(title=point_data['title'])
+
+                                                               })
+            except KeyError:
+
+                PointTemplate.objects.update_or_create(id=None,
+                                                            defaults={
+                                                                'title': point_data['title'],
+                                                                'description': point_data['description'],
+                                                                'gender': point_data['gender'],
+                                                                'bypass_sheet_template': bypass_sheet_template,
+                                                                'department': Department.objects.get(title=point_data['title'])
+                                                            })
+
+                bypass_sheets = BypassSheet.objects.filter(bypass_sheet_template=bypass_sheet_template)
+
+                for bypass_sheet in bypass_sheets:
+
+                    self.create_points(bypass_sheet, bypass_sheet_template)
+
+            point_template = PointTemplate.objects.get(title=point_data['title'], bypass_sheet_template=bypass_sheet_template)
+
+            try:
+                self.update_common_reasons(point_template, point_data.pop('commonReasons'))
+            except KeyError:
+                self.update_common_reasons(point_template, [])
+            self.update_required_documents_template(point_template, point_data)
+            self.update_upload_documents_format(point_template, point_data)
+
+        self.delete_points_template(bypass_sheet_template, points_template)
+
+    def create_statement(self, bypass_sheet, bypass_sheet_template):
+
+        statements_template_query = StatementsTemplate.objects.filter(bypass_sheet_template=bypass_sheet_template)
+
+        statement_data = dict()
+
+        for statement in statements_template_query:
+            statement_data['file'] = statement.img
+            statement_data['bypass_sheet'] = bypass_sheet
+
+            Statement.objects.create(**statement_data)
+
+            statement_data = dict()
+
+    def create_required_documents(self, point, point_template):
+
+        required_documents_templates = RequiredDocumentsTemplate.objects.filter(point_template=point_template)
+
+        required_documents_data = dict()
+
+        for required_documents_template in required_documents_templates:
+            required_documents_data['img'] = required_documents_template.img
+            required_documents_data['requiredDocumentsTemplate'] = required_documents_template
+            required_documents_data['point'] = point
+
+            RequiredDocuments.objects.create(**required_documents_data)
+
+            required_documents_data = dict()
+
+    def update_points(self, bypass_sheet, bypass_sheet_template):
+
+        points_template_query = PointTemplate.objects.filter(bypass_sheet_template=bypass_sheet_template)
+
+        for point_template in points_template_query:
+
+
+            Point.objects.update_or_create(title=point_template.title, bypass_sheet=bypass_sheet,
+                                                   defaults={
+                                                       'title':point_template.title,
+                                                       'description': point_template.description,
+                                                       'gender': point_template.gender,
+                                                       'department':point_template.department,
+                                                       'bypass_sheet': bypass_sheet,
+                                                       'point_template': point_template
+                                                   })
+
+
+            point = Point.objects.get(title=point_template.title, bypass_sheet=bypass_sheet)
+
+            self.create_required_documents(point, point_template)
+
+    def create_points(self, bypass_sheet, bypass_sheet_template):
+        points_template_query = PointTemplate.objects.filter(bypass_sheet_template=bypass_sheet_template)
+
+        point_data = dict()
+
+        for point in points_template_query:
+            point_data['title'] = point.title
+            point_data['description'] = point.description
+            point_data['gender'] = point.gender
+            point_data['department'] = point.department
+            point_data['bypass_sheet'] = bypass_sheet
+            point_data['point_template'] = point
+
+            self.create_required_documents(Point.objects.create(**point_data), point)
+
+            point_data = dict()
+
+    def update_bypass_sheets(self, bypass_sheet_template, students, old_students_list):
+
+        for old_student in old_students_list:
+            if old_student.user.id in students == False:
+                BypassSheet.objects.filter(bypass_sheet_template=bypass_sheet_template, student_id=old_student).delete()
+
+
+        bypass_sheets = BypassSheet.objects.filter(bypass_sheet_template=bypass_sheet_template)
+
+        for bypass_sheet in bypass_sheets:
+
+            bypass_sheet.title = bypass_sheet_template.title
+            bypass_sheet.educationForm = bypass_sheet_template.educationForm
+
+            bypass_sheet.save()
+
+            self.create_statement(bypass_sheet, bypass_sheet_template)
+            self.update_points(bypass_sheet, bypass_sheet_template)
+
+        bypass_sheet_data = dict()
+
+        bypass_sheet_data['title'] = bypass_sheet_template.title
+        bypass_sheet_data['educationForm'] = bypass_sheet_template.educationForm
+        bypass_sheet_data['bypass_sheet_template'] = bypass_sheet_template
+
+        for student_id in students:
+
+            student = Student.objects.get(user=User.objects.get(id=student_id))
+
+            bypass_sheet_data['student_id'] = student
+
+            if BypassSheet.objects.filter(student_id = student, title=bypass_sheet_template.title):
+                continue
+
+            bypass_sheet = BypassSheet.objects.create(**bypass_sheet_data)
+
+            self.create_statement(bypass_sheet, bypass_sheet_template)
+
+            self.create_points(bypass_sheet, bypass_sheet_template)
+
+    def check_signing_points(self, bypass_sheet):
+
+        points = Point.objects.filter(bypass_sheet=bypass_sheet)
+
+        for point in points:
+            if point.status != 'Подписано':
+                return False
+        return True
+
+    def check_signing_bypass_sheets(self, bypass_sheet_template):
+
+        bypass_sheets = BypassSheet.objects.filter(bypass_sheet_template=bypass_sheet_template)
+
+        for bypass_sheet in bypass_sheets:
+
+            student = bypass_sheet.student_id
+            user = student.user
+
+            if self.check_signing_points(bypass_sheet):
+                bypass_sheet.status = 'Подписан'
+                bypass_sheet.save()
+
+                send_mail('MyDoc', 'Ваш обходной лист был успешно подписан', 'mydockemsu@gmail.com', [user.email])
+
+            else:
+                bypass_sheet.status = 'Не подписан'
+                bypass_sheet.save()
+
+    def create(self, validated_data):
+
+        data = validated_data
+
+        pk = self.context['id']
+
+        bypass_sheet_validated_data = dict()
+
+        bypass_sheet_validated_data.setdefault('title', data.pop('title'))
+        bypass_sheet_validated_data.setdefault('educationForm', data.pop('educationForm'))
+
+        bypass_sheet_template = BypassSheetTemplate.objects.get(id=pk)
+
+        bypass_sheet_template.title = bypass_sheet_validated_data['title']
+
+        bypass_sheet_template.educationForm = bypass_sheet_validated_data['educationForm']
+
+        bypass_sheet_template.save()
+
+        students = []
+
+        old_students_list = bypass_sheet_template.studentList.all()
+
+        try:
+            for student in data.pop('studentList'):
+                students.append(int(student))
+        except KeyError:
+            students = []
+
+        bypass_sheet_template.studentList.set(students)
+
+        self.update_statements_template(bypass_sheet_template, data)
+
+        self.update_points_template(bypass_sheet_template, data)
+
+        self.update_bypass_sheets(bypass_sheet_template, students, old_students_list)
+
+        self.check_signing_bypass_sheets(bypass_sheet_template)
+
+        return bypass_sheet_template
+
+class UploadDocumentsSerializer(serializers.ModelSerializer):
+    uploadedDocuments = serializers.ListField(write_only=True, allow_empty=True, required=False)
+
+    class Meta:
+        model = Point
+        fields = ('title', 'uploadedDocuments')
+
+    def __updateUploadedDocuments(self, point, files):
+
+        point.status = 'На подписании'
+        point.save()
+
+        department = point.department
+
+        staffs = Staff.objects.filter(department=department)
+
+        emails = []
+
+        for staff in staffs:
+            user = staff.user
+
+            emails.append(user.email)
+
+        send_mail('MyDoc', 'Вам пришло заявление на подписание. Пожалуйста, проверьте ваш личный кабинет.', 'mydockemsu@gmail.com', emails)
+
+        uploaded_document_data = dict()
+
+        upload = UploadedDocuments.objects.filter(point=point).delete()
+
+        for file in files:
+
+            if isinstance(file, str):
+                file_arr = file.split('/')
+
+                file = file_arr[-2]+'/'+file_arr[-1]
+
+            uploaded_document_data['img'] = file
+            uploaded_document_data['point'] = point
+
+            UploadedDocuments.objects.create(**uploaded_document_data)
+
+    def create(self, validated_data):
+
+        try:
+            uploaded_documents_data = validated_data.pop('uploadedDocuments')
+        except KeyError:
+            uploaded_documents_data = []
+        bypass_sheet = BypassSheet.objects.get(id=self.context['id'])
+
+        point = Point.objects.get(title=validated_data['title'], bypass_sheet=bypass_sheet)
+
+        self.__updateUploadedDocuments(point, uploaded_documents_data)
+
+        return 1
 
 class LogoutSerializer(serializers.Serializer):
     refresh = serializers.CharField()
@@ -456,11 +1070,30 @@ class RefreshTokenSerializer(serializers.Serializer):
 
         return data
 
+class StaffForDepartmentSerializer(serializers.ModelSerializer):
+
+    fullname = serializers.SerializerMethodField()
+    email = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Staff
+        fields = ('fullname', 'email')
+
+    def get_fullname(self, staff):
+        user = staff.user
+
+        return user.fullname
+
+    def get_email(self, staff):
+        return staff.user.email
+
 class DepartmentsSerializer(serializers.ModelSerializer):
+
+    staff = StaffForDepartmentSerializer(many=True, read_only=True)
 
     class Meta:
         model = Department
-        fields = ('title', 'address', 'institute')
+        fields = ('title', 'address', 'institute', 'staff')
 
 class UserBypassSheetSerializer(serializers.ModelSerializer):
     id = serializers.SerializerMethodField()
@@ -470,11 +1103,15 @@ class UserBypassSheetSerializer(serializers.ModelSerializer):
     institute = serializers.SerializerMethodField()
     courseNumber = serializers.SerializerMethodField()
     bypassSheet = serializers.SerializerMethodField()
+    isBaned = serializers.SerializerMethodField()
 
     class Meta:
         model = Student
         fields = ('id', 'fullname', 'email', 'recruitmentForm', 'status', 'group',
-                  'institute', 'courseNumber', 'bypassSheet')
+                  'institute', 'courseNumber', 'bypassSheet', 'isBaned')
+
+    def get_isBaned(self, student):
+        return student.user.is_baned
 
     def get_id(self, student):
         return student.user.id
@@ -510,11 +1147,15 @@ class UserBypassSheetPointSerializer(serializers.ModelSerializer):
     institute = serializers.SerializerMethodField()
     courseNumber = serializers.SerializerMethodField()
     point = serializers.SerializerMethodField()
+    isBaned = serializers.SerializerMethodField()
 
     class Meta:
         model = Student
         fields = ('id', 'fullname', 'email', 'recruitmentForm', 'status', 'group',
-                  'institute', 'courseNumber', 'point')
+                  'institute', 'courseNumber', 'point', 'isBaned')
+
+    def get_isBaned(self, student):
+        return student.user.is_baned
 
     def get_id(self, student):
         return student.user.id
@@ -537,13 +1178,13 @@ class UserBypassSheetPointSerializer(serializers.ModelSerializer):
         bypassSheetsName = self.context.get('bypassSheetsName')
         pointsName = self.context.get('pointName')
 
-        bypassSheets = BypassSheet.objects.filter(title=bypassSheetsName, student_id=user)
+        bypassSheet = BypassSheet.objects.filter(title=bypassSheetsName, student_id=user).first()
 
-        points = Point.objects.filter(title=None)
-        for bypassSheet in bypassSheets:
-            points |= Point.objects.filter(title=pointsName, bypass_sheet=bypassSheet)
+        # points = Point.objects.filter(title=None)
+        # for bypassSheet in bypassSheets:
+        point = Point.objects.filter(title=pointsName, bypass_sheet=bypassSheet).first()
 
-        serializers = PointSerializer(points, many=True, read_only=True)
+        serializers = PointSerializer(point, read_only=True)
 
         return serializers.data
 class FileSerializer(serializers.ModelSerializer):
@@ -561,25 +1202,59 @@ class StatementsTemplateSerializer(serializers.ModelSerializer):
 class RequiredDocumentsSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = RequiredDocuments
+        model = RequiredDocumentsTemplate
         fields = ('img',)
 
 class PointTemplateSerializer(serializers.ModelSerializer):
 
-    requiredDocuments = RequiredDocumentsSerializer(many=True, read_only=True)
+    requiredDocuments = serializers.SerializerMethodField()
+    uploadDocumentsFormat = serializers.SlugRelatedField(slug_field='title', many=True, read_only=True)
+    commonReasons = serializers.SerializerMethodField()
 
     class Meta:
         model = PointTemplate
-        fields = ('title', 'description', 'requiredDocuments')
+        fields = ('id', 'title', 'description', 'requiredDocuments', 'gender', 'uploadDocumentsFormat', 'commonReasons')
+
+    def get_requiredDocuments(self, point_template):
+        required_documents_template = RequiredDocumentsTemplate.objects.filter(point_template=point_template)
+
+        files = []
+
+        for required_document_template in required_documents_template:
+            files.append(required_document_template.img.url)
+
+        return files
+
+    def get_commonReasons(self, point_template):
+        common_reasons_in_string = point_template.commonReasons
+
+        if common_reasons_in_string == "" or common_reasons_in_string == None:
+            return []
+
+        common_reasons_list = common_reasons_in_string.split('<separator>')
+
+        common_reasons_list.pop()
+
+        return common_reasons_list
 
 class BypassSheetTemplateSerializer(serializers.ModelSerializer):
 
-    statements = StatementsTemplateSerializer(required=False, read_only=True, many=True)
+    statements = serializers.SerializerMethodField()
     points = PointTemplateSerializer(required=False, read_only=True, many=True)
 
     class Meta:
         model = BypassSheetTemplate
-        fields = ('id', 'title', 'educationForm', 'statements', 'points')
+        fields = ('id', 'title', 'educationForm', 'statements', 'points', 'studentList')
+
+    def get_statements(self, bypass_sheet_template):
+        statements_template = StatementsTemplate.objects.filter(bypass_sheet_template=bypass_sheet_template)
+
+        files = []
+
+        for statement_template in statements_template:
+            files.append(statement_template.img.url)
+
+        return files
 
 class PostStatementTemplateSerializer(serializers.ModelSerializer):
 
@@ -590,70 +1265,88 @@ class PostStatementTemplateSerializer(serializers.ModelSerializer):
 class PostRequiredDocumentsSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = RequiredDocuments
+        model = RequiredDocumentsTemplate
         fields = ('img',)
-
-class PostUploadDocumentsFormatSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = UploadDocumentsFormat
-        fields = ('format',)
-
-class PostPointTemplateSerializer(serializers.ModelSerializer):
-
-    requiredDocuments = PostRequiredDocumentsSerializer(many=True, write_only=True)
-    uploadDocumentsFormat = PostUploadDocumentsFormatSerializer(many=True, write_only=True)
-
-    class Meta:
-        model = PointTemplate
-        fields = ('title', 'description', 'requiredDocuments', 'gender', 'uploadDocumentsFormat')
 
 class PostBypassSheetTemplateSerializer(serializers.ModelSerializer):
 
-    statements = PostStatementTemplateSerializer(many=True, write_only=True)
-    points = PostPointTemplateSerializer(many=True, write_only=True)
-    studentList = serializers.ListField(write_only=True, allow_empty=True)
+    statements = serializers.ListField(write_only=True, allow_empty=True, required=False)
+
+    points = serializers.ListField(child=PostPointTemplateSerializer(write_only=True))
+
+    studentList = serializers.ListField(write_only=True, allow_empty=True, allow_null=True, required=False)
 
     class Meta:
         model = BypassSheetTemplate
         fields = ('title', 'educationForm', 'statements', 'points', 'studentList')
 
     def create_statements_template(self, bypass_sheet_template, validated_data):
-        statements_template = validated_data.pop('statements')
+
+        try:
+            statements_template = validated_data.pop('statements')
+        except KeyError:
+            statements_template = []
+
+        statements_data = []
+
+        for statement_data in statements_template:
+            statements_data.append(statement_data)
 
         statement_template_data = dict()
 
-        for statement in statements_template:
+        for file in statements_data:
             statement_template_data['bypass_sheet_template'] = bypass_sheet_template
+            statement_template_data['img'] = file
             StatementsTemplate.objects.create(**statement_template_data)
             statement_template_data = dict()
 
-    def create_required_documents(self, point_template, point_data):
-        required_documents = point_data.pop('requiredDocuments')
+    def create_required_documents_template(self, point_template, point_data):
+
+        try:
+            required_documents = point_data.pop('requiredDocuments')
+        except KeyError:
+            required_documents = []
 
         required_documents_data = dict()
 
-        for required_document in required_documents:
+        for file in required_documents:
             required_documents_data['point_template'] = point_template
+            required_documents_data['img'] = file
 
-            RequiredDocuments.objects.create(**required_documents_data)
+            RequiredDocumentsTemplate.objects.create(**required_documents_data)
 
             required_documents_data = dict()
 
     def create_upload_documents_format(self, point_template, point_data):
-        upload_documents_format = point_data.pop('uploadDocumentsFormat')
+
+        try:
+            upload_documents_format = point_data.pop('uploadDocumentsFormat')
+        except KeyError:
+            upload_documents_format = []
 
         upload_documents_format_data = dict()
 
         for upload_document_format in upload_documents_format:
-            upload_documents_format_data['format'] = upload_document_format['format']
+            upload_documents_format_data['title'] = upload_document_format['title']
             upload_documents_format_data['point_template'] = point_template
 
             UploadDocumentsFormat.objects.create(**upload_documents_format_data)
 
             upload_documents_format_data = dict()
 
+    def create_common_reasons(self, point_template, common_reasons):
+
+        common_reasons_in_string = ""
+
+        for common_reason in common_reasons:
+            common_reasons_in_string += common_reason + "<separator>"
+
+        point_template.commonReasons = common_reasons_in_string
+
+        point_template.save()
+
     def create_points_template(self, bypass_sheet_template, validated_data):
+
         points_template = validated_data.pop('points')
 
         points_template_data = dict()
@@ -667,24 +1360,47 @@ class PostBypassSheetTemplateSerializer(serializers.ModelSerializer):
 
             point_template = PointTemplate.objects.create(**points_template_data)
 
-            self.create_required_documents(point_template, point)
+            try:
+                self.create_common_reasons(point_template, point.pop('commonReasons'))
+            except KeyError:
+                self.create_common_reasons(point_template, [])
+            self.create_required_documents_template(point_template, point)
             self.create_upload_documents_format(point_template, point)
 
             points_template_data = dict()
 
-    def create_points(self, bypass_sheet, bypass_sheet_template):
+    def create_required_documents(self, point, point_template):
+        required_documents_templates = RequiredDocumentsTemplate.objects.filter(point_template=point_template)
+
+        required_documents_data = dict()
+
+        for required_documents_template in required_documents_templates:
+            required_documents_data['img'] = required_documents_template.img
+            required_documents_data['requiredDocumentsTemplate'] = required_documents_template
+            required_documents_data['point'] = point
+
+            RequiredDocuments.objects.create(**required_documents_data)
+
+            required_documents_data = dict()
+
+    def create_points(self, bypass_sheet, bypass_sheet_template, student):
+
         points_template_query = PointTemplate.objects.filter(bypass_sheet_template=bypass_sheet_template)
 
         point_data = dict()
 
         for point in points_template_query:
+            if student.user.gender != point.gender and point.gender != 'None':
+                continue
+
             point_data['title'] = point.title
             point_data['description'] = point.description
             point_data['gender'] = point.gender
             point_data['department'] = point.department
             point_data['bypass_sheet'] = bypass_sheet
+            point_data['point_template'] = point
 
-            Point.objects.create(**point_data)
+            self.create_required_documents(Point.objects.create(**point_data), point)
 
             point_data = dict()
 
@@ -694,8 +1410,8 @@ class PostBypassSheetTemplateSerializer(serializers.ModelSerializer):
         statement_data = dict()
 
         for statement in statements_template_query:
-            statement_data['img'] = statement.img
             statement_data['bypass_sheet'] = bypass_sheet
+            # statement_data['statement_template'] = statement
 
             Statement.objects.create(**statement_data)
 
@@ -708,6 +1424,7 @@ class PostBypassSheetTemplateSerializer(serializers.ModelSerializer):
 
         bypass_sheet_data['title'] = bypass_sheet_template.title
         bypass_sheet_data['educationForm'] = bypass_sheet_template.educationForm
+        bypass_sheet_data['bypass_sheet_template'] = bypass_sheet_template
 
         for student in studentQuery:
             bypass_sheet_data['student_id'] = student
@@ -716,15 +1433,28 @@ class PostBypassSheetTemplateSerializer(serializers.ModelSerializer):
 
             self.create_statement(bypass_sheet, bypass_sheet_template)
 
-            self.create_points(bypass_sheet, bypass_sheet_template)
+            self.create_points(bypass_sheet, bypass_sheet_template, student)
 
     def create(self, validated_data):
         bypass_sheet_validated_data = dict()
 
         bypass_sheet_validated_data.setdefault('title', validated_data.pop('title'))
         bypass_sheet_validated_data.setdefault('educationForm', validated_data.pop('educationForm'))
+
+        if BypassSheetTemplate.objects.filter(title=bypass_sheet_validated_data['title'], educationForm=bypass_sheet_validated_data['educationForm']).first():
+            raise BypassSheetTemplateExistException
+
         bypass_sheet_template = BypassSheetTemplate.objects.create(**bypass_sheet_validated_data)
-        bypass_sheet_template.studentList.set(validated_data.pop('studentList'))
+
+        students = []
+
+        try:
+            for student in validated_data.pop('studentList'):
+                students.append(int(student))
+        except KeyError:
+            students = []
+
+        bypass_sheet_template.studentList.set(students)
 
         self.create_statements_template(bypass_sheet_template, validated_data)
 

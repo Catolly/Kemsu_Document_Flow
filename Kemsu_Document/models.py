@@ -1,3 +1,4 @@
+import os
 from datetime import date
 
 from django.db import models
@@ -5,6 +6,8 @@ from django.core import validators
 from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.models import BaseUserManager
+from django.dispatch import receiver
+
 
 class Institute(models.Model):
     title = models.CharField("Название института", default=None, max_length=50)
@@ -94,6 +97,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
+    is_baned = models.BooleanField(default=False)
 
     STATUS = (
         ('Работник', 'работник'),
@@ -113,6 +117,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     EMAIL_FIELD = 'email'
     REQUIRED_FIELDS = ('fullname', 'email')
 
+
+
     objects = UserManager()
 
     class Meta:
@@ -124,8 +130,11 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 class Staff(models.Model):
     user = models.OneToOneField(User, verbose_name="Пользователь", on_delete=models.CASCADE, primary_key=True, related_name="staff")
-    department = models.ForeignKey(Department, verbose_name="Отдел", on_delete=models.SET_NULL, null=True, blank=True, related_name="department")
-    contactNumber = models.CharField("Контактный номер", default="Номер не установлен", max_length=50)
+    department = models.ForeignKey(Department, verbose_name="Отдел", on_delete=models.SET_NULL, null=True, blank=True, related_name="staff")
+
+    class Meta:
+        verbose_name = "Сотрудник"
+        verbose_name_plural = "Сотрудники"
 
     def __str__(self):
         return self.user.fullname
@@ -154,6 +163,10 @@ class Student(models.Model):
     recruitmentForm = models.CharField(max_length=20, choices=RECRUITMENT_FORM, blank=True, help_text='Форма набора')
     status = models.CharField(max_length=20, choices=STATUS, default='Учится', blank=True, help_text='Статус')
 
+    class Meta:
+        verbose_name = "Студент"
+        verbose_name_plural = "Студенты"
+
     def __str__(self):
         return self.user.fullname
 
@@ -177,21 +190,28 @@ class BypassSheetTemplate(models.Model):
         return self.title
 
 class StatementsTemplate(models.Model):
-    bypass_sheet_template = models.ForeignKey(BypassSheetTemplate, verbose_name="Шаблон обходного листа", on_delete=models.CASCADE, null=False, related_name="statements")
-    img = models.FileField("Шаблон заявления", upload_to="statement_documents/", blank=True)
+    bypass_sheet_template = models.ForeignKey(BypassSheetTemplate, verbose_name="Шаблон обходного листа", on_delete=models.CASCADE, null=True, related_name="statements")
+    img = models.FileField("Шаблон заявления", upload_to="statement_documents/", blank=True, max_length=1000)
 
     class Meta:
         verbose_name = "Шаблон заявления"
         verbose_name_plural = "Шаблоны заявлений"
 
     def __str__(self):
-        return self.title
+        return self.bypass_sheet_template.title
+
+    def delete(self, *args, **kwargs):
+        storage, path = self.img.storage, self.img.path
+
+        super(StatementsTemplate, self).delete(*args, **kwargs)
+        storage.delete(path)
 
 class PointTemplate(models.Model):
     title = models.CharField("Название пункта", default=None, max_length=50)
-    description = models.TextField("Описание", default=None, blank=True)
+    description = models.TextField("Описание", default=None, blank=True, null=True)
     bypass_sheet_template = models.ForeignKey(BypassSheetTemplate, verbose_name="Шаблон обходного листа", on_delete=models.CASCADE, related_name="points")
-    department = models.ForeignKey(Department, verbose_name="Отдел", on_delete=models.SET_NULL, null=True, related_name="points_template")
+    department = models.ForeignKey(Department, verbose_name="Отдел", on_delete=models.CASCADE, null=True, related_name="points_template")
+    commonReasons = models.TextField(null=True, blank=True)
 
     GENDER = (
         ('Male', 'Male'),
@@ -211,7 +231,7 @@ class PointTemplate(models.Model):
 class BypassSheet(models.Model):
     title = models.CharField("Название модуля", default=None, max_length=50)
     student_id = models.ForeignKey(Student, verbose_name="Студент", on_delete=models.CASCADE, null=False, related_name='bypassSheets')
-    # bypass_sheet_template = models.OneToOneField(BypassSheetTemplate, verbose_name="Шаблон обходного листа", on_delete=models.SET_NULL, null=True, related_name='BypassSheet')
+    bypass_sheet_template = models.ForeignKey(BypassSheetTemplate, verbose_name="Шаблон обходного листа", on_delete=models.CASCADE, null=True, related_name='BypassSheet')
 
     STATUS = (
         ('Подписан', 'Подписан'),
@@ -228,7 +248,7 @@ class BypassSheet(models.Model):
                                      help_text="Форма обучения")
 
     status = models.CharField("Подпись", max_length=20, choices=STATUS, default='Не подписан',
-                                     help_text="Форма обучения")
+                              help_text="Форма обучения")
     class Meta:
         verbose_name = "Обходной лист"
         verbose_name_plural = "Обходные листы"
@@ -238,9 +258,8 @@ class BypassSheet(models.Model):
 
 class Statement(models.Model):
     bypass_sheet = models.ForeignKey(BypassSheet, verbose_name="Обходной лист", on_delete=models.CASCADE, null=True, related_name="statements")
-    file = models.FileField("Документ", upload_to="statement_documents/", blank=True)
-    # statement_template = models.OneToOneField(StatementsTemplate, verbose_name="Шаблон заявления", on_delete=models.SET_NULL, null=True, related_name='statements')
-    img = models.FileField("Шаблон заявления", upload_to="statement_documents/", blank=True)
+    file = models.FileField("Документ", upload_to="statement_documents/", blank=True, max_length=1000)
+    # statement_template = models.ForeignKey(StatementsTemplate, verbose_name="Шаблон заявления", on_delete=models.CASCADE, null=True, related_name='statements')
 
     STATUS = (
         ('На рассмотрении', 'На рассмотрении'),
@@ -255,20 +274,26 @@ class Statement(models.Model):
         verbose_name_plural = "Заявления"
 
     def __str__(self):
-        return self.title
+        return self.bypass_sheet.title
+
+    def delete(self, *args, **kwargs):
+        storage, path = self.file.storage, self.file.path
+
+        super(Statement, self).delete(*args, **kwargs)
+        storage.delete(path)
 
 class Point(models.Model):
     title = models.CharField("Название пункта", default=None, max_length=50)
-    bypass_sheet = models.ForeignKey(BypassSheet, verbose_name="Модуль", on_delete=models.SET_NULL, null=True, blank=True, related_name="points")
+    bypass_sheet = models.ForeignKey(BypassSheet, verbose_name="Модуль", on_delete=models.CASCADE, null=True, blank=True, related_name="points")
     staff = models.ForeignKey(Staff, verbose_name="Работник", on_delete=models.SET_NULL, null=True, blank=True)
     rejectReason = models.TextField("Причина отказа", null=True, blank=True)
-    # point_template = models.ForeignKey(PointTemplate, verbose_name="Шаблон модуля", on_delete=models.SET_NULL, null=True, related_name="points")
-    description = models.TextField("Описание", default=None, blank=True)
-    department = models.ForeignKey(Department, verbose_name="Отдел", on_delete=models.SET_NULL, null=True,
+    point_template = models.ForeignKey(PointTemplate, verbose_name="Шаблон модуля", on_delete=models.CASCADE, null=True, related_name="points")
+    description = models.TextField("Описание", default=None, blank=True, null=True)
+    department = models.ForeignKey(Department, verbose_name="Отдел", on_delete=models.CASCADE, null=True,
                                    related_name="points")
 
     STATUS = (
-        ('Не отправлено', 'Не отпрвлено'),
+        ('Не отправлено', 'Не отправлено'),
         ('На подписании', 'На подписании'),
         ('Отказано', 'Отказано'),
         ('Подписано', 'Подписано'),
@@ -291,23 +316,186 @@ class Point(models.Model):
         return self.title
 
 class UploadedDocuments(models.Model):
-    img = models.ImageField("Файл", upload_to="uploaded_documents/", blank=True)
-    point = models.ForeignKey(Point, verbose_name="Пункт", on_delete=models.CASCADE, null=False, related_name="uploadedDocuments")
+    img = models.FileField("Файл", upload_to="uploaded_documents/", blank=True, max_length=1000)
+    point = models.ForeignKey(Point, verbose_name="Пункт", on_delete=models.CASCADE, null=True, related_name="uploadedDocuments")
+
+    class Meta:
+        verbose_name = "Загруженный документ"
+        verbose_name_plural = "Загруженные документы"
 
     def __str__(self):
-        return self.title
+        return self.point.title
+
+    # def delete(self, *args, **kwargs):
+    def delete(self, using=None, keep_parents=False):
+        print("=====delete=====")
+        storage, path = self.img.storage, self.img.path
+
+        super(UploadedDocuments, self).delete(using, keep_parents)
+        storage.delete(path)
+
+class RequiredDocumentsTemplate(models.Model):
+    img = models.FileField("Файл", upload_to="required_documents/", blank=True, max_length=1000)
+    point_template = models.ForeignKey(PointTemplate, verbose_name="Шаблон пункта", on_delete=models.CASCADE,
+                                       null=True, related_name="requiredDocuments")
+
+    class Meta:
+        verbose_name = "Шаблон требуемых документов"
+        verbose_name_plural = "Шаблоны требуемых документов"
+
+    def __str__(self):
+        return self.point_template.title
+
+    def delete(self, *args, **kwargs):
+        storage, path = self.img.storage, self.img.path
+
+        super(RequiredDocumentsTemplate, self).delete(*args, **kwargs)
+        storage.delete(path)
 
 class RequiredDocuments(models.Model):
-    img = models.ImageField("Файл", upload_to="required_documents/", blank=True)
-    point_template = models.ForeignKey(PointTemplate, verbose_name="Шаблон пункта", on_delete=models.CASCADE, null=True, related_name="requiredDocuments")
-    point = models.ForeignKey(Point, verbose_name="Пункт", on_delete=models.CASCADE, null=True, related_name="requiredDocuments")
+    img = models.FileField("Файл", upload_to="required_documents/", blank=True, max_length=1000)
+    point = models.ForeignKey(Point, verbose_name="Пункт", on_delete=models.CASCADE,
+                                       null=True, related_name="requiredDocuments")
+    requiredDocumentsTemplate = models.ForeignKey(RequiredDocumentsTemplate, verbose_name='Шаблон', on_delete=models.CASCADE, null=True, related_name="requiredDocuments")
+
+    class Meta:
+        verbose_name = "Требуемый документ"
+        verbose_name_plural = "Требуемые документы"
 
     def __str__(self):
-        return self.title
+        return self.point.title
+
+    # def delete(self, *args, **kwargs):
+    def delete(self, using=None, keep_parents=False):
+        print("=====delete=====")
+
+        storage, path = self.img.storage, self.img.path
+
+        super(RequiredDocuments, self).delete(using, keep_parents)
+        storage.delete(path)
 
 class UploadDocumentsFormat(models.Model):
-    format = models.CharField("Название документа", default=None, max_length=100)
-    point_template = models.ForeignKey(PointTemplate, verbose_name="Шаблон пункта", on_delete=models.CASCADE, null=False, related_name='uploadDocumentsFormat')
+    title = models.CharField("Формат", default=None, max_length=100)
+    point_template = models.ForeignKey(PointTemplate, verbose_name="Шаблон пункта", on_delete=models.CASCADE, null=True, related_name='uploadDocumentsFormat')
+
+    class Meta:
+        verbose_name = "Формат загруженого документы"
+        verbose_name_plural = "Форматы загруженных документов"
 
     def __str__(self):
         return self.title
+
+@receiver(models.signals.post_delete, sender=UploadedDocuments)
+def auto_delete_file_on_delete(sender, instance, **kwargs):
+
+    if instance.img:
+        if os.path.isfile(instance.img.path):
+            os.remove(instance.img.path)
+
+@receiver(models.signals.pre_save, sender=UploadedDocuments)
+def auto_delete_file_on_change(sender, instance, **kwargs):
+
+    if not instance.pk:
+        return False
+
+    try:
+        old_file = UploadedDocuments.objects.get(pk=instance.pk).img
+    except UploadedDocuments.DoesNotExist:
+        return False
+
+    new_file = instance.file
+    if not old_file == new_file:
+        if os.path.isfile(old_file.path):
+            os.remove(old_file.path)
+
+@receiver(models.signals.post_delete, sender=StatementsTemplate)
+def auto_delete_file_on_delete(sender, instance, **kwargs):
+
+    if instance.img:
+        if os.path.isfile(instance.img.path):
+            os.remove(instance.img.path)
+
+@receiver(models.signals.pre_save, sender=StatementsTemplate)
+def auto_delete_file_on_change(sender, instance, **kwargs):
+
+    if not instance.pk:
+        return False
+
+    try:
+        old_file = StatementsTemplate.objects.get(pk=instance.pk).img
+    except StatementsTemplate.DoesNotExist:
+        return False
+
+    new_file = instance.file
+    if not old_file == new_file:
+        if os.path.isfile(old_file.path):
+            os.remove(old_file.path)
+
+@receiver(models.signals.post_delete, sender=Statement)
+def auto_delete_file_on_delete(sender, instance, **kwargs):
+
+    if instance.file:
+        if os.path.isfile(instance.file.path):
+            os.remove(instance.file.path)
+
+@receiver(models.signals.pre_save, sender=Statement)
+def auto_delete_file_on_change(sender, instance, **kwargs):
+
+    if not instance.pk:
+        return False
+
+    try:
+        old_file = Statement.objects.get(pk=instance.pk).file
+    except Statement.DoesNotExist:
+        return False
+
+    new_file = instance.file
+    if not old_file == new_file:
+        if os.path.isfile(old_file.path):
+            os.remove(old_file.path)
+
+@receiver(models.signals.post_delete, sender=RequiredDocumentsTemplate)
+def auto_delete_file_on_delete(sender, instance, **kwargs):
+
+    if instance.img:
+        if os.path.isfile(instance.img.path):
+            os.remove(instance.img.path)
+
+@receiver(models.signals.pre_save, sender=RequiredDocumentsTemplate)
+def auto_delete_file_on_change(sender, instance, **kwargs):
+
+    if not instance.pk:
+        return False
+
+    try:
+        old_file = RequiredDocumentsTemplate.objects.get(pk=instance.pk).img
+    except RequiredDocumentsTemplate.DoesNotExist:
+        return False
+
+    new_file = instance.img
+    if not old_file == new_file:
+        if os.path.isfile(old_file.path):
+            os.remove(old_file.path)
+
+@receiver(models.signals.post_delete, sender=RequiredDocuments)
+def auto_delete_file_on_delete(sender, instance, **kwargs):
+
+    if instance.img:
+        if os.path.isfile(instance.img.path):
+            os.remove(instance.img.path)
+
+@receiver(models.signals.pre_save, sender=RequiredDocuments)
+def auto_delete_file_on_change(sender, instance, **kwargs):
+
+    if not instance.pk:
+        return False
+
+    try:
+        old_file = RequiredDocuments.objects.get(pk=instance.pk).img
+    except RequiredDocuments.DoesNotExist:
+        return False
+
+    new_file = instance.img
+    if not old_file == new_file:
+        if os.path.isfile(old_file.path):
+            os.remove(old_file.path)

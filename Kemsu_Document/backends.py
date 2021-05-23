@@ -1,10 +1,17 @@
 import jwt
 
+from django.db.models import Q
+
+from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user
+
 from django.conf import settings
 
 from rest_framework import authentication, exceptions
 
 from .models import User
+
+# MyUser = get_user_model()
 
 class JWTAuthentication(authentication.BaseAuthentication):
     authentication_header_prefix = 'Bearer'
@@ -51,3 +58,22 @@ class JWTAuthentication(authentication.BaseAuthentication):
             raise exceptions.AuthenticationFailed(msg)
 
         return (user, token)
+
+class UsernameOrEmailBackend(object):
+
+    def get_user(self, request):
+        my_user_model = get_user_model()
+        try:
+            return my_user_model.objects.get(pk=request)
+        except my_user_model.DoesNotExist:
+            return None
+
+    def authenticate(self, request, username=None, password=None, **kwargs):
+        my_user = get_user_model()
+
+        try:
+            user = my_user.objects.get(email=username)
+            if user.check_password(password):
+                return user
+        except User.DoesNotExist:
+            raise exceptions.AuthenticationFailed("Не правильно указан email или пароль")
