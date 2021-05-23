@@ -29,7 +29,10 @@ export default {
 
   padding: 12px 24px;
 
+  height: fit-content;
   font-size: @fz-small;
+  text-align: left;
+  word-break: break-all;
 }
 
 </style>
