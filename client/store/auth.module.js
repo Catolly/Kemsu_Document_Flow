@@ -122,10 +122,7 @@ const actions = {
       const id = UserService.getId()
       if (tokens && id) {
         if (!tokens.access || (tokens.expiresIn < Date.now())) {
-          const newTokens = await context.dispatch(REFRESH, JwtService.getToken().refresh)
-          if (newTokens) {
-            context.commit(SET_TOKEN, newTokens)
-          }
+          await context.dispatch(REFRESH, JwtService.getToken().refresh)
         }
         if (_.isEmpty(context.getters.currentUser)) {
           const user = await context.dispatch(FETCH_USER, id)
