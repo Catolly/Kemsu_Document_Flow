@@ -117,6 +117,9 @@ import { required, minLength, email } from "vuelidate/lib/validators"
 import { optionExist } from "~/vuelidate/validators"
 import { minPasswordLength } from "~/vuelidate/constants"
 
+import _ from "lodash"
+import { throttleDelay } from "~/services/config"
+
 import AppButton from '~/components/common/AppButton'
 import AppInput from '~/components/common/AppInput'
 import AppAutocomplete from '~/components/common/AppAutocomplete'
@@ -170,7 +173,7 @@ export default {
     ...mapGetters(['unregisteredStudents']),
 
     unregisteredStudentsOptionList() {
-      return this.unregisteredStudents.slice(0, 4).map(user => ({
+      return this.unregisteredStudents.map(user => ({
         id: user.id,
         value: user.fullname + this.divider + user.group,
       }))
@@ -181,6 +184,8 @@ export default {
     fullnameAndGroup() {
       this.fullname = this.fullnameAndGroup.split(this.divider)[0]
       this.group = this.fullnameAndGroup.split(this.divider)[1]
+
+      this.fetchUnregisteredStudents()
     },
   },
 
@@ -223,12 +228,22 @@ export default {
           else this.error = error
         })
     },
+
+    fetchUnregisteredStudents: _.throttle(async function() {
+      this.$store
+        .dispatch(FETCH_UNREGISTERED_STUDENTS, {
+          search: this.fullname,
+          limit: 4,
+        })
+        .catch(error => {
+          console.error(error)
+          this.fetchUnregisteredStudentsError = error
+        })
+    }, 500)
   },
 
-  created() {
-    this.$store
-      .dispatch(FETCH_UNREGISTERED_STUDENTS, this.unregisteredStudents)
-      .catch(error => this.fetchUnregisteredStudentsError = error)
+  beforeMount() {
+    this.fetchUnregisteredStudents()
   },
 }
 </script>

@@ -4,4 +4,5 @@ export const BASE_URL = process.env.NODE_ENV === 'production'
 export const API_URL = `${BASE_URL}/api/`
 
 export const debounceDelay = 1500
-export const adminEmail = 'admin@email.com'
+export const throttleDelay = 500
+export const adminEmail = 'mydockemsu@gmail.com'
