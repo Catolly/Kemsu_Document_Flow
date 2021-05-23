@@ -44,7 +44,7 @@
                   v-for="(file, index) in selectedSchema.statements"
                   :key="index"
                   :file="file"
-                  class="example-document"
+                  big
                 />
               </div>
             </div>
@@ -73,7 +73,6 @@
 				<app-button class="btn btn-cancel red">
 					Отмена
 				</app-button>
-
 				<app-button
           class="btn btn-submit blue filled"
           :disabled="$v.$invalid"
@@ -87,7 +86,11 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { FETCH_BYPASS_SHEETS_SCHEMAS_TITLES, CREATE_BYPASS_SHEET } from '~/store/actions.type'
+import {
+  FETCH_BYPASS_SHEETS_SCHEMAS_TITLES,
+  CREATE_BYPASS_SHEET,
+  WAIT_FOR
+} from '~/store/actions.type'
 
 import { required } from "vuelidate/lib/validators"
 
@@ -124,6 +127,7 @@ export default {
 
   async fetch() {
     try {
+      await this.$store.dispatch(WAIT_FOR, 'checkingAuth')
       await this.$store.dispatch(FETCH_BYPASS_SHEETS_SCHEMAS_TITLES, {
         educationForm: this.$store.getters.currentUser.educationForm
       })
@@ -143,7 +147,7 @@ export default {
   }),
 
   computed: {
-    ...mapGetters(['bypassSheetsSchemasTitles']),
+    ...mapGetters(['bypassSheetsSchemasTitles', 'currentUser']),
 
     selectedSchema() {
       if (this.selectedReason === '') return {
@@ -187,13 +191,13 @@ export default {
     async create() {
       try {
         await this.$store.dispatch(CREATE_BYPASS_SHEET, {
-          title,
-          statements,
+          title: this.selectedSchema.title,
+          statements: this.selectedSchema.statements,
         })
         this.$router.push({ path: '..', append: true })
       } catch (error) {
-        console.error(createError)
-        this.createError = createError
+        console.error(error)
+        this.createError = error
       }
     },
   },

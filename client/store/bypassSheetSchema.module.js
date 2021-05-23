@@ -56,7 +56,9 @@ const actions = {
     }) {
     try {
       await context.dispatch(WAIT_FOR, 'checkingAuth')
+
       const { data: schema } = await BypassSheetsSchemasService.get(id)
+
       context.commit(SET_BYPASS_SHEETS_SCHEMA, JSON.parse(JSON.stringify(schema)))
       return schema
     } catch (error) {
@@ -69,9 +71,13 @@ const actions = {
     }) {
     try {
       await context.dispatch(WAIT_FOR, 'checkingAuth')
-      const {
-        data: schemasTitles
-      } = await BypassSheetsSchemasService.getTitles(educationForm)
+      const { data } = await BypassSheetsSchemasService.getTitles(educationForm)
+
+      const userSchemasTitles = context.getters.currentUser.bypassSheets
+        .map(sheet => sheet.title)
+      const schemasTitles = data
+        .filter(sheet => !userSchemasTitles.includes(sheet.title))
+
       context.commit(SET_BYPASS_SHEETS_SCHEMAS_TITLES, schemasTitles)
       return schemasTitles
     } catch (error) {
