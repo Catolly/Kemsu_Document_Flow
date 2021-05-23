@@ -237,7 +237,7 @@ export default {
           search: this.fullname,
           limit: 4,
         })
-        then(data => {
+        .then(data => {
           console.log(data)
         })
         .catch(error => {
