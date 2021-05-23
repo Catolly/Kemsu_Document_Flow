@@ -6,6 +6,9 @@
     <NuxtLink
     to="/settings"
     class="nav-link">Настройки</NuxtLink>
+    <NuxtLink
+    to="/contacts"
+    class="nav-link">Контакты</NuxtLink>
   </nav>
 </template>
 

@@ -1,5 +1,5 @@
 <template>
-  <roleAdminStaff class="contacts">
+  <div class="contacts">
     <div class="contacts-head">
       <h1 class="header">Контакты</h1>
       <span
@@ -38,23 +38,17 @@
         </div>
       </div>
     </div>
-  </roleAdminStaff>
+  </div>
 </template>
 
 <script>
 import { mapGetters } from "vuex"
 import { FETCH_ALL_DEPARTMENTS } from "~/store/actions.type"
 
-import roleAdminStaff from '~/components/roles/roleAdminStaff'
-
 export default {
   name: 'settings',
 
   middleware: 'authenticated',
-
-  components: {
-    roleAdminStaff,
-  },
 
   data:() => ({
     loadError: false,
