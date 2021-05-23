@@ -3,7 +3,7 @@
     <div
       v-for="(file, index) in documentList"
       :key="index"
-      :title="'Удалить ' + file.name"
+      :title="'Удалить ' + filename(file)"
       :class="classObj"
       class="file"
     >
@@ -26,12 +26,12 @@
 
       <a
         class="header"
-        :title="'Открыть ' + file.name"
-        :download="file.name"
+        :title="'Открыть ' + filename(file)"
+        :download="filename(file)"
         :href="createURL(file)"
         target="_blank"
       >
-        {{file.name}}
+        {{filename(file)}}
       </a>
     </div>
   </div>
@@ -73,35 +73,34 @@ export default {
     },
   },
 
-  watch: {
-    documentList: {
-      handler() {
-        this.documentList.forEach(file => {
-          if (this.isLink(file)) {
-            this.$set(file, 'name', file.img.split('/')
-                                            .slice(-1)
-                                            .join())
-            this.$set(file, 'fullname', file.img)
-          }
-        })
-      },
-      deep: true,
-      immediate: true,
-    },
-  },
-
   methods: {
+    filename(file) {
+      if (this.isLink(file)) return this.shortname(file)
+      return file.name
+    },
+
+    shortname(file) {
+      return file
+        .split('/')
+        .slice(-1)
+        .join()
+    },
+
     isLink(file) {
-      return !file.size
+      return typeof file === 'string'
     },
 
     createURL(file) {
-      if (this.isLink(file)) return this.BASE_URL + file.fullname
+      if (this.isLink(file)) return this.BASE_URL + file
       return URL.createObjectURL(file)
     },
 
     previewIcon(file) {
-      const fileType = file.name.split('.').reverse()[0].toLowerCase()
+      let fileType
+      if (this.isLink(file))
+        fileType = file.split('.').reverse()[0].toLowerCase()
+      else
+        fileType = file.name.split('.').reverse()[0].toLowerCase()
 
       switch(fileType) {
         case 'doc':

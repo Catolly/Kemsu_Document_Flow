@@ -1,8 +1,7 @@
 <template>
   <a
-    v-if="hasFile"
-    :title="'Открыть ' + file.name"
-    :download="file.name"
+    :title="'Открыть ' + filename"
+    :download="filename"
     :href="createURL()"
     :class="classObj"
     class="app-download-file clear"
@@ -20,7 +19,7 @@
       <icon-download class="icon-download" />
     </span>
 
-    <a class="header">{{file.name}}</a>
+    <a class="header">{{filename}}</a>
   </a>
 </template>
 
@@ -44,7 +43,7 @@ export default {
 
   props: {
     file: {
-      type: Object,
+      type: Object | String,
       required: true,
     },
 
@@ -53,19 +52,28 @@ export default {
       default: false,
     },
 
-    small: {
+    big: {
       type: Boolean,
       default: false,
     },
   },
 
   computed: {
-    isLink() {
-      return !this.file.size
+    filename() {
+      console.log(this.shortname, this.file)
+      if (this.isLink) return this.shortname
+      return this.file.name
     },
 
-    hasFile() {
-      return !this.isLink || this.file.img
+    shortname() {
+      return this.file
+        .split('/')
+        .slice(-1)
+        .join()
+    },
+
+    isLink() {
+      return typeof this.file === 'string'
     },
 
     BASE_URL() {
@@ -80,29 +88,18 @@ export default {
     },
   },
 
-  watch: {
-    file: {
-      handler() {
-        if (this.isLink && this.hasFile) {
-          this.$set(this.file, 'name', this.file.img.split('/')
-                                                    .slice(-1)
-                                                    .join())
-          this.$set(this.file, 'fullname', this.file.img)
-        }
-      },
-      immediate: true,
-    },
-  },
-
   methods: {
     createURL() {
-      if (!this.hasFile) return ''
-      if (this.isLink) return this.BASE_URL + this.file.fullname
+      if (this.isLink) return this.BASE_URL + this.file
       return URL.createObjectURL(this.file)
     },
 
     previewIcon() {
-      const fileType = this.file.name.split('.').reverse()[0].toLowerCase()
+      let fileType
+      if (this.isLink)
+        fileType = this.file.split('.').reverse()[0].toLowerCase()
+      else
+        fileType = this.file.name.split('.').reverse()[0].toLowerCase()
 
       switch(fileType) {
         case 'doc':
