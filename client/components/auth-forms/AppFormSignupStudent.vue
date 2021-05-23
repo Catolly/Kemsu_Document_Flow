@@ -173,10 +173,12 @@ export default {
     ...mapGetters(['unregisteredStudents']),
 
     unregisteredStudentsOptionList() {
-      return this.unregisteredStudents.map(user => ({
-        id: user.id,
-        value: user.fullname + this.divider + user.group,
-      }))
+      console.log(this.unregisteredStudents)
+      if (this.unregisteredStudents)
+        return this.unregisteredStudents.map(user => ({
+          id: user.id,
+          value: user.fullname + this.divider + user.group,
+        }))
     },
   },
 
@@ -234,6 +236,9 @@ export default {
         .dispatch(FETCH_UNREGISTERED_STUDENTS, {
           search: this.fullname,
           limit: 4,
+        })
+        then(data => {
+          console.log(data)
         })
         .catch(error => {
           console.error(error)

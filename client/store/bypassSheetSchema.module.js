@@ -72,13 +72,16 @@ const actions = {
     try {
       await context.dispatch(WAIT_FOR, 'checkingAuth')
       const { data } = await BypassSheetsSchemasService.getTitles(educationForm)
+      console.log(data)
+      if (context.getters.currentUser.bypassSheets) {
+        const userSchemasTitles = context.getters.currentUser.bypassSheets
+          .map(sheet => sheet.title)
+        const schemasTitles = data
+          .filter(sheet => !userSchemasTitles.includes(sheet.title))
+        context.commit(SET_BYPASS_SHEETS_SCHEMAS_TITLES, schemasTitles)
+      }
+      else context.commit(SET_BYPASS_SHEETS_SCHEMAS_TITLES, data)
 
-      const userSchemasTitles = context.getters.currentUser.bypassSheets
-        .map(sheet => sheet.title)
-      const schemasTitles = data
-        .filter(sheet => !userSchemasTitles.includes(sheet.title))
-
-      context.commit(SET_BYPASS_SHEETS_SCHEMAS_TITLES, schemasTitles)
       return schemasTitles
     } catch (error) {
       context.commit(SET_ERROR, error)
