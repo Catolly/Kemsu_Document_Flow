@@ -19,4 +19,5 @@ export const SET_IS_ADMIN = "setIsAdmin"
 export const SET_TOKEN = "setToken"
 export const SET_UNREGISTERED_STUDENTS = "setUnregiseredStudents"
 export const SET_USERS = "setUsers"
+export const SET_USERS_AMOUNT = "setUsersAmount"
 
