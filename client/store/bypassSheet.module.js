@@ -29,12 +29,9 @@ const actions = {
 
       const formData = new FormData()
       formData.append('title', point.title)
-      if (!point.uploadedDocuments.length)
-        formData.append('uploadedDocuments', [])
-      else
-        point.uploadedDocuments.forEach(file => {
-          formData.append('uploadedDocuments', file)
-        })
+      point.uploadedDocuments.forEach(file => {
+        formData.append('uploadedDocuments', file)
+      })
 
       return await BypassSheetsService.patch(id, formData)
     } catch (error) {
