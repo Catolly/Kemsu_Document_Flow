@@ -72,7 +72,6 @@ const actions = {
     try {
       await context.dispatch(WAIT_FOR, 'checkingAuth')
       const { data } = await BypassSheetsSchemasService.getTitles(educationForm)
-      console.log(data)
       if (context.getters.currentUser.bypassSheets) {
         const userSchemasTitles = context.getters.currentUser.bypassSheets
           .map(sheet => sheet.title)
