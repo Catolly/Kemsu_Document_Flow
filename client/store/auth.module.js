@@ -26,7 +26,7 @@ import {
 import _ from 'lodash'
 
 const state = () => ({
-  errors: null,
+  error: null,
   user: {},
   isAuthenticated: !!JwtService.getToken(),
   checkingAuth: false,
@@ -52,9 +52,9 @@ const actions = {
           context.commit(SET_AUTH, data)
           resolve(data)
         })
-        .catch(errors => {
-          context.commit(SET_ERROR, errors)
-          reject(errors)
+        .catch(error => {
+          context.commit(SET_ERROR, error)
+          reject(error)
         })
     })
   },
@@ -69,9 +69,9 @@ const actions = {
           context.commit(SET_AUTH, data)
           resolve(data)
         })
-        .catch(errors => {
-          context.commit(SET_ERROR, errors)
-          reject(errors)
+        .catch(error => {
+          context.commit(SET_ERROR, error)
+          reject(error)
         })
     })
   },
@@ -81,9 +81,9 @@ const actions = {
         .then(({ data }) => {
           resolve(data)
         })
-        .catch(errors => {
-          context.commit(SET_ERROR, errors)
-          reject(errors)
+        .catch(error => {
+          context.commit(SET_ERROR, error)
+          reject(error)
         })
     })
   },
@@ -95,10 +95,10 @@ const actions = {
           context.commit(SET_TOKEN, data.tokens)
           resolve(data.tokens)
         })
-        .catch(errors => {
+        .catch(error => {
           context.commit(PURGE_AUTH)
           context.commit(PURGE_ROLES)
-          reject(errors)
+          reject(error)
         })
     })
   },
@@ -109,9 +109,9 @@ const actions = {
         .then(({ data }) => {
           resolve(data)
         })
-        .catch(errors => {
-          context.commit(SET_ERROR, errors)
-          reject(errors)
+        .catch(error => {
+          context.commit(SET_ERROR, error)
+          reject(error)
         })
     })
   },
@@ -182,12 +182,12 @@ const mutations = {
     state.user.fullname = fullname
   },
   [SET_ERROR](state, error) {
-    state.errors = error
+    state.error = error
   },
   [SET_AUTH](state, {tokens = null, ...user}) {
     state.isAuthenticated = true
     state.user = user
-    state.errors = ''
+    state.error = ''
 
     UserService.saveId(user.id)
     if (tokens)
@@ -195,7 +195,7 @@ const mutations = {
   },
   [SET_TOKEN](state, tokens) {
     state.isAuthenticated = true
-    state.errors = ''
+    state.error = ''
     JwtService.saveToken(tokens)
   },
   [SET_CHECKING](state, checking) {
@@ -204,7 +204,7 @@ const mutations = {
   [PURGE_AUTH](state) {
     state.isAuthenticated = false
     state.user = {}
-    state.errors = ''
+    state.error = ''
     UserService.destroyId()
     JwtService.destroyToken()
   }

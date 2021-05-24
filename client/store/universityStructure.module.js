@@ -54,9 +54,9 @@ const actions = {
           context.commit(SET_ALL_DEPARTMENTS, departments.data.slice())
           resolve(departments.data)
         })
-        .catch(errors => {
-          context.commit(SET_ERROR, errors)
-          reject(errors)
+        .catch(error => {
+          context.commit(SET_ERROR, error)
+          reject(error)
         })
     })
   },
@@ -76,9 +76,9 @@ const actions = {
               context.commit(SET_DEPARTMENTS, data.slice())
               resolve(data)
             })
-            .catch(errors => {
-              context.commit(SET_ERROR, errors)
-              reject(errors)
+            .catch(error => {
+              context.commit(SET_ERROR, error)
+              reject(error)
             })
       })
     })
@@ -92,9 +92,9 @@ const actions = {
               context.commit(SET_DEPARTMENT, data.slice())
               resolve(data)
             })
-            .catch(errors => {
-              context.commit(SET_ERROR, errors)
-              reject(errors)
+            .catch(error => {
+              context.commit(SET_ERROR, error)
+              reject(error)
             })
         })
     })
@@ -111,9 +111,9 @@ const actions = {
               context.commit(SET_GROUPS, data)
               resolve(data)
             })
-            .catch(errors => {
-              context.commit(SET_ERROR, errors)
-              reject(errors)
+            .catch(error => {
+              context.commit(SET_ERROR, error)
+              reject(error)
             })
         })
     })
@@ -129,7 +129,7 @@ const actions = {
       })
       context.commit(SET_UNREGISTERED_STUDENTS, data.students)
     } catch(error) {
-      context.commit(SET_ERROR, errors)
+      context.commit(SET_ERROR, error)
       console.error(error)
       throw error
     }
