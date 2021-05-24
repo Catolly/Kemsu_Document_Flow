@@ -12,6 +12,9 @@
       <app-nav-student v-if="Role.isStudent" />
       <app-nav-staff v-if="Role.isStaff" />
       <app-nav-admin v-if="Role.isAdmin" />
+      <NuxtLink class="about-link clear" to="/about">
+        Сделано в [IT Биржа]
+      </NuxtLink>
     </div>
   </div>
 </template>
@@ -84,5 +87,9 @@ export default {
   box-shadow: 10px 4px 120px rgba(0, 0, 0, 0.04);
 }
 
+.about-link {
+  font-size: @fz-small;
+  color: @grey-darkset;
+}
 </style>
 
