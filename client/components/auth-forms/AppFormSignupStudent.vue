@@ -114,7 +114,6 @@ import { mapGetters } from "vuex"
 import { SIGNUP_STUDENT, FETCH_UNREGISTERED_STUDENTS } from "~/store/actions.type"
 
 import { required, minLength, email } from "vuelidate/lib/validators"
-import { optionExist } from "~/vuelidate/validators"
 import { minPasswordLength } from "~/vuelidate/constants"
 
 import _ from "lodash"

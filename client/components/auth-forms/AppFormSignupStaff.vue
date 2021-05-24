@@ -13,10 +13,14 @@
                 && !$v.fullname.required
                 ? ['Поле должно быть заполнено']
                 : [],
+            ... $v.fullname.required
+                && !$v.fullname.cyrillic
+                ? ['Поле должно содержать только символы кириллицы']
+                : [],
             ... $v.fullname.$dirty
                 && $v.fullname.required
                 && !$v.fullname.twoOrThreeWords
-                ? ['Поле должно содержать хотя бы имя и фамилию']
+                ? ['Поле должно содержать фамилию, имя и (необязательно) отчество']
                 : [],
           ]"
           @input="reset($v.fullname)"
@@ -128,18 +132,12 @@ import { mapGetters } from "vuex"
 import { SIGNUP_STAFF, FETCH_ALL_DEPARTMENTS } from "~/store/actions.type"
 
 import { required, minLength, email, helpers } from "vuelidate/lib/validators"
-import { twoOrThreeWordsReg } from '~/vuelidate/validators'
 import { minPasswordLength } from "~/vuelidate/constants"
 
 import AppButton from '~/components/common/AppButton'
 import AppInput from '~/components/common/AppInput'
 import AppSelect from '~/components/common/AppSelect'
 import AppDialog from '~/components/common/AppDialog'
-
-const isTwoOrThreeWords = helpers.regex('isTwoOrThreeWords',
-  twoOrThreeWordsReg) // От 2 до 3 слов
-
-const twoOrThreeWords = (value) => isTwoOrThreeWords(value)
 
 export default {
   name: 'FormSingupStaff',
@@ -154,7 +152,10 @@ export default {
   validations:() => ({
     fullname: {
       required,
-      twoOrThreeWords,
+      twoOrThreeWords: (value, vm) => !!value.match(
+        /^[а-яА-ЯЁёa-zA-Z]+\s[а-яА-ЯЁёa-zA-Z]+\s?[а-яА-ЯЁёa-zA-Z]*$/
+      ),
+      cyrillic: (value, vm) => !!value.match(/^[а-яА-ЯЁё]+/),
     },
     email: {
       required,
