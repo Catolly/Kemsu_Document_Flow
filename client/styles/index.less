@@ -17,7 +17,7 @@ html {
   overflow-x: hidden;
   min-width: 320px;
   font-size: @fz-normal;
-  color: #000;
+  color: @black;
   background: @white;
   padding: 0;
   margin: 0;
@@ -59,6 +59,12 @@ html {
   border: 3px solid transparent;
 }
 
+span,
+p {
+  font-size: @fz-normal;
+  line-height: 160%;
+}
+
 h1,
 h2,
 h3,
@@ -83,12 +89,6 @@ h3 {
 
 label, input {
   font-size: @fz-large;
-}
-
-span,
-p {
-  font-size: @fz-normal;
-  line-height: 160%;
 }
 
 a {

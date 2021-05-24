@@ -69,8 +69,7 @@ export default {
   height: 100vh;
   padding-top: 56px;
   padding-left: 48px;
-  border-left: 1px solid #eee;
-
+  border-left: 1px solid @grey-medium;
   .topbar {
     display: flex;
     align-items: baseline;
@@ -79,19 +78,16 @@ export default {
       margin-right: 18px;
     }
   }
-
   .filter-list {
     margin-top: 64px;
   }
 }
 
 @media all and (max-width: 1800px) {
-
   .app-filter {
     padding-left: 32px;
     padding-right: 32px;
   }
-
 }
 
 </style>
