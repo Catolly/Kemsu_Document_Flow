@@ -6,13 +6,18 @@
         <h3 class="logo-title">Mydoc</h3>
       </div>
 
-      <app-nav-student class="nav" v-if="Role.isStudent" />
-      <app-nav-staff class="nav" v-if="Role.isStaff" />
-      <app-nav-admin class="nav" v-if="Role.isAdmin" />
+      <app-nav-student v-if="Role.isStudent" />
+      <app-nav-staff v-if="Role.isStaff" />
+      <app-nav-admin v-if="Role.isAdmin" />
 
-      <NuxtLink class="about-link clear" to="/about">
-        Сделано в [IT Биржа]
-      </NuxtLink>
+      <div class="links">
+        <a class="clear" target="_blank" href="https://t.me/kemsu_mydoc_help">
+          Нужна помощь?
+        </a>
+        <NuxtLink class="clear" to="/about">
+          Сделано в [IT Биржа]
+        </NuxtLink>
+      </div>
     </div>
   </div>
 </template>
@@ -68,7 +73,7 @@ export default {
   display: grid;
   grid-template-rows: minmax(auto-fit, 250px) 1fr 1fr;
 
-  padding: 3em;
+  padding: 2.5em;
   padding-top: 1.5em;
   padding-right: 0;
 }
@@ -76,30 +81,29 @@ export default {
 .logo {
   align-self: flex-start;
 
-  top: 1.5em;
-  left: 3.5em;
-
   cursor: pointer;
 
   display: flex;
   align-items: flex-end;
-  gap: 8px;
+  gap: .5em;
 }
 
 .logo-title {
   font-size: @fz-large;
-  margin-bottom: 4px;
+  margin-bottom: .25em;
 }
 
-.nav {
-
-}
-
-.about-link {
+.links {
   align-self: flex-end;
 
-  font-size: @fz-small;
-  color: @grey-darkset;
+  display: flex;
+  flex-direction: column;
+  gap: .5em;
+
+  * {
+    font-size: @fz-small;
+    color: @grey-darkset;
+  }
 }
 </style>
 
