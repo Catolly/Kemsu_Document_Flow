@@ -19,12 +19,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
-
 .app-nav-student {
-  margin-top: 250px;
-  margin-left: 50px;
-
-  .flex(center, normal, column);
+  display: flex;
+  flex-direction: column;
 }
 
 .nav-link {
@@ -38,11 +35,11 @@ export default {
     display: none;
   }
   &:hover {
-    color: #000;
+    color: @black;
   }
   &.nuxt-link-active {
     font-weight: @fw-normal;
-    color: #000;
+    color: @black;
   }
 }
 </style>

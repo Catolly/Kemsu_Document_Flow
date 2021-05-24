@@ -1,17 +1,15 @@
 <template>
   <div class="container">
-    <div
-      class="logo"
-      @click="$router.push('/')"
-    >
-      <icon-logo />
-      <h3 class="logo-title">Mydoc</h3>
-    </div>
+    <div class="content">
+      <div class="logo" @click="$router.push('/')">
+        <icon-logo />
+        <h3 class="logo-title">Mydoc</h3>
+      </div>
 
-    <div class="nav">
-      <app-nav-student v-if="Role.isStudent" />
-      <app-nav-staff v-if="Role.isStaff" />
-      <app-nav-admin v-if="Role.isAdmin" />
+      <app-nav-student class="nav" v-if="Role.isStudent" />
+      <app-nav-staff class="nav" v-if="Role.isStaff" />
+      <app-nav-admin class="nav" v-if="Role.isAdmin" />
+
       <NuxtLink class="about-link clear" to="/about">
         Сделано в [IT Биржа]
       </NuxtLink>
@@ -57,14 +55,31 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.content {
+  position: fixed;
+  left: 0;
+  top: 0;
+
+  height: 100vh;
+  width: inherit;
+
+  box-shadow: 10px 4px 120px rgba(0, 0, 0, 0.04);
+
+  display: grid;
+  grid-template-rows: minmax(auto-fit, 250px) 1fr 1fr;
+
+  padding: 3em;
+  padding-top: 1.5em;
+  padding-right: 0;
+}
 
 .logo {
-  z-index: 1;
-  cursor: pointer;
+  align-self: flex-start;
 
-  position: fixed;
-  top: 25px;
-  left: 60px;
+  top: 1.5em;
+  left: 3.5em;
+
+  cursor: pointer;
 
   display: flex;
   align-items: flex-end;
@@ -77,17 +92,12 @@ export default {
 }
 
 .nav {
-  position: fixed;
-  left: 0;
-  top: 0;
 
-  height: 100vh;
-  width: inherit;
-
-  box-shadow: 10px 4px 120px rgba(0, 0, 0, 0.04);
 }
 
 .about-link {
+  align-self: flex-end;
+
   font-size: @fz-small;
   color: @grey-darkset;
 }
