@@ -27,23 +27,22 @@ export default {
 <style scoped>
 .container {
   height: 100vh;
-
-  display: flex;
-  justify-content: center;
 }
 
 .content {
-  width: 516px;
   height: 100%;
+  width: 100%;
+
+  overflow-y: auto;
 
   display: flex;
-  flex-direction: column;
   justify-content: center;
+  align-items: center;
 }
 
 .login {
   padding: 48px 0;
-  overflow-y: auto;
+  width: 516px;
 }
 </style>
 
