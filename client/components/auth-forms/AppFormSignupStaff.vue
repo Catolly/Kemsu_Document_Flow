@@ -34,7 +34,7 @@
             ... $v.email.$dirty
                 && $v.email.required
                 && !$v.email.email
-                ? ['Введите email']
+                ? ['Поле должно быть заполнено по email-маске']
                 : [],
           ]"
           @input="reset($v.email)"
