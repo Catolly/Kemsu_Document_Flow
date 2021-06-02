@@ -56,10 +56,10 @@
         </p>
 
         <p
-          v-if="error"
+          v-if="fetchError || unknownError"
           class="error-message"
         >
-          Произошла ошибка
+          Произошла ошибка сервера, попробуйте войти позже
         </p>
 
   			<app-button
@@ -115,7 +115,8 @@ export default {
     minPasswordLength: minPasswordLength,
 
     loginError: '',
-    error: '',
+    fetchError: '',
+    unknownError: '',
 
     dialog: false,
     adminEmail: adminEmail,
@@ -155,7 +156,8 @@ export default {
 
     login() {
       this.loginError = ''
-      this.error = ''
+      this.fetchError = ''
+      this.unknownError = ''
       this.$store
         .dispatch(LOGIN, {
           'email': this.email,
@@ -166,7 +168,9 @@ export default {
           console.error(error)
           if (errorCode(error === '400'))
             this.loginError = error
-          else this.error = error
+          else if (errorCode(error === '500'))
+            this.fetchError = error
+          else this.unknownError = error
         })
     },
   },
