@@ -19,7 +19,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.app-nav-student {
+.app-nav-staff {
   display: flex;
   flex-direction: column;
 }
