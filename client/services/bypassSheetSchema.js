@@ -13,8 +13,8 @@ const bypassSheetSchema = {
   },
   genderReqValues: {
     'Не указывать': 'None',
-    'Мужской': 'Male',
-    'Женский': 'Female',
+    'Мужской': 'Муж',
+    'Женский': 'Жен',
   },
 }
 
