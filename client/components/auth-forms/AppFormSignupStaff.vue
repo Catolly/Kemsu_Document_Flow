@@ -97,7 +97,7 @@
       <div class="btns">
         <app-button
           class="signup-btn blue big filled fluid"
-          :disabled="$v.$invalid"
+          :disabled="$v.$invalid || signupSuccess"
         >
           Зарегистрироваться
         </app-button>
@@ -200,7 +200,7 @@ export default {
     submit() {
       this.$v.$touch()
 
-      if (this.$v.$invalid) return
+      if (this.$v.$invalid || this.signupSuccess) return
 
       this.signup()
     },
