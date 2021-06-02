@@ -6,3 +6,4 @@ export const API_URL = `${BASE_URL}/api/`
 export const debounceDelay = 1500
 export const throttleDelay = 500
 export const adminEmail = 'mydockemsu@gmail.com'
+export const telegramHelpUrl = 'https://t.me/kemsu_mydoc_help'

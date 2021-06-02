@@ -92,22 +92,17 @@
       </div>
 
       <p class="signup-problem">
-        Кто-то зарегистрировался под вашим именем? Обратитесь к
-        <a @click="dialog = true">администрации</a>
+        Возникли проблемы?
+        <a class="clear" target="_blank" :href="telegramHelpUrl">
+          Напишите нам
+        </a>
       </p>
     </div>
-
-    <app-dialog :isOpen="dialog" @close="dialog = false">
-      <p>
-        При возникновении проблем, свяжитесь с администрацией:
-        <b>{{adminEmail}}</b>
-      </p>
-    </app-dialog>
   </form>
 </template>
 
 <script>
-import { adminEmail } from "~/services/config"
+import { telegramHelpUrl } from '~/services/config'
 import { errorCode } from "~/services/ApiService"
 
 import { mapGetters } from "vuex"
@@ -122,7 +117,6 @@ import { throttleDelay } from "~/services/config"
 import AppButton from '~/components/common/AppButton'
 import AppInput from '~/components/common/AppInput'
 import AppAutocomplete from '~/components/common/AppAutocomplete'
-import AppDialog from '~/components/common/AppDialog'
 
 export default {
   name: 'FormSingupStudent',
@@ -131,7 +125,6 @@ export default {
     AppButton,
     AppInput,
     AppAutocomplete,
-    AppDialog,
   },
 
   data:() => ({
@@ -148,9 +141,6 @@ export default {
     error: '',
     conflictError: '',
     fetchUnregisteredStudentsError: '',
-
-    dialog: false,
-    adminEmail: adminEmail,
   }),
 
   validations:() => ({
@@ -177,6 +167,10 @@ export default {
           id: user.id,
           value: user.fullname + this.divider + user.group,
         }))
+    },
+
+    telegramHelpUrl() {
+      return telegramHelpUrl
     },
   },
 

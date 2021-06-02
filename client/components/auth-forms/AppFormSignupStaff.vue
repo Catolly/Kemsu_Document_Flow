@@ -110,22 +110,17 @@
       </div>
 
       <p class="signup-problem">
-        Кто-то зарегистрировался под вашим именем? Обратитесь к
-        <a @click="dialog = true">администрации</a>
+        Возникли проблемы?
+        <a class="clear" target="_blank" :href="telegramHelpUrl">
+          Напишите нам
+        </a>
       </p>
     </div>
-
-    <app-dialog :isOpen="dialog" @close="dialog = false">
-      <p>
-        При возникновении проблем, свяжитесь с администрацией:
-        <b>{{adminEmail}}</b>
-      </p>
-    </app-dialog>
   </form>
 </template>
 
 <script>
-import { adminEmail } from "~/services/config"
+import { telegramHelpUrl } from '~/services/config'
 import { errorCode } from "~/services/ApiService"
 
 import { mapGetters } from "vuex"
@@ -137,7 +132,6 @@ import { minPasswordLength } from "~/vuelidate/constants"
 import AppButton from '~/components/common/AppButton'
 import AppInput from '~/components/common/AppInput'
 import AppSelect from '~/components/common/AppSelect'
-import AppDialog from '~/components/common/AppDialog'
 
 export default {
   name: 'FormSingupStaff',
@@ -146,7 +140,6 @@ export default {
     AppButton,
     AppInput,
     AppSelect,
-    AppDialog,
   },
 
   validations:() => ({
@@ -181,13 +174,14 @@ export default {
     error: '',
     conflictError: '',
     signupSuccess: false,
-
-    dialog: false,
-    adminEmail: adminEmail,
   }),
 
   computed: {
     ...mapGetters(['allDepartments']),
+
+    telegramHelpUrl() {
+      return telegramHelpUrl
+    },
   },
 
   methods: {

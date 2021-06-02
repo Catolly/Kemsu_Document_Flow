@@ -11,9 +11,13 @@
       <app-nav-admin v-if="Role.isAdmin" />
 
       <div class="links">
-        <a class="clear" target="_blank" href="https://t.me/kemsu_mydoc_help">
-          Нужна помощь?
-        </a>
+        <span>
+          Возникли проблемы?
+          <br>
+          <a class="clear" target="_blank" :href="telegramHelpUrl">
+            Напишите нам
+          </a>
+        </span>
         <NuxtLink class="clear" to="/about">
           Сделано в [IT Биржа]
         </NuxtLink>
@@ -25,6 +29,8 @@
 <script>
 import { mapGetters } from 'vuex'
 import { ROLE_IS } from '~/store/actions.type'
+
+import { telegramHelpUrl } from '~/services/config'
 
 import IconLogo from '~/components/icons/IconLogo'
 import AppNavStudent from '~/components/sidebar/AppNavStudent'
@@ -54,7 +60,11 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['Role'])
+    ...mapGetters(['Role']),
+
+    telegramHelpUrl() {
+      return telegramHelpUrl
+    },
   },
 }
 </script>
