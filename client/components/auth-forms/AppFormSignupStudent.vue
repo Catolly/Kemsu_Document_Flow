@@ -176,6 +176,8 @@ export default {
 
   watch: {
     fullnameAndGroup() {
+      this.fetchUnregisteredStudentsError = ''
+
       this.fullname = this.fullnameAndGroup.split(this.divider)[0]
       this.group = this.fullnameAndGroup.split(this.divider)[1]
 
