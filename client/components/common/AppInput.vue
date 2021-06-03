@@ -192,7 +192,8 @@ export default {
 
   color: @grey-darkset;
 
-  background: linear-gradient(to top, @grey-bright 50%, transparent 0);
+  background: linear-gradient(to top, @grey-bright 60
+%, transparent 0);
 
   user-select: none;
   cursor: text;
