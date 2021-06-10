@@ -150,6 +150,7 @@ export default {
     updated: false,
     updateError: false,
     loadError: false,
+    loading: false,
 
     lastname: '',
     firstname: '',
@@ -194,12 +195,13 @@ export default {
     submit() {
       this.$v.$touch()
 
-      if (this.$v.$invalid) return
+      if (this.$v.$invalid || this.loading) return
 
       this.updateUser()
     },
 
     updateUser() {
+      this.loading = true
       this.$store
         .dispatch(UPDATE_USER, {
           fullname: [
@@ -213,6 +215,7 @@ export default {
           console.error(error)
           this.updateError = error
         })
+        .finally(() => this.loading = false)
     },
 
 		logout() {

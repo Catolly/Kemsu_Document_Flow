@@ -65,6 +65,7 @@
   			<app-button
           class="login-btn blue big filled fluid"
           :disabled="$v.$invalid"
+          :loading="submitLoading"
         >
   				Войти
   			</app-button>
@@ -117,6 +118,7 @@ export default {
     loginError: '',
     fetchError: '',
     unknownError: '',
+    submitLoading: false,
 
     dialog: false,
     adminEmail: adminEmail,
@@ -149,7 +151,7 @@ export default {
     submit() {
       this.$v.$touch()
 
-      if (this.$v.$invalid) return
+      if (this.$v.$invalid || this.submitLoading) return
 
       this.login()
     },
@@ -158,6 +160,7 @@ export default {
       this.loginError = ''
       this.fetchError = ''
       this.unknownError = ''
+      this.submitLoading = true
       this.$store
         .dispatch(LOGIN, {
           'email': this.email,
@@ -172,6 +175,7 @@ export default {
             this.fetchError = error
           else this.unknownError = error
         })
+        .finally(() => this.submitLoading = false)
     },
   },
 }

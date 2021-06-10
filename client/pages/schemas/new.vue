@@ -102,6 +102,7 @@
                 blue
                 class="next-step"
                 :disabled="isInvalidForm"
+                :loading="submitLoading"
                 @click="submit"
               >
                 Создать
@@ -149,6 +150,7 @@ export default {
     createError: '',
 
     isInvalidForm: true,
+    submitLoading: false,
 
     points: [],
 
@@ -206,7 +208,7 @@ export default {
 
   methods: {
     async submit() {
-      if (this.isInvalidForm) return
+      if (this.isInvalidForm || this.submitLoading) return
 
       await this.createSchema()
     },
@@ -235,6 +237,7 @@ export default {
 
     async createSchema() {
       this.createError = ''
+      this.submitLoading = true
       try {
         await this.$store
           .dispatch(CREATE_BYPASS_SHEETS_SCHEMA, {
@@ -249,6 +252,8 @@ export default {
       } catch (error) {
         console.error(error)
         this.createError = error
+      } finally {
+        this.submitLoading = false
       }
     },
 

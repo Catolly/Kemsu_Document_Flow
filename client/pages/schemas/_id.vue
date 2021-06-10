@@ -11,6 +11,7 @@
 
           <app-delete-schema-dialog
             class="delete"
+            :loading="deleteLoading"
             @delete="deleteSchema"
           />
         </div>
@@ -116,6 +117,7 @@
                 blue
                 class="next-step"
                 :disabled="isInvalidForm"
+                :loading="submitLoading"
                 @click="submit"
               >
                 Сохранить
@@ -168,6 +170,8 @@ export default {
     loadSchemaError: '',
     updateError: '',
     updateSuccess: false,
+    submitLoading: false,
+    deleteLoading: false,
 
     isInvalidForm: true,
 
@@ -227,7 +231,7 @@ export default {
 
   methods: {
     async submit() {
-      if (this.isInvalidForm) return
+      if (this.isInvalidForm || this.submitLoading) return
 
       await this.updateSchema()
     },
@@ -266,6 +270,7 @@ export default {
     async updateSchema() {
       this.updateError = ''
       this.updateSuccess = false
+      this.submitLoading = true
       this.$store
         .dispatch(UPDATE_BYPASS_SHEETS_SCHEMA, {
           id: this.schema.id,
@@ -282,6 +287,7 @@ export default {
             console.error(error)
             this.updateError = error
           })
+          .finally(() => this.submitLoading = false)
     },
 
     async fetchDepartments() {
@@ -349,12 +355,16 @@ export default {
     },
 
     async deleteSchema() {
+      if (this.deleteLoading) return
       try {
-        this.$store
+        this.deleteLoading = true
+        await this.$store
           .dispatch(DELETE_BYPASS_SHEETS_SCHEMA, this.schema.id)
         this.$router.push({ path: '..', append: true })
       } catch (error) {
         console.error(error)
+      } finally {
+        this.deleteLoading = false
       }
     }
   },

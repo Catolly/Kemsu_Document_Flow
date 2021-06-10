@@ -76,6 +76,7 @@
 				<app-button
           class="btn btn-submit blue filled"
           :disabled="$v.$invalid"
+          :loading="createLoading"
         >
 					Отправить
 				</app-button>
@@ -122,6 +123,7 @@ export default {
     statements: [],
 
     createError: '',
+    createLoading: false,
     fetchSchemasTitlesError: '',
 	}),
 
@@ -183,13 +185,14 @@ export default {
     submit() {
       this.$v.$touch()
 
-      if (this.$v.$invalid) return
+      if (this.$v.$invalid || this.createLoading) return
 
       this.create()
     },
 
     async create() {
       try {
+        this.createLoading = true
         await this.$store.dispatch(CREATE_BYPASS_SHEET, {
           title: this.selectedSchema.title,
           statements: this.selectedSchema.statements,
@@ -198,6 +201,8 @@ export default {
       } catch (error) {
         console.error(error)
         this.createError = error
+      } finally {
+        this.createLoading = false
       }
     },
   },

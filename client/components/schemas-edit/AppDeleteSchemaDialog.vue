@@ -15,7 +15,7 @@
         <span>Действительно удалить шаблон обходного листа?</span>
 
         <div class="btns">
-          <app-button type="button" cancel @click="$emit('delete')">
+          <app-button type="button" :loading="loading" cancel @click="$emit('delete')">
             Удалить
           </app-button>
           <app-button type="button" blue filled @click="dialog = false">
@@ -42,6 +42,13 @@ export default {
   data:() => ({
     dialog: false,
   }),
+
+  props: {
+    loading: {
+      type: Boolean,
+      default: false,
+    },
+  },
 }
 </script>
 

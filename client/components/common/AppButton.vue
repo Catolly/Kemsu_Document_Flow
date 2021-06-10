@@ -7,7 +7,9 @@
   	@click="$emit('click')"
   	@keydown.enter="$emit('click')"
   >
-		<slot />
+    <span :class="{'hidden': loading}">
+		  <slot />
+    </span>
 	</button>
 </template>
 
@@ -85,6 +87,11 @@ export default {
       type: Boolean,
       default: false,
     },
+
+    loading: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   computed: {
@@ -104,6 +111,7 @@ export default {
         'filled': this.filled,
         'icon': this.icon,
         'semi-round': this.semiRound,
+        'loading': this.loading,
       }
     },
   },
@@ -162,6 +170,14 @@ export default {
 .big {
   min-height: 70px;
   min-width: 70px;
+
+  .loading:after {
+    width: 50px;
+    height: 50px;
+
+    top: calc(50% - 25px);
+    left: calc(50% - 25px);
+  }
 }
 
 .fluid {
@@ -208,6 +224,37 @@ export default {
   color: #fff;
 }
 
+.hidden {
+  visibility: hidden;
+}
+
+@keyframes spinner {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.loading:after {
+  content: " ";
+  display: block;
+  position: absolute;
+
+  top: calc(50% - 17.5px);
+  left: calc(50% - 17.5px);
+
+  width: 35px;
+  height: 35px;
+
+  border-radius: 50%;
+  border: 4px solid @black;
+  border-color: @black transparent @black transparent;
+
+  animation: spinner 1.2s linear infinite;
+}
+
 .setInteractiveColor(@prop, @color-hover, @color-active) {
   &:focus-visible,
   &:hover {
@@ -232,6 +279,9 @@ export default {
       fill: @white;
       .setInteractiveColor(fill, @white, @white);
     }
+    &.loading:after {
+      border-color: @white transparent @white transparent;
+    }
 
     .setInteractiveColor(background, @color-hover, @color-active);
     .setInteractiveColor(border-color, @color-hover, @color-active);
@@ -250,6 +300,18 @@ export default {
     .setInteractiveColor(color, @color-hover, @color-active);
     .setInteractiveColor(border-color, transparent, transparent);
     .setInteractiveColor(fill, @color-hover, @color-active);
+  }
+
+  &.loading {
+    &:after {
+      border-color: @color transparent @color transparent;
+    }
+    &:hover,
+    &:active {
+      &:after {
+        border-color: @white transparent @white transparent;
+      }
+    }
   }
 }
 

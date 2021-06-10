@@ -34,7 +34,7 @@
       <span v-if="updateError" class="error-message">
         Не удалось отправить данные
       </span>
-      <app-button blue filled class="submit">
+      <app-button :loading="updateLoading" blue filled class="submit">
         Отправить
       </app-button>
     </div>
@@ -59,6 +59,7 @@ export default {
 
   data:() => ({
     updateError: '',
+    updateLoading: false,
   }),
 
   props: {
@@ -77,7 +78,9 @@ export default {
 
   methods: {
     async submit() {
+      if (this.updateLoading) return
       try {
+        this.updateLoading = true
         this.updateError = ''
         await this.$store.dispatch(UPDATE_BYPASS_SHEET, {
           point: this.point,
@@ -87,6 +90,8 @@ export default {
       } catch (error) {
         console.error(error)
         this.updateError = error
+      } finally {
+        this.updateLoading = false
       }
     },
 

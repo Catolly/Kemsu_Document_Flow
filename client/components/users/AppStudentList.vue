@@ -37,6 +37,7 @@
         <app-button
           v-else
           cancel
+          :loading="student.loading"
           @click="unban(student)"
         >
           Разблокировать аккаунт
@@ -91,6 +92,8 @@ export default {
 
   methods: {
     async ban(user) {
+      if (this.loading) return
+      this.$set(user, 'loading', true)
       this.banError = ''
       try {
         await this.$store.dispatch(BAN_USER, user.id)
@@ -98,10 +101,14 @@ export default {
       } catch (error) {
         console.error(error)
         this.banError = error
+      } finally {
+        this.$set(user, 'loading', false)
       }
     },
 
     async unban(user) {
+      if (this.loading) return
+      this.$set(user, 'loading', true)
       this.unbanError = ''
       try {
         await this.$store.dispatch(UNBAN_USER, user.id)
@@ -109,7 +116,15 @@ export default {
       } catch (error) {
         console.error(error)
         this.unbanError = error
+      } finally {
+        this.$set(user, 'loading', false)
       }
+    },
+
+    beforeMount() {
+      this.studentList.forEach(student => {
+        this.$set(student, 'loading', false)
+      })
     },
   },
 }

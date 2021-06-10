@@ -80,6 +80,7 @@
         <app-button
           class="signup-btn blue big filled fluid"
           :disabled="$v.$invalid"
+          :loading="submitLoading"
         >
           Зарегистрироваться
         </app-button>
@@ -141,6 +142,7 @@ export default {
     error: '',
     conflictError: '',
     fetchUnregisteredStudentsError: '',
+    submitLoading: false,
   }),
 
   validations:() => ({
@@ -201,7 +203,7 @@ export default {
     submit() {
       this.$v.$touch()
 
-      if (this.$v.$invalid) return
+      if (this.$v.$invalid || this.submitLoading) return
 
       this.signup()
     },
@@ -209,6 +211,7 @@ export default {
     signup() {
       this.error = ''
       this.conflictError = ''
+      this.submitLoading = true
       this.$store
         .dispatch(SIGNUP_STUDENT, {
           'fullname': this.fullname,
@@ -223,6 +226,7 @@ export default {
             this.conflictError = error
           else this.error = error
         })
+        .finally(() => this.submitLoading = false)
     },
 
     fetchUnregisteredStudents: _.throttle(async function() {
