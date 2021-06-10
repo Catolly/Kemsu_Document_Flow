@@ -25,20 +25,23 @@
         </span>
       </div>
 
-      <app-button
-        v-if="!student.isBaned"
-        red
-        @click="ban(student)"
-      >
-        Заблокировать аккаунт
-      </app-button>
-      <app-button
-        v-else
-        cancel
-        @click="unban(student)"
-      >
-        Разблокировать аккаунт
-      </app-button>
+      <div class="btns">
+        <app-button
+          v-if="!student.isBaned"
+          red
+          :loading="student.loading"
+          @click="ban(student)"
+        >
+          Заблокировать аккаунт
+        </app-button>
+        <app-button
+          v-else
+          cancel
+          @click="unban(student)"
+        >
+          Разблокировать аккаунт
+        </app-button>
+      </div>
     </app-list-item>
   </app-list>
 </template>
@@ -117,6 +120,7 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
+  gap: 1em;
 }
 
 .student-info {
@@ -135,5 +139,9 @@ export default {
   &.signed {
     color: @green;
   }
+}
+
+.btns {
+  flex-shrink: 0;
 }
 </style>
