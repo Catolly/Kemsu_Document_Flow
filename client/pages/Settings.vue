@@ -115,7 +115,8 @@
                 lastname,
                 firstname,
                 middlename
-              ) === currentUser.fullname"
+              ) === currentUser.fullname.trim()"
+            :loading="loading"
             class="btn btn-submit blue filled"
           >
   					Сохранить
