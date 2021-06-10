@@ -10,7 +10,7 @@
       Удалить шаблон
     </app-button>
 
-    <app-dialog v-if="dialog" @close="dialog = false">
+    <app-dialog :isOpen="dialog" @close="dialog = false">
       <div class="dialog">
         <span>Действительно удалить шаблон обходного листа?</span>
 

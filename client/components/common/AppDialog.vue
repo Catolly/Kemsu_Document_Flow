@@ -1,5 +1,5 @@
 <template>
-  <app-modal v-if="isOpen" class="modal">
+  <app-modal v-show="isOpen" class="modal">
     <div class="app-dialog">
       <slot class="content" />
 
