@@ -60,7 +60,6 @@ export default {
 
   computed: {
     filename() {
-      console.log(this.shortname, this.file)
       if (this.isLink) return this.shortname
       return this.file.name
     },
