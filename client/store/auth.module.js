@@ -124,12 +124,12 @@ const actions = {
         if (!tokens.access || (tokens.expiresIn < Date.now())) {
           await context.dispatch(REFRESH, JwtService.getToken().refresh)
         }
-        if (_.isEmpty(context.getters.currentUser)) {
-          const user = await context.dispatch(FETCH_USER, id)
-          if (user) {
-            context.commit(SET_AUTH, user)
-          }
+        // if (_.isEmpty(context.getters.currentUser)) {
+        const user = await context.dispatch(FETCH_USER, id)
+        if (user) {
+          context.commit(SET_AUTH, user)
         }
+        // }
         context.commit(SET_CHECKING, false)
       }
       else {
