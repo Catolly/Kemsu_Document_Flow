@@ -1,10 +1,10 @@
 import axios from 'axios'
 import JwtService from "~/services/JWTService"
-import { API_URL } from "~/services/config"
+import { API_URL, REQUEST_TIMEOUT } from "~/services/config"
 
 const api = axios.create({
   baseURL: API_URL,
-  timeout: 10000,
+  timeout: REQUEST_TIMEOUT,
 })
 
 const ApiService = {
