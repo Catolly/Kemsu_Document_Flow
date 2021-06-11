@@ -384,12 +384,16 @@ export default {
 }
 
 .submit-section {
-  border-left: 1px solid @grey-medium;
-  padding-top: 48px;
-  padding-bottom: 48px;
+  position: fixed;
+  bottom: 48px;
+  right: 48px;
 
-  display: flex;
-  justify-content: flex-end;
+  // border-left: 1px solid @grey-medium;
+  // padding-top: 48px;
+  // padding-bottom: 48px;
+
+  // display: flex;
+  // justify-content: flex-end;
 }
 
 .submit {
