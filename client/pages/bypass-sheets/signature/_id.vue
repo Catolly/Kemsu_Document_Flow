@@ -306,7 +306,11 @@ export default {
               .some(value => value))
             .filter(student =>
               student.point.status
-              && (student.point.status != bypassSheetStatus.NotSent))
+              && (
+                (student.point.status != bypassSheetStatus.NotSent)
+                || student.point.uploadDocumentsFormat.length === 0
+              )
+            )
           this.studentList
             .forEach(student => {
               this.$set(student, 'checked', false)
