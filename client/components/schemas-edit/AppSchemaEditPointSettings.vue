@@ -65,9 +65,9 @@
             @click="deleteCommonReason(reason)"
           >
             {{reason}}
-            <div class="delete-chips-btn">
-              <div class="minus" />
-            </div>
+            <span class="delete-chips-btn">
+              <span class="minus" />
+            </span>
           </app-chips>
         </div>
       </div>
@@ -289,6 +289,8 @@ export default {
 
   .delete-chips-btn {
     position: relative;
+    display: inline-block;
+    vertical-align: middle;
     height: 24px;
     width: 24px;
   }
