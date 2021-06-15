@@ -37,7 +37,6 @@
               />
     				</div>
           </template>
-          <span class="header" v-else>Необходимые документы не прикреплены</span>
         </div>
 
         <div
