@@ -27,7 +27,10 @@
 
       <div v-if="student.point" class="sign-btns">
         <div
-          v-if="student.point.status != bypassSheetStatus.Reviewing"
+          v-if="[
+            bypassSheetStatus.Signed,
+            bypassSheetStatus.Rejected
+          ].includes(student.point.status)"
           class="staff"
         >
           <span>
