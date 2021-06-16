@@ -375,10 +375,10 @@ export default {
         }
     },
 
-    updateBypassSheets: _.debounce(async function () {
+    updateBypassSheets: _.debounce(function () {
       try {
         this.updateBypassSheetsError = ''
-        await this.$store.dispatch(UPDATE_BYPASS_SHEETS, {
+        this.$store.dispatch(UPDATE_BYPASS_SHEETS, {
           department: this.currentUser.department,
           bypassSheets: Array.from(this.updatingBypassSheets),
         })
