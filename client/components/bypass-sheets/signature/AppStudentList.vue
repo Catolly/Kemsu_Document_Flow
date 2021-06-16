@@ -6,7 +6,8 @@
       class="student simple"
     >
       <app-checkbox
-        v-model="student.checked"
+        :value="student.checked"
+        @input="student.checked ? $emit('uncheck', student) : $emit('check', student)"
       />
       <div class="student-info">
         <span class="student-fullname">
