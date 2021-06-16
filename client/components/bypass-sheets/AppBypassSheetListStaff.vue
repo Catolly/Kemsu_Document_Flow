@@ -32,7 +32,6 @@
       >
   			<app-list-item
           :key="index"
-          v-if="schema.studentList.length"
     			@click="$router.push('/bypass-sheets/signature/' + schema.id)"
     			class="bypass-sheet"
         >
