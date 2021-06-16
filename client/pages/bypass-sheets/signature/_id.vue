@@ -27,7 +27,7 @@
 
       <template v-if="studentList.length && !fetchUsersError && !fetchSchemaError">
         <app-sign-topbar
-          :checkedPointsCount="checkedStudentList.length"
+          :checkedPointsCount="checkedStudents.length"
           @signChecked="signChecked"
           @checkAll="checkAll"
           @uncheckAll="uncheckAll"
@@ -39,8 +39,8 @@
         />
 
         <app-pagination
-          v-if="searchingStudentList.length"
-          :itemsAmount="searchingStudentList.length"
+          v-show="studentList.length > 0"
+          :itemsAmount="usersAmount"
           :page="page"
           @updateItemsPerPage="itemsPerPage = $event"
           @updatePage="page = $event"
@@ -49,7 +49,7 @@
         />
 
         <app-student-list
-          :studentList="studentListInPage"
+          :studentList="studentList"
           @check="check"
           @uncheck="uncheck"
           @sign="sign"
@@ -130,6 +130,7 @@ export default {
     },
 
     studentList: [],
+    checkedStudents: [],
     updatingBypassSheets: new Set(),
 
     fetchGroupsError: '',
@@ -144,7 +145,7 @@ export default {
     try {
       await this.fetchSchema()
       await Promise.all([
-        this.fetchStudentList(),
+        this.findUsers(),
         this.fetchGroups(),
       ])
       this.FilterService = initFilterService(this.groups)
@@ -154,34 +155,19 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['currentUser', 'users', 'groups', 'bypassSheetsSchema']),
+    ...mapGetters([
+      'currentUser',
+      'users',
+      'usersAmount',
+      'groups',
+      'bypassSheetsSchema'
+    ]),
 
-    studentListInPage() {
-      return this.searchingStudentList.slice(this.page * this.itemsPerPage,
-                                            (this.page + 1) * this.itemsPerPage)
-    },
-    checkedStudentList() {
-      return this.searchingStudentList.filter(student => student.checked)
-    },
-    searchingStudentList() {
-      if (this.searchText === '') return this.filteredStudentList
+    filters() {
+      if (!this.FilterService) return []
 
-      return this.filteredStudentList.filter(student =>
-        student.fullname.toLowerCase().includes(this.searchText.toLowerCase())
-      )
-    },
-    filteredStudentList() {
-      if (
-        !this.FilterService ||
-        this.FilterService.filterList.every(filter => filter.value === '')
-      ) return this.studentList
-
-      return this.studentList
-      .filter(student => this.FilterService.filterList
-        .filter(filter => filter.value != '')
-        .every(filter => {
-          return student[filter.filteringPropName] === filter.value
-        }))
+      return this.FilterService.filterList
+        .map(filter => filter.value)
     },
 
     filterList() {
@@ -206,15 +192,54 @@ export default {
     bypassSheetStatus() {
       return bypassSheetStatus
     },
+
+    checkedStudentsId() {
+      return this.checkedStudents
+        .map(checkedStudent => checkedStudent.id)
+    },
+  },
+
+  watch: {
+    filterPath() {
+      this.page = 0
+      this.findUsers()
+    },
+    searchText() {
+      this.page = 0
+      this.findUsers()
+    },
+    page() {
+      this.findUsers()
+    },
+    itemsPerPage() {
+      if (this.itemsPerPage) {
+        this.findUsers()
+      }
+    },
+    studentList() {
+      this.checkAttachedStudents()
+    },
   },
 
   methods: {
     // Методы app-sign-student-list
     check(student) {
-      student.checked = true
+      if (this.checkedStudentsId.includes(student.id)) return
+      this.$set(student, 'checked', true)
+      this.checkedStudents.push(student)
     },
     uncheck(student) {
-      student.checked = false
+      if (!this.checkedStudentsId.includes(student.id)) return
+      this.$set(student, 'checked', false)
+      this.checkedStudents = this.checkedStudents
+        .filter(checkedStudent => checkedStudent.id !== student.id)
+    },
+    checkAttachedStudents() {
+      this.studentList.forEach(student => {
+        this.$set(student, 'checked', this.checkedStudentsId
+          .includes(student.id)
+        )
+      })
     },
     sign(student) {
       this.uncheck(student)
@@ -246,13 +271,21 @@ export default {
 
     // Методы app-sign-topbar
     signChecked() {
-      this.checkedStudentList.forEach(this.sign)
+      this.studentList.forEach(student => {
+        if (this.checkedStudentsId.includes(student.id))
+          this.sign(student)
+        this.uncheck(student)
+      })
+      this.checkedStudents.forEach(this.sign)
     },
     checkAll() {
-      this.searchingStudentList.forEach(this.check)
+      this.studentList.forEach(this.check)
     },
     uncheckAll() {
-      this.checkedStudentList.forEach(this.uncheck)
+      this.studentList.forEach(student => {
+        this.$set(student, 'checked', false)
+      })
+      this.checkedStudents = []
     },
     search(searchText) {
       this.searchText = searchText
@@ -292,33 +325,29 @@ export default {
     },
     //
 
-    async fetchStudentList() {
+    async findUsers() {
+      this.fetchUsersError = ''
       try {
-        this.fetchUsersError = ''
+        const [
+          institute,
+          course,
+          group
+        ] = this.filters.map(filter => filter)
         await this.$store
           .dispatch(FETCH_USERS, {
-            users: this.users,
             bypassSheet: this.bypassSheetsSchema.title,
             point: this.currentUser.department,
+            search: this.searchText,
+            institute,
+            course,
+            group,
+            offset: this.page * this.itemsPerPage,
+            limit: this.itemsPerPage
           })
-          this.studentList = copy(this.users)
-            .filter(student => Object.values(student.point)
-              .some(value => value))
-            .filter(student =>
-              student.point.status
-              && (
-                (student.point.status != bypassSheetStatus.NotSent)
-                || student.point.uploadDocumentsFormat.length === 0
-              )
-            )
-          this.studentList
-            .forEach(student => {
-              this.$set(student, 'checked', false)
-            })
+        this.studentList = copy(this.$store.getters.users)
       } catch (error) {
         console.error(error)
         this.fetchUsersError = error
-        throw error
       }
     },
 
