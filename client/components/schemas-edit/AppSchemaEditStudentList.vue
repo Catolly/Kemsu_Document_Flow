@@ -44,8 +44,8 @@
 
     <app-student-list
       :studentList="studentList"
-      @check="check($event)"
-      @uncheck="uncheck($event)"
+      @check="check"
+      @uncheck="uncheck"
     />
   </div>
 </template>
@@ -95,7 +95,9 @@ export default {
     itemsPerPage: 0,
 
     studentList: [],
-    checkedStudents: []
+    checkedStudents: [],
+
+    fetchUsersError: '',
   }),
 
   computed: {
@@ -159,6 +161,7 @@ export default {
     },
 
     async findUsers() {
+      this.fetchUsersError = ''
       try {
         const [
           institute,
@@ -177,7 +180,7 @@ export default {
         this.studentList = copy(this.$store.getters.users)
       } catch (error) {
         console.error(error)
-        this.loadError = error
+        this.fetchUsersError = error
       }
     },
   },
