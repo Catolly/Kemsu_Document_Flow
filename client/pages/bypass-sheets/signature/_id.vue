@@ -138,19 +138,24 @@ export default {
     fetchSchemaError: '',
     updateBypassSheetsError: '',
 
+    fetchUsersLoading: false,
+
     FilterService: null,
   }),
 
   async fetch() {
+    this.fetchUsersLoading = true
     try {
-      await this.fetchSchema()
       await Promise.all([
-        this.findUsers(),
+        this.fetchSchema(),
         this.fetchGroups(),
       ])
       this.FilterService = initFilterService(this.groups)
+      this.findUsers()
     } catch (error) {
       console.error(error)
+    } finally {
+      this.fetchUsersLoading = false
     }
   },
 
@@ -201,17 +206,21 @@ export default {
 
   watch: {
     filterPath() {
+      if (this.fetchUsersLoading) return
       this.page = 0
       this.findUsers()
     },
     searchText() {
+      if (this.fetchUsersLoading) return
       this.page = 0
       this.findUsers()
     },
     page() {
+      if (this.fetchUsersLoading) return
       this.findUsers()
     },
     itemsPerPage() {
+      if (this.fetchUsersLoading) return
       if (this.itemsPerPage) {
         this.findUsers()
       }
