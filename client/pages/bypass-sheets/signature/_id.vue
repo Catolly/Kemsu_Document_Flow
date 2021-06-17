@@ -23,9 +23,7 @@
         />
       </div>
 
-      <h2 v-if="!studentList.length">Обходных листов на подпись ещё нет</h2>
-
-      <template v-if="studentList.length && !fetchUsersError && !fetchSchemaError">
+      <template v-if="!fetchUsersError && !fetchSchemaError">
         <app-sign-topbar
           :checkedPointsCount="checkedStudents.length"
           @signChecked="signChecked"
@@ -49,12 +47,17 @@
         />
 
         <app-student-list
+          v-if="studentList.length"
           :studentList="studentList"
           @check="check"
           @uncheck="uncheck"
           @sign="sign"
           @reject="openRejectForm"
         />
+
+        <h2 v-else class="empty-message">
+          Обходных листов не было найдено
+        </h2>
 
         <app-modal
           v-show="rejectForm.isOpen"
@@ -70,7 +73,7 @@
     </div>
 
     <app-filter
-      v-if="studentList.length && !fetchGroupsError && FilterService"
+      v-if="!fetchGroupsError && FilterService"
       :filterList="filterList"
       @select="select"
       @clear="clear"
@@ -425,6 +428,10 @@ export default {
 
   .pagination {
     justify-content: flex-end;
+  }
+
+  .empty-message {
+    margin-top: 1em;
   }
 }
 
