@@ -240,6 +240,11 @@ export default {
   gap: 8px;
 }
 
+.point-title {
+  width: 50%;
+  padding-right: 48px;
+}
+
 .arrow {
 	.arrow();
 }
