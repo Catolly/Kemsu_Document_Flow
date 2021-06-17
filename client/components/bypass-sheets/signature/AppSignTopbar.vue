@@ -23,7 +23,7 @@
 
     <app-search
       :value="searchText"
-      @input="$emit('search', $event)"
+      @change="$emit('search', $event)"
       round
       small
       class="search"
