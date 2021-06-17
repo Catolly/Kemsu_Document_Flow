@@ -24,6 +24,8 @@
 import { WAIT_FOR } from "~/store/actions.type"
 import { copy } from "~/store/methods"
 
+import bypassSheetStatus from '~/services/bypassSheetStatus'
+
 import roleStudent from '~/components/roles/roleStudent'
 
 import AppList from '~/components/common/AppList'
@@ -38,12 +40,7 @@ export default {
     AppBypassSheetPoint,
 	},
 
-	data:() => ({
-    sheet: null,
-    fetchSheetError: '',
-	}),
-
-  async beforeMount() {
+  async fetch() {
     try {
       this.fetchSheetError = ''
       await this.$store.dispatch(WAIT_FOR, 'checkingAuth')
@@ -62,12 +59,26 @@ export default {
       this.sheet.points
         .forEach(point => {
           point.uploadedDocuments = []
+          if (point.uploadDocumentsFormat.length === 0
+              && point.status === this.bypassSheetStatus.NotSent)
+            point.status = this.bypassSheetStatus.Reviewing
         })
     }
     catch (error) {
       console.error(error)
       this.fetchSheetError = error
     }
+  },
+
+	data:() => ({
+    sheet: null,
+    fetchSheetError: '',
+	}),
+
+  computed: {
+    bypassSheetStatus() {
+      return bypassSheetStatus
+    },
   },
 }
 </script>
