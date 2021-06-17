@@ -151,7 +151,6 @@ export default {
         this.fetchGroups(),
       ])
       this.FilterService = initFilterService(this.groups)
-      this.findUsers()
     } catch (error) {
       console.error(error)
     } finally {
@@ -206,24 +205,18 @@ export default {
 
   watch: {
     filterPath() {
-      if (this.fetchUsersLoading) return
       this.page = 0
       this.findUsers()
     },
     searchText() {
-      if (this.fetchUsersLoading) return
       this.page = 0
       this.findUsers()
     },
     page() {
-      if (this.fetchUsersLoading) return
       this.findUsers()
     },
     itemsPerPage() {
-      if (this.fetchUsersLoading) return
-      if (this.itemsPerPage) {
-        this.findUsers()
-      }
+      this.findUsers()
     },
     studentList() {
       this.checkAttachedStudents()
@@ -336,6 +329,8 @@ export default {
 
     async findUsers() {
       this.fetchUsersError = ''
+      if (!this.bypassSheetsSchema) return
+      if (this.itemsPerPage === 0) return
       try {
         const [
           institute,
@@ -375,13 +370,13 @@ export default {
     async fetchSchema() {
       try {
         this.fetchSchemaError = ''
-        return await this.$store
+        await this.$store
           .dispatch(FETCH_BYPASS_SHEETS_SCHEMA, {id: this.$route.params.id})
-        } catch (error) {
-          console.error(error)
-          this.fetchSchemaError = error
-          throw error
-        }
+      } catch (error) {
+        console.error(error)
+        this.fetchSchemaError = error
+        throw error
+      }
     },
 
     updateBypassSheets: _.debounce(function () {
