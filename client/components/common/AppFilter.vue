@@ -64,6 +64,10 @@ export default {
     select(selected, filter) {
       if (filter.postfix) {
         selected = selected.substring(0, selected.indexOf(filter.postfix))
+
+        // Перевод строки в число, если возможно
+        if (!Number.isNaN(+selected))
+          selected = +selected
       }
 
       this.$emit('select', [selected, filter])
