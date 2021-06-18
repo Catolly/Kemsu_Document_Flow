@@ -1,14 +1,14 @@
 <template>
   <nav class="app-nav-student">
-    <NuxtLink
+    <nuxt-link
     to="/bypass-sheets"
-    class="nav-link">Обходной лист</NuxtLink>
-    <NuxtLink
+    class="nav-link">Обходной лист</nuxt-link>
+    <nuxt-link
     to="/settings"
-    class="nav-link">Настройки</NuxtLink>
-    <NuxtLink
+    class="nav-link">Настройки</nuxt-link>
+    <nuxt-link
     to="/contacts"
-    class="nav-link">Контакты</NuxtLink>
+    class="nav-link">Контакты</nuxt-link>
   </nav>
 </template>
 

@@ -35,12 +35,12 @@
         </div>
       </div>
 
-      <NuxtLink
+      <nuxt-link
         :to="URL + id + '?step=2'"
         class="edit-link"
       >
         Список студентов
-      </NuxtLink>
+      </nuxt-link>
     </div>
   </div>
 </template>

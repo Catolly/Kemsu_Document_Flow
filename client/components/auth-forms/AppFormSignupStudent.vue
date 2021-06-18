@@ -85,11 +85,11 @@
           Зарегистрироваться
         </app-button>
 
-        <NuxtLink to="/login" tabindex="-1" class="clear">
+        <nuxt-link to="/login" tabindex="-1" class="clear">
           <app-button class="to-login-btn blue big fluid">
             Войти
           </app-button>
-        </NuxtLink>
+        </nuxt-link>
       </div>
 
       <p class="signup-problem">

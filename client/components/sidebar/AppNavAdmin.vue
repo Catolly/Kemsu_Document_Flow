@@ -1,17 +1,17 @@
 <template>
   <nav class="app-nav-admin">
-    <NuxtLink
+    <nuxt-link
     to="/schemas"
-    class="nav-link">Обходной лист</NuxtLink>
-    <NuxtLink
+    class="nav-link">Обходной лист</nuxt-link>
+    <nuxt-link
     to="/users"
-    class="nav-link">Пользователи</NuxtLink>
-    <NuxtLink
+    class="nav-link">Пользователи</nuxt-link>
+    <nuxt-link
     to="/settings"
-    class="nav-link">Настройки</NuxtLink>
-    <NuxtLink
+    class="nav-link">Настройки</nuxt-link>
+    <nuxt-link
     to="/contacts"
-    class="nav-link">Контакты</NuxtLink>
+    class="nav-link">Контакты</nuxt-link>
   </nav>
 </template>
 

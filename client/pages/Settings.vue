@@ -99,14 +99,14 @@
 
   			</span>
   			<div class="btns-wrapper">
-          <NuxtLink
+          <nuxt-link
             class="clear"
             to="/"
           >
     				<app-button class="btn btn-cancel red">
     					Отмена
     				</app-button>
-          </NuxtLink>
+          </nuxt-link>
 
   				<app-button
             :disabled="

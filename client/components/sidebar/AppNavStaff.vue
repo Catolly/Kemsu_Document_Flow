@@ -1,14 +1,14 @@
 <template>
   <nav class="app-nav-staff">
-    <NuxtLink
+    <nuxt-link
     to="/bypass-sheets"
-    class="nav-link">Подписи</NuxtLink>
-    <NuxtLink
+    class="nav-link">Подписи</nuxt-link>
+    <nuxt-link
     to="/settings"
-    class="nav-link">Настройки</NuxtLink>
-    <NuxtLink
+    class="nav-link">Настройки</nuxt-link>
+    <nuxt-link
     to="/contacts"
-    class="nav-link">Контакты</NuxtLink>
+    class="nav-link">Контакты</nuxt-link>
   </nav>
 </template>
 

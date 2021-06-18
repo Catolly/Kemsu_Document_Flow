@@ -10,13 +10,13 @@
     </p>
 
     <div class="topbar">
-      <NuxtLink
+      <nuxt-link
         to="new"
         append
         class="clear"
       >
         <app-button blue filled class="create-btn">Добавить</app-button>
-      </NuxtLink>
+      </nuxt-link>
       <app-search
         round
         small

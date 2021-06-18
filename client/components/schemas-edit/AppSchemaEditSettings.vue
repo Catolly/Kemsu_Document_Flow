@@ -32,7 +32,7 @@
     </div>
 
     <div class="nav-btns">
-      <NuxtLink
+      <nuxt-link
         class="clear"
         tabindex="-1"
         :to="{ path: '..' }"
@@ -44,9 +44,9 @@
         >
           Отмена
         </app-button>
-      </NuxtLink>
+      </nuxt-link>
 
-      <NuxtLink
+      <nuxt-link
         class="clear"
         tabindex="-1"
         :to="{
@@ -61,7 +61,7 @@
         >
           Далее
         </app-button>
-      </NuxtLink>
+      </nuxt-link>
     </div>
   </div>
 </template>

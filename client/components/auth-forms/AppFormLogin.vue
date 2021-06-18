@@ -70,11 +70,11 @@
   				Войти
   			</app-button>
 
-        <NuxtLink to="/signup" tabindex="-1" class="clear">
+        <nuxt-link to="/signup" tabindex="-1" class="clear">
           <app-button class="to-register-btn blue big fluid">
             Зарегистрироваться
           </app-button>
-        </NuxtLink>
+        </nuxt-link>
       </div>
 		</div>
 

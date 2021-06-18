@@ -19,7 +19,7 @@
           v-if="!loadError"
           class="steps"
         >
-          <NuxtLink
+          <nuxt-link
             :class="{
               'current': step == '1',
               'has-error': isInvalidForm && step != '1'
@@ -31,9 +31,9 @@
             }"
           >
           Шаг 1
-          </NuxtLink>
+          </nuxt-link>
 
-          <NuxtLink
+          <nuxt-link
             :class="{'current': step == '2'}"
             class="step"
             :to="{
@@ -42,7 +42,7 @@
             }"
           >
           Шаг 2
-          </NuxtLink>
+          </nuxt-link>
         </div>
 
         <app-schema-edit-form
@@ -80,7 +80,7 @@
             </span>
 
             <div class="nav-btns">
-              <NuxtLink
+              <nuxt-link
                 class="clear"
                 tabindex="-1"
                 :to="{
@@ -95,7 +95,7 @@
                 >
                   Назад
                 </app-button>
-              </NuxtLink>
+              </nuxt-link>
 
               <app-button
                 filled

@@ -18,9 +18,9 @@
             Напишите нам
           </a>
         </span>
-        <NuxtLink class="clear" to="/about">
+        <nuxt-link class="clear" to="/about">
           Сделано в [IT Биржа]
-        </NuxtLink>
+        </nuxt-link>
       </div>
     </div>
   </div>
