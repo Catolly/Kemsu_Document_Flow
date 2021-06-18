@@ -66,7 +66,7 @@ export default {
   },
 
 	props: {
-		value: String,
+		value: String | Number,
 
 		placeholder: String,
 
@@ -176,12 +176,17 @@ export default {
 	computed: {
 		filteredOptions() {
 			if (!this.options) return null
+
 			if (!this.value) return this.options
 
 			return this.options.filter(item =>
-				item.value.toLowerCase()
-                  .startsWith(this.value.toLowerCase())
-				&& item.value.toLowerCase() != this.value.toLowerCase())
+				String(item.value)
+          .toLowerCase()
+          .startsWith(
+            String(this.value).toLowerCase()
+          )
+				&& String(item.value).toLowerCase() != String(this.value).toLowerCase()
+      )
 		}
 	},
 
