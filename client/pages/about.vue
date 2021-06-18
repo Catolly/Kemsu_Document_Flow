@@ -11,9 +11,14 @@
         <span class="role">{{creator.role}}</span>
         <h2 class="name">{{creator.name}}</h2>
         <template v-for="(link, index) in creator.links">
-          <NuxtLink :key="index" :to="link.path" class="link clear">
+          <a
+            :key="index"
+            :href="link.path"
+            target="_blank"
+            class="link clear"
+          >
             <span class="line" />{{link.name}}
-          </NuxtLink>
+          </a>
         </template>
       </div>
     </div>
