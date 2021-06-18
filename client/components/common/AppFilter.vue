@@ -51,6 +51,15 @@ export default {
     },
   },
 
+  watch: {
+    filterList() {
+      this.filterList.forEach(filter => {
+          filter.options = filter.options.sort()
+        }
+      )
+    }
+  },
+
   methods: {
     select(selected, filter) {
       if (filter.postfix) {
