@@ -58,8 +58,11 @@ export default {
   },
 
   watch: {
-    filterList() {
-      this.localFilterList = this.filterList
+    filterList: {
+      handler() {
+        this.localFilterList = this.filterList
+      },
+      immediate: true,
     },
 
     localFilterList() {
