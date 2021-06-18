@@ -16,14 +16,14 @@
       class="filter-list"
       :gap="16"
     >
-      <app-select
-        v-for="(filter, index) in filterList"
+      <app-autocomplete
+        v-for="(filter, index) in localFilterList"
         :key="index"
+        v-model="filter.selected"
         :placeholder="filter.placeholder"
-        :options="filter.options.map(option => option + (filter.postfix || ''))"
-        :value="filter.selected + (filter.selected && filter.postfix || '')"
+        :options="filterOptions(filter)"
         class="select"
-        @input="select($event, filter)"
+        @change="select($event, filter)"
       />
     </app-list>
 
@@ -33,6 +33,7 @@
 <script>
 import AppButton from '~/components/common/AppButton'
 import AppSelect from '~/components/common/AppSelect'
+import AppAutocomplete from '~/components/common/AppAutocomplete'
 import AppList from '~/components/common/AppList'
 
 export default {
@@ -41,8 +42,13 @@ export default {
   components: {
     AppButton,
     AppSelect,
+    AppAutocomplete,
     AppList,
   },
+
+  data:() => ({
+    localFilterList: [],
+  }),
 
   props: {
     filterList: {
@@ -53,25 +59,39 @@ export default {
 
   watch: {
     filterList() {
-      this.filterList.forEach(filter => {
-          filter.options = filter.options.sort()
-        }
-      )
-    }
+      this.localFilterList = this.filterList
+    },
+
+    localFilterList() {
+      this.localFilterList.forEach(filter => {
+        filter.options = filter.options.sort()
+        filter.selected += (filter.selected && filter.postfix || '')
+      })
+    },
   },
 
   methods: {
+    filterOptions(filter) {
+      return filter.options
+        .map(option => ({
+          value: option + (filter.postfix || '')
+        }))
+    },
+
     select(selected, filter) {
-      if (filter.postfix) {
+      if (filter.postfix && filter.selected.split(' ').length > 1) {
         selected = selected.substring(0, selected.indexOf(filter.postfix))
 
         // Перевод строки в число, если возможно
-        if (!Number.isNaN(+selected))
+        if (!!+selected)
           selected = +selected
       }
 
-      this.$emit('select', [selected, filter])
-    }
+      if (filter.options.some(option =>
+        String(option).toLowerCase() === String(selected).toLowerCase())
+      )
+        this.$emit('select', [selected, filter])
+    },
   },
 }
 </script>
