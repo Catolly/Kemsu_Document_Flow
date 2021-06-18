@@ -33,18 +33,19 @@
     </label>
 
 		<div
-		v-show="isOpen"
-		v-if="filteredOptions.length"
+		v-show="isOpen && filteredOptions.length"
 		class="option-list">
-			<div
-			v-for="(option, index) in filteredOptions"
-			:key="index"
-			@click="selectOption(option)"
-			:class="{'active': arrowPosition === index}"
-			class="option"
-			tabindex="0">
-				{{option.value}}
-			</div>
+      <template v-for="(option, index) in options">
+  			<div
+        v-show="filteredOptions.includes(option)"
+  			:key="index"
+  			@click="selectOption(option)"
+  			:class="{'active': arrowPosition === index}"
+  			class="option"
+  			tabindex="0">
+  				{{option.value}}
+  			</div>
+      </template>
 		</div>
 
 	</div>
