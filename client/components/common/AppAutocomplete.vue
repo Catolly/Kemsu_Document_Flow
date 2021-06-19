@@ -257,7 +257,8 @@ export default {
       position: relative;
       min-height: 3.5em;
       width: 100%;
-      padding-left: 24px;
+      padding: .5em 24px;
+      line-height: 125%;
 
       font-size: @fz-large;
       background: @grey-bright;
@@ -265,10 +266,6 @@ export default {
       border: 1px solid @grey-light;
       border-top: none;
       border-bottom: none;
-
-      // &:last-child {
-      //   border-radius: 0 0 10px 10px;
-      // }
 
       &:hover {
         background: @grey-medium;
