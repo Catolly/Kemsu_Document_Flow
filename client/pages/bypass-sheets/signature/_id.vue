@@ -2,7 +2,9 @@
   <roleStaff class="container">
     <div class="sign-main">
       <div class="head">
-        <h1 v-if="bypassSheetsSchema" class="header">{{bypassSheetsSchema.title}}</h1>
+        <h1 v-if="bypassSheetsSchema" class="header">
+          {{bypassSheetsSchema.title}}
+        </h1>
         <span
           v-if="
             fetchGroupsError
@@ -16,6 +18,11 @@
           {{ fetchSchemaError ? 'Не удалось загрузить обходной лист'  : '' }}
           {{ updateBypassSheetsError ? 'Не удалось сохранить обходной лист'  : '' }}
         </span>
+
+        <span v-else-if="currentPoint">
+          {{currentPoint.description}}
+        </span>
+
         <app-filter-nav
           v-if="filterPath"
           :filterPath="filterPath"
@@ -204,6 +211,14 @@ export default {
       return this.checkedStudents
         .map(checkedStudent => checkedStudent.id)
     },
+
+    currentPoint() {
+      if (!this.bypassSheetsSchema) return null
+
+      return this.bypassSheetsSchema
+        .points
+          .find(point => point.title === this.currentUser.department)
+    }
   },
 
   watch: {
