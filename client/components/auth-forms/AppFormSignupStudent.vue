@@ -9,6 +9,7 @@
           v-model="$v.fullnameAndGroup.$model"
           :options="unregisteredStudentsOptionList"
           placeholder="Ф.И.О."
+          :loading="unregisteredStudentsLoading"
           :errorMessages="[
             ... $v.fullnameAndGroup.$dirty
                 && !$v.fullnameAndGroup.required
@@ -143,6 +144,7 @@ export default {
     conflictError: '',
     fetchUnregisteredStudentsError: '',
     submitLoading: false,
+    unregisteredStudentsLoading: false,
   }),
 
   validations:() => ({
@@ -230,6 +232,7 @@ export default {
     },
 
     fetchUnregisteredStudents: _.debounce(async function() {
+      this.unregisteredStudentsLoading = true
       try {
         await this.$store
           .dispatch(FETCH_UNREGISTERED_STUDENTS, {
@@ -240,6 +243,7 @@ export default {
         console.error(error)
         this.fetchUnregisteredStudentsError = error
       } finally {
+        this.unregisteredStudentsLoading = false
       }
     }, 500)
   },
