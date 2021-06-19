@@ -15,13 +15,18 @@
 			<div class="about">
         <span
           v-show="isOpen"
-          v-if="[
-            bypassSheetStatus.Rejected,
-            bypassSheetStatus.Reviewing
-          ].includes(point.status)"
+          v-if="point.status === bypassSheetStatus.Rejected"
           :class="classObj"
         >
           {{point.rejectReason}}
+        </span>
+
+        <span
+          v-show="isOpen"
+          v-else
+          :class="classObj"
+        >
+          {{point.description}}
         </span>
 
         <div class="required-documents">
