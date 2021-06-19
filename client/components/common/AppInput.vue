@@ -11,6 +11,7 @@
         @change="$emit('change', $event.target.value)"
     		:type="type"
     		:required="required"
+        :loading="loading"
     		:disabled="disabled"
     		class="app-input"
     		placeholder=" "
@@ -24,6 +25,8 @@
       >
         {{placeholder}}
       </label>
+
+      <div v-show="loading" class="spinner" />
     </div>
 
     <template v-if="errorMessages.length || messages.length">
@@ -59,6 +62,11 @@ export default {
     },
 
     required: {
+      type: Boolean,
+      default: false,
+    },
+
+    loading: {
       type: Boolean,
       default: false,
     },
@@ -184,17 +192,24 @@ export default {
   }
 }
 
-.label {
-  position: absolute;
-  top: calc(50% - .6em); // Фиксирует label по центру input'а
-  left: 1.2em;
-  z-index: 1;
-
-  color: @grey-darkset;
-
-  background: linear-gradient(to top, @grey-bright 60%, transparent 0);
-
+.label,
+.spinner {
   user-select: none;
   cursor: text;
+}
+
+.label {
+  position: absolute;
+  z-index: 1;
+  top: calc(50% - .6em); // Фиксирует label по центру input'а
+  left: 1.2em;
+
+  color: @grey-darkset;
+  background: linear-gradient(to top, @grey-bright 60%, transparent 0);
+}
+
+.spinner {
+  .spinner();
+  left: calc(100% - 52px);
 }
 </style>

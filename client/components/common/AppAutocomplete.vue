@@ -18,6 +18,7 @@
         :type="type"
         :required="required"
         :small="small"
+        :loading="loading"
         :disabled="disabled"
         :error-messages="errorMessages"
         :messages="messages"
@@ -26,6 +27,7 @@
       />
 
       <div
+        v-show="!loading"
         :class="{'rotate': isOpen && filteredOptions.length}"
         class="arrow"
         @click="focusIn($event)"
@@ -87,6 +89,11 @@ export default {
 		},
 
     small: {
+      type: Boolean,
+      default: false
+    },
+
+    loading: {
       type: Boolean,
       default: false
     },
@@ -183,7 +190,7 @@ export default {
 			return this.options.filter(item =>
 				String(item.value)
           .toLowerCase()
-          .startsWith(
+          .includes(
             String(this.value).toLowerCase()
           )
 				&& String(item.value).toLowerCase() != String(this.value).toLowerCase()
@@ -250,7 +257,8 @@ export default {
       position: relative;
       min-height: 3.5em;
       width: 100%;
-      padding-left: 24px;
+      padding: .5em 24px;
+      line-height: 125%;
 
       font-size: @fz-large;
       background: @grey-bright;
@@ -258,10 +266,6 @@ export default {
       border: 1px solid @grey-light;
       border-top: none;
       border-bottom: none;
-
-      // &:last-child {
-      //   border-radius: 0 0 10px 10px;
-      // }
 
       &:hover {
         background: @grey-medium;

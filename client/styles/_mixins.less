@@ -111,3 +111,28 @@
     transform: rotate(135deg);
   }
 }
+
+.spinner() {
+  @keyframes spinner {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  .absolute();
+
+  top: calc(50% - 17.5px);
+  left: calc(50% - 17.5px);
+
+  width: 35px;
+  height: 35px;
+
+  border-radius: 50%;
+  border: 4px solid @black;
+  border-color: @black transparent @black transparent;
+
+  animation: spinner 1.2s linear infinite;
+}

@@ -8,7 +8,7 @@
         <app-autocomplete
           v-model="$v.fullnameAndGroup.$model"
           :options="unregisteredStudentsOptionList"
-          placeholder="Ф.И.О."
+          :loading="unregisteredStudentsLoading"
           :errorMessages="[
             ... $v.fullnameAndGroup.$dirty
                 && !$v.fullnameAndGroup.required
@@ -17,12 +17,18 @@
             ... $v.fullnameAndGroup.$dirty
                 && $v.fullnameAndGroup.required
                 && !$v.fullnameAndGroup.exist
+                && !fetchUnregisteredStudentsError
+                && !unregisteredStudentsLoading
                 ? ['Такого студента или группы не существует']
                 : [],
             ... fetchUnregisteredStudentsError
                 ? ['Не удалось загрузить список пользователей']
                 : [],
           ]"
+          :messages="[
+            'Поиск может занять некоторое время',
+          ]"
+          placeholder="Ф.И.О."
           @input="reset($v.fullnameAndGroup)"
           @change="checkField($v.fullnameAndGroup)"
         />
@@ -143,6 +149,7 @@ export default {
     conflictError: '',
     fetchUnregisteredStudentsError: '',
     submitLoading: false,
+    unregisteredStudentsLoading: false,
   }),
 
   validations:() => ({
@@ -229,16 +236,21 @@ export default {
         .finally(() => this.submitLoading = false)
     },
 
-    fetchUnregisteredStudents: _.throttle(async function() {
-      this.$store
-        .dispatch(FETCH_UNREGISTERED_STUDENTS, {
-          search: this.fullname,
-          limit: 4,
-        })
-        .catch(error => {
-          console.error(error)
-          this.fetchUnregisteredStudentsError = error
-        })
+    fetchUnregisteredStudents: _.debounce(async function() {
+      if (this.$v.fullnameAndGroup.exist) return
+      this.unregisteredStudentsLoading = true
+      try {
+        await this.$store
+          .dispatch(FETCH_UNREGISTERED_STUDENTS, {
+            search: this.fullname,
+            limit: 4,
+          })
+      } catch (error) {
+        console.error(error)
+        this.fetchUnregisteredStudentsError = error
+      } finally {
+        this.unregisteredStudentsLoading = false
+      }
     }, 500)
   },
 

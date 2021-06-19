@@ -228,31 +228,32 @@ export default {
   visibility: hidden;
 }
 
-@keyframes spinner {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
+// @keyframes spinner {
+//   0% {
+//     transform: rotate(0deg);
+//   }
+//   100% {
+//     transform: rotate(360deg);
+//   }
+// }
 
 .loading:after {
-  content: " ";
-  display: block;
-  position: absolute;
+  .spinner();
+  // content: " ";
+  // display: block;
+  // position: absolute;
 
-  top: calc(50% - 17.5px);
-  left: calc(50% - 17.5px);
+  // top: calc(50% - 17.5px);
+  // left: calc(50% - 17.5px);
 
-  width: 35px;
-  height: 35px;
+  // width: 35px;
+  // height: 35px;
 
-  border-radius: 50%;
-  border: 4px solid @black;
-  border-color: @black transparent @black transparent;
+  // border-radius: 50%;
+  // border: 4px solid @black;
+  // border-color: @black transparent @black transparent;
 
-  animation: spinner 1.2s linear infinite;
+  // animation: spinner 1.2s linear infinite;
 }
 
 .setInteractiveColor(@prop, @color-hover, @color-active) {
