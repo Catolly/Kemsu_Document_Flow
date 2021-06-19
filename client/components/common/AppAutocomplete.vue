@@ -190,7 +190,7 @@ export default {
 			return this.options.filter(item =>
 				String(item.value)
           .toLowerCase()
-          .startsWith(
+          .includes(
             String(this.value).toLowerCase()
           )
 				&& String(item.value).toLowerCase() != String(this.value).toLowerCase()
