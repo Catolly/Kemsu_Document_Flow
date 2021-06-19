@@ -27,6 +27,7 @@
       />
 
       <div
+        v-show="!loading"
         :class="{'rotate': isOpen && filteredOptions.length}"
         class="arrow"
         @click="focusIn($event)"
