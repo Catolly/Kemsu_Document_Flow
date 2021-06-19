@@ -8,7 +8,6 @@
         <app-autocomplete
           v-model="$v.fullnameAndGroup.$model"
           :options="unregisteredStudentsOptionList"
-          placeholder="Ф.И.О."
           :loading="unregisteredStudentsLoading"
           :errorMessages="[
             ... $v.fullnameAndGroup.$dirty
@@ -26,6 +25,10 @@
                 ? ['Не удалось загрузить список пользователей']
                 : [],
           ]"
+          :messages="[
+            'Поиск может занять некоторое время',
+          ]"
+          placeholder="Ф.И.О."
           @input="reset($v.fullnameAndGroup)"
           @change="checkField($v.fullnameAndGroup)"
         />
