@@ -1,9 +1,4 @@
 /*
-** Font-family
-/* ******************* */
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display=swap');
-
-/*
 ** Font sizes
 /* ******************* */
 @fz-large: 20px;
@@ -20,3 +15,26 @@
 @fw-medium: 500;
 @fw-normal: 400;
 @fw-light: 300;
+
+/*
+** Font-family
+/* ******************* */
+// @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display=swap');
+
+@font-face {
+  font-family: 'Montserrat';
+  src:  url('./fonts/Montserrat-Light.woff2') format('woff2');
+  font-weight: 300;
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  src:  url('./fonts/Montserrat-Regular.woff2') format('woff2');
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  src:  url('./fonts/Montserrat-Medium.woff2') format('woff2');
+  font-weight: 500;
+}
