@@ -18,6 +18,8 @@
             ... $v.fullnameAndGroup.$dirty
                 && $v.fullnameAndGroup.required
                 && !$v.fullnameAndGroup.exist
+                && !fetchUnregisteredStudentsError
+                && !unregisteredStudentsLoading
                 ? ['Такого студента или группы не существует']
                 : [],
             ... fetchUnregisteredStudentsError
