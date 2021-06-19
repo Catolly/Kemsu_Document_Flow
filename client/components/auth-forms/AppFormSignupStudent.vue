@@ -229,16 +229,18 @@ export default {
         .finally(() => this.submitLoading = false)
     },
 
-    fetchUnregisteredStudents: _.throttle(async function() {
-      this.$store
-        .dispatch(FETCH_UNREGISTERED_STUDENTS, {
-          search: this.fullname,
-          limit: 4,
-        })
-        .catch(error => {
-          console.error(error)
-          this.fetchUnregisteredStudentsError = error
-        })
+    fetchUnregisteredStudents: _.debounce(async function() {
+      try {
+        await this.$store
+          .dispatch(FETCH_UNREGISTERED_STUDENTS, {
+            search: this.fullname,
+            limit: 4,
+          })
+      } catch (error) {
+        console.error(error)
+        this.fetchUnregisteredStudentsError = error
+      } finally {
+      }
     }, 500)
   },
 
