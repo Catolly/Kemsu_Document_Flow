@@ -64,6 +64,16 @@
         Заявление подписано
       </h2>
 
+      <div
+        v-else-if="autosent"
+        class="sent">
+        <p>
+          Пункт был автоматически
+          <br>
+          отправлен на подписание
+        </p>
+      </div>
+
       <app-bypass-sheet-point-form
         v-else-if="[
           bypassSheetStatus.Rejected,
@@ -74,19 +84,19 @@
         class="send-form"
       />
 
-			<div v-else class="sent">
-				<p>
-					Ваши документы на проверке,
+      <div v-else class="sent">
+        <p>
+          Ваши документы на проверке,
           <br>
           вы можете
-					<a
+          <a
             @click="point.status = bypassSheetStatus.NotSent"
             class="cancel-link"
           >
             переотправить их
           </a>
-				</p>
-			</div>
+        </p>
+      </div>
 		</div>
 	</app-list-item>
 </template>
@@ -157,11 +167,17 @@ export default {
 
     classObj() {
       return {
-        'green': this.point.status === bypassSheetStatus.Signed,
-        'red': this.point.status === bypassSheetStatus.Rejected,
-        'disabled': this.point.status === bypassSheetStatus.Reviewing,
+        'green': this.point.status === this.bypassSheetStatus.Signed,
+        'red': this.point.status === this.bypassSheetStatus.Rejected,
+        'disabled': this.point.status === this.bypassSheetStatus.Reviewing
+          || this.autosent,
         'is-open' : this.isOpen,
       }
+    },
+
+    autosent() {
+      return (this.point.status === bypassSheetStatus.NotSent)
+      && !this.point.uploadDocumentsFormat.length
     },
 
     bypassSheetStatus() {
