@@ -60,8 +60,10 @@ export default {
         .forEach(point => {
           point.uploadedDocuments = []
           if (point.uploadDocumentsFormat.length === 0
-              && point.status === this.bypassSheetStatus.NotSent)
-            point.status = this.bypassSheetStatus.Reviewing
+              && point.status === this.bypassSheetStatus.Rejected)
+            point.uploadDocumentsFormat.push({
+              title: 'Необходимые документы'
+            })
         })
     }
     catch (error) {
