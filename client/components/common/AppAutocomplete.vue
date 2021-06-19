@@ -18,6 +18,7 @@
         :type="type"
         :required="required"
         :small="small"
+        :loading="loading"
         :disabled="disabled"
         :error-messages="errorMessages"
         :messages="messages"
@@ -87,6 +88,11 @@ export default {
 		},
 
     small: {
+      type: Boolean,
+      default: false
+    },
+
+    loading: {
       type: Boolean,
       default: false
     },
