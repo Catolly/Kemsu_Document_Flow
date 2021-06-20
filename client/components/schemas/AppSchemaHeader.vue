@@ -65,6 +65,11 @@ export default {
   background: @grey-bright;
 }
 
+.title {
+  font-size: @fz-large;
+  font-weight: @fw-normal;
+}
+
 .icons {
   display: flex;
   align-items: center;

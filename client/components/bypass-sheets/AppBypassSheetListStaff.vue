@@ -121,6 +121,7 @@ export default {
 }
 
 .bypass-sheet-title {
-	font-size: @fz-normal;
+  font-size: @fz-large;
+  font-weight: @fw-normal;
 }
 </style>

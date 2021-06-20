@@ -8,6 +8,7 @@
       <app-checkbox
         :value="student.checked"
         @input="student.checked ? $emit('uncheck', student) : $emit('check', student)"
+        class="checkbox"
       />
       <div class="student-info">
         <span class="student-fullname">
@@ -24,6 +25,12 @@
           :files="student.point.uploadedDocuments"
           class="student-documents"
         />
+      </div>
+
+      <div v-if="student.point.deadline" class="deadline">
+        Срок заполнения:
+        <br>
+        до {{student.point.deadline}}
       </div>
 
       <div v-if="student.point" class="sign-btns">
@@ -116,6 +123,10 @@ export default {
   padding-bottom: 24px;
 }
 
+.checkbox {
+  flex-shrink: 0;
+}
+
 .student-info {
   display: flex;
   flex-direction: column;
@@ -127,6 +138,16 @@ export default {
 
 .student-documents {
   margin-top: 8px;
+}
+
+.deadline {
+  flex-shrink: 0;
+  margin: 0 .5em;
+  max-width: 120px;
+  line-height: 135%;
+
+  font-size: @fz-small;
+  color: @grey-darkset;
 }
 
 .sign-btns {
