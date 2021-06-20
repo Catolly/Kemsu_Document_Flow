@@ -99,6 +99,9 @@ export const BypassSheetsSchemasService = {
       'titles' + (educationForm && `?educationForm=${educationForm}`)
     )
   },
+  getDeadlines() {
+    ApiService.setHeader()
+    return ApiService.get('bypass_sheets_schema/deadlines')
   },
   post(params) {
     ApiService.setHeader()
