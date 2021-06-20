@@ -67,8 +67,8 @@ const actions = {
     }
   },
   async [FETCH_BYPASS_SHEETS_SCHEMAS_TITLES](context, {
-      educationForm,
-    }) {
+      educationForm = '',
+    } = {}) {
     try {
       await context.dispatch(WAIT_FOR, 'checkingAuth')
       const { data } = await BypassSheetsSchemasService.getTitles(educationForm)

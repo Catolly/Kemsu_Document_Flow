@@ -3,6 +3,9 @@
     <template v-if="sheet">
   		<div class="head">
         <h1 class="header">Обходной лист - {{sheet.title}}</h1>
+        <span v-if="sheet.deadline" class="deadline">
+          Срок заполнения обходного листа: до {{sheet.deadline}}
+        </span>
         <span v-if="fetchSheetError" class="error-message">
           Не удалось загрузить обходной лист
         </span>
@@ -100,6 +103,12 @@ export default {
 
 .head {
   gap: .5em;
+}
+
+.deadline {
+  line-height: 135%;
+
+  color: @grey-darkset;
 }
 </style>
 

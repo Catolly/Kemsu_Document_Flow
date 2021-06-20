@@ -9,12 +9,23 @@
     <nuxt-link
     to="/contacts"
     class="nav-link">Контакты</nuxt-link>
+    <nuxt-link
+    v-if="extended"
+    to="/deadlines"
+    class="nav-link">Сроки</nuxt-link>
   </nav>
 </template>
 
 <script>
 export default {
-  name: 'AppNavStaff'
+  name: 'AppNavStaff',
+
+  props: {
+    extended: {
+      type: Boolean,
+      default: false,
+    },
+  },
 }
 </script>
 

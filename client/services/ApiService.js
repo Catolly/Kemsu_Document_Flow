@@ -92,9 +92,16 @@ export const BypassSheetsSchemasService = {
       'bypass_sheets_schema' + (department ? `?department=${department}` : '')
     )
   },
-  getTitles(educationForm) { //department=''
+  getTitles(educationForm='') { //department=''
     ApiService.setHeader()
-    return ApiService.get(`bypass_sheets_schema`, `titles?educationForm=${educationForm}`)
+    return ApiService.get(
+      `bypass_sheets_schema`,
+      'titles' + (educationForm && `?educationForm=${educationForm}`)
+    )
+  },
+  getDeadlines() {
+    ApiService.setHeader()
+    return ApiService.get('bypass_sheets_schema/deadlines')
   },
   post(params) {
     ApiService.setHeader()
@@ -103,6 +110,10 @@ export const BypassSheetsSchemasService = {
   patch(id, params) {
     ApiService.setHeader()
     return ApiService.patch(`bypass_sheets_schema/${id}/`, params)
+  },
+  patchDeadlines(id, params) {
+    ApiService.setHeader()
+    return ApiService.patch(`bypass_sheets_schema/deadlines/${id}/`, params)
   },
   delete(id) {
     ApiService.setHeader()

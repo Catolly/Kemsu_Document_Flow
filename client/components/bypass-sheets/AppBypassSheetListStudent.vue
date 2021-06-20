@@ -30,6 +30,15 @@
 				<div class="bypass-sheet-title">
 					{{ sheet.title }}
 				</div>
+
+<!--         <div v-if="sheet.deadline" class="deadline">
+          {{ sheet.deadline }}
+        </div> -->
+        <div class="deadline">
+          Срок заполнения:
+          <br>
+          до 25/06/2021
+        </div>
 			</app-list-item>
 		</app-list>
 	</div>
@@ -114,6 +123,15 @@ export default {
 }
 
 .bypass-sheet-title {
-	font-size: @fz-normal;
+	font-size: @fz-large;
+  font-weight: @fw-normal;
+}
+
+.deadline {
+  margin: 0 1em;
+  line-height: 135%;
+
+  font-size: @fz-small;
+  color: @grey-darkset;
 }
 </style>
