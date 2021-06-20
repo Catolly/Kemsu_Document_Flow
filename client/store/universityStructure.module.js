@@ -99,7 +99,7 @@ const actions = {
         })
     })
   },
-  async [FETCH_GROUPS](context, prevGroups) {
+  async [FETCH_GROUPS](context, prevGroups=[]) {
     if (prevGroups.length !== 0) {
       return context.commit(SET_GROUPS, prevGroups)
     }
