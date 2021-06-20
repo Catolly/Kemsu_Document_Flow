@@ -7,7 +7,7 @@
       </div>
 
       <app-nav-student v-if="Role.isStudent" />
-      <app-nav-staff v-if="Role.isStaff" />
+      <app-nav-staff v-if="Role.isStaff" :extended="isDirectorate" />
       <app-nav-admin v-if="Role.isAdmin" />
 
       <div class="links">
@@ -60,10 +60,14 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['Role']),
+    ...mapGetters(['Role', 'currentUser']),
 
     telegramHelpUrl() {
       return telegramHelpUrl
+    },
+
+    isDirectorate() {
+      return this.currentUser.department.includes('Дирекция')
     },
   },
 }
