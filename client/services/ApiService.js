@@ -92,9 +92,13 @@ export const BypassSheetsSchemasService = {
       'bypass_sheets_schema' + (department ? `?department=${department}` : '')
     )
   },
-  getTitles(educationForm) { //department=''
+  getTitles(educationForm='') { //department=''
     ApiService.setHeader()
-    return ApiService.get(`bypass_sheets_schema`, `titles?educationForm=${educationForm}`)
+    return ApiService.get(
+      `bypass_sheets_schema`,
+      'titles' + (educationForm && `?educationForm=${educationForm}`)
+    )
+  },
   },
   post(params) {
     ApiService.setHeader()
