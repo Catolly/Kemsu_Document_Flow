@@ -237,7 +237,6 @@ export default {
     },
 
     fetchUnregisteredStudents: _.debounce(async function() {
-      if (this.$v.fullnameAndGroup.exist) return
       this.unregisteredStudentsLoading = true
       try {
         await this.$store
