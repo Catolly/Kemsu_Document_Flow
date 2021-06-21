@@ -199,11 +199,11 @@ export default {
 	},
 
 	mounted() {
-		document.addEventListener('click', this.handleClickOutside)
+		document.addEventListener('mousedown', this.handleClickOutside)
 	},
 
 	destroyed() {
-		document.removeEventListener('click', this.handleClickOutside)
+		document.removeEventListener('mousedown', this.handleClickOutside)
 	},
 }
 </script>
