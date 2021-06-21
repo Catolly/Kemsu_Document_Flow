@@ -31,13 +31,10 @@
 					{{ sheet.title }}
 				</div>
 
-<!--         <div v-if="sheet.deadline" class="deadline">
-          {{ sheet.deadline }}
-        </div> -->
-        <div class="deadline">
+        <div v-if="sheet.deadline" class="deadline">
           Срок заполнения:
           <br>
-          до 25/06/2021
+          до {{ sheet.deadline }}
         </div>
 			</app-list-item>
 		</app-list>
