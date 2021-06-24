@@ -35,6 +35,14 @@
       </app-button>
     </div>
 
+    <app-status-table-row-details
+      v-show="isOpen"
+      :sheet="sheet"
+      :signedPointsTitles="signedPointsTitles"
+      :rejectedPointsTitles="rejectedPointsTitles"
+      :reviewingPointsTitles="reviewingPointsTitles"
+      :notSentPointsTitles="notSentPointsTitles"
+      class="details"
     />
   </div>
 </template>
@@ -42,12 +50,14 @@
 <script>
 import bypassSheetStatus from '~/services/bypassSheetStatus'
 
+import AppStatusTableRowDetails from '~/components/status/AppStatusTableRowDetails'
 import AppButton from '~/components/common/AppButton'
 
 export default {
   name: 'AppStatusTableRow',
 
   components: {
+    AppStatusTableRowDetails,
     AppButton,
   },
 
