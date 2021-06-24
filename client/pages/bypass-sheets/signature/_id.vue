@@ -6,17 +6,28 @@
           {{bypassSheetsSchema.title}}
         </h1>
         <span
-          v-if="
-            fetchGroupsError
-            || fetchUsersError
-            || fetchSchemaError
-            || updateBypassSheetsError"
+          v-if="fetchGroupsError"
           class="error-message"
         >
-          {{ fetchGroupsError ? 'Не удалось загрузить список групп'  : '' }}
-          {{ fetchUsersError ? 'Не удалось загрузить список студентов'  : '' }}
-          {{ fetchSchemaError ? 'Не удалось загрузить обходной лист'  : '' }}
-          {{ updateBypassSheetsError ? 'Не удалось сохранить обходной лист'  : '' }}
+          {{fetchGroupsError ? 'Не удалось загрузить список групп'  : ''}}
+        </span>
+        <span
+          v-if="fetchUsersError"
+          class="error-message"
+        >
+          {{fetchUsersError ? 'Не удалось загрузить список студентов'  : ''}}
+        </span>
+        <span
+          v-if="fetchSchemaError"
+          class="error-message"
+        >
+          {{fetchSchemaError ? 'Не удалось загрузить обходной лист'  : ''}}
+        </span>
+        <span
+          v-if="updateBypassSheetsError"
+          class="error-message"
+        >
+          {{updateBypassSheetsError ? 'Не удалось сохранить обходной лист'  : ''}}
         </span>
 
         <span v-else-if="currentPoint">
