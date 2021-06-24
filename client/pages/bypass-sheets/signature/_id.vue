@@ -364,6 +364,9 @@ export default {
     },
     //
 
+    fetchUsersDebounced: _.debounce(function() {
+      this.fetchUsers()
+    }, 500),
 
     async fetchUsers() {
       if (!this.bypassSheetsSchema) return
