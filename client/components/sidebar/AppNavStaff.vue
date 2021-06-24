@@ -13,6 +13,10 @@
     v-if="extended"
     to="/deadlines"
     class="nav-link">Сроки</nuxt-link>
+    <nuxt-link
+    v-if="extended"
+    to="/status"
+    class="nav-link">Статус</nuxt-link>
   </nav>
 </template>
 
