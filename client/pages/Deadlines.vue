@@ -1,7 +1,7 @@
 <template>
   <roleStaff class="deadlines">
     <div class="header">
-      <h1 class="header">Сроки</h1>
+      <h1>Сроки</h1>
       <span v-if="fetchDeadlinesError" class="error-message">
         Не удалось загрузить обходные листы
       </span>
