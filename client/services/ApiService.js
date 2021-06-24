@@ -167,7 +167,7 @@ export const UsersService = {
 
 export const errorCode = error => error.toString().split(' ').reverse()[0]
 
-const URLfromParams = params => Object.entries(params)
+const URLfromParams = (params=[]) => Object.entries(params)
   .map(([key, value]) => value ? `&${key}=${value}` : '')
   .join('')
   .slice(1)
