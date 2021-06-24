@@ -51,6 +51,8 @@
           :searchText="searchText"
           @search="search"
 
+          :isLoading="fetchingUsers"
+
           class="topbar"
         />
 
@@ -66,6 +68,7 @@
 
         <app-student-list
           v-if="studentList.length"
+          v-show="!fetchingUsers"
           :studentList="studentList"
           @check="check"
           @uncheck="uncheck"
@@ -73,9 +76,17 @@
           @reject="openRejectForm"
         />
 
-        <h2 v-else class="empty-message">
+        <h2
+          v-else
+          v-show="!fetchingUsers"
+          class="empty-message"
+        >
           Обходных листов не было найдено
         </h2>
+
+        <div class="loading-spinner-inner">
+          <div v-show="fetchingUsers" class="loading-spinner" />
+        </div>
 
         <app-modal
           v-show="rejectForm.isOpen"
@@ -159,13 +170,12 @@ export default {
     fetchSchemaError: '',
     updateBypassSheetsError: '',
 
-    fetchUsersLoading: false,
+    fetchingUsers: false,
 
     FilterService: null,
   }),
 
   async fetch() {
-    this.fetchUsersLoading = true
     try {
       await Promise.all([
         this.fetchSchema(),
@@ -174,8 +184,6 @@ export default {
       this.FilterService = initFilterService(this.groups)
     } catch (error) {
       console.error(error)
-    } finally {
-      this.fetchUsersLoading = false
     }
   },
 
@@ -214,10 +222,6 @@ export default {
       )
     },
 
-    bypassSheetStatus() {
-      return bypassSheetStatus
-    },
-
     checkedStudentsId() {
       return this.checkedStudents
         .map(checkedStudent => checkedStudent.id)
@@ -229,23 +233,27 @@ export default {
       return this.bypassSheetsSchema
         .points
           .find(point => point.title === this.currentUser.department)
-    }
+    },
+
+    bypassSheetStatus() {
+      return bypassSheetStatus
+    },
   },
 
   watch: {
     filterPath() {
       this.page = 0
-      this.findUsers()
+      this.fetchUsers()
     },
     searchText() {
       this.page = 0
-      this.findUsers()
+      this.fetchUsersDebounced()
     },
     page() {
-      this.findUsers()
+      this.fetchUsers()
     },
     itemsPerPage() {
-      this.findUsers()
+      this.fetchUsers()
     },
     studentList() {
       this.checkAttachedStudents()
@@ -356,16 +364,22 @@ export default {
     },
     //
 
-    async findUsers() {
-      this.fetchUsersError = ''
+
+    async fetchUsers() {
       if (!this.bypassSheetsSchema) return
       if (this.itemsPerPage === 0) return
+      if (this.fetchingUsers) return
+
+      this.fetchUsersError = ''
+      this.fetchingUsers = true
+
       try {
         const [
           institute,
           course,
           group
         ] = this.filters.map(filter => filter)
+
         await this.$store
           .dispatch(FETCH_USERS, {
             bypassSheet: this.bypassSheetsSchema.title,
@@ -377,10 +391,13 @@ export default {
             offset: this.page * this.itemsPerPage,
             limit: this.itemsPerPage
           })
+
         this.studentList = copy(this.$store.getters.users)
       } catch (error) {
         console.error(error)
         this.fetchUsersError = error
+      } finally {
+        this.fetchingUsers = false
       }
     },
 
@@ -442,6 +459,8 @@ export default {
     display: flex;
     flex-direction: column;
     gap: 24px;
+
+    position: relative;
   }
 
   .head {
@@ -458,6 +477,17 @@ export default {
 
   .empty-message {
     margin-top: 1em;
+  }
+
+  .loading-spinner-inner {
+    height: 100%;
+
+    position: relative;
+    margin-bottom: 20%;
+  }
+
+  .loading-spinner {
+    .spinner();
   }
 }
 
