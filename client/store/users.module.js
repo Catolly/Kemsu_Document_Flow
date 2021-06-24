@@ -51,7 +51,7 @@ const actions = {
       context.commit(SET_USERS_AMOUNT, studentsAmount)
       return students
     } catch (error) {
-      context.commit(SET_ERROR, errors)
+      context.commit(SET_ERROR, error)
       throw error
     }
   },
