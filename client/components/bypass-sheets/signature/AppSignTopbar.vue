@@ -9,6 +9,7 @@
 
     <app-button
       class="btn plain"
+      :disabled="isLoading"
       @click="$emit('checkAll')"
     >
       Выбрать всех
@@ -50,7 +51,12 @@ export default {
     },
     searchText: {
       type: String,
-    }
+      default: '',
+    },
+    isLoading: {
+      type: Boolean,
+      default: false,
+    },
   },
 }
 </script>
