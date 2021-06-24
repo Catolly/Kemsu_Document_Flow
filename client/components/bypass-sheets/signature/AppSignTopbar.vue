@@ -9,6 +9,7 @@
 
     <app-button
       class="btn plain"
+      :disabled="isLoading"
       @click="$emit('checkAll')"
     >
       Выбрать всех
@@ -23,7 +24,7 @@
 
     <app-search
       :value="searchText"
-      @change="$emit('search', $event)"
+      @input="$emit('search', $event)"
       round
       small
       class="search"
@@ -50,7 +51,12 @@ export default {
     },
     searchText: {
       type: String,
-    }
+      default: '',
+    },
+    isLoading: {
+      type: Boolean,
+      default: false,
+    },
   },
 }
 </script>

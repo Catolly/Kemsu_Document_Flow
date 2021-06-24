@@ -70,9 +70,11 @@
       </div>
 
 			<div class="btns-wrapper">
-				<app-button class="btn btn-cancel red">
-					Отмена
-				</app-button>
+        <nuxt-link to="../" append class="clear">
+  				<app-button class="btn btn-cancel red" tabindex="0">
+  					Отмена
+  				</app-button>
+        </nuxt-link>
 				<app-button
           class="btn btn-submit blue filled"
           :disabled="$v.$invalid"
