@@ -187,14 +187,27 @@ export default {
     fullnameAndGroup() {
       this.fetchUnregisteredStudentsError = ''
 
-      this.fullname = this.fullnameAndGroup.split(this.divider)[0]
-      this.group = this.fullnameAndGroup.split(this.divider)[1]
+      const reversedFullnameAndGroup = this.reverseString(this.fullnameAndGroup)
+
+      this.fullname = reverseString(
+        reversedFullnameAndGroup.split(this.divider)[0]
+      )
+      this.group = reverseString(
+        reversedFullnameAndGroup.split(this.divider)[1]
+      )
 
       this.fetchUnregisteredStudents()
     },
   },
 
   methods: {
+    reverseString(string) {
+      return string
+        .split('')
+        .reverse()
+        .join('')
+    },
+
     reset($v) {
       if (!$v.required) return
 
