@@ -189,10 +189,10 @@ export default {
 
       const reversedFullnameAndGroup = this.reverseString(this.fullnameAndGroup)
 
-      this.fullname = reverseString(
+      this.fullname = this.reverseString(
         reversedFullnameAndGroup.split(this.divider)[0]
       )
-      this.group = reverseString(
+      this.group = this.reverseString(
         reversedFullnameAndGroup.split(this.divider)[1]
       )
 
