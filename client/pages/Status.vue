@@ -1,5 +1,5 @@
 <template>
-  <roleStaff class="status">
+  <roleAdminStaff class="status">
     <div class="header">
       <h1>Статус обходного листа</h1>
       <span v-if="fetchUsersError" class="error-message">
@@ -34,7 +34,7 @@
       v-show="fetchingUsers"
       class="loading-spinner"
     />
-  </roleStaff>
+  </roleAdminStaff>
 </template>
 
 <script>
@@ -45,7 +45,7 @@ import { BypassSheetsSchemasService } from '~/services/ApiService'
 
 import { mapGetters } from 'vuex'
 
-import roleStaff from '~/components/roles/roleStaff'
+import roleAdminStaff from '~/components/roles/roleAdminStaff'
 
 import AppStatusTable from '~/components/status/AppStatusTable'
 import AppStatusTopbar from '~/components/status/AppStatusTopbar'
@@ -56,7 +56,7 @@ export default {
   middleware: 'authenticated',
 
   components: {
-    roleStaff,
+    roleAdminStaff,
     AppStatusTable,
     AppStatusTopbar,
   },
