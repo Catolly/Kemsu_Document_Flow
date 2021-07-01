@@ -141,6 +141,7 @@ export default {
     async fetchUsers() {
       try {
         if (this.fetchingUsers) return
+        if (!this.sheetsTitle.length) return
         this.fetchingUsers = true
         const { data } = await this.UsersService.get({
           title: this.currentSheetTitle,
