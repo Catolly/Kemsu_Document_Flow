@@ -66,6 +66,9 @@ export default {
   grid-template-columns: 100%;
   grid-row-gap: .5em;
 
+  overflow-y: auto;
+  padding-bottom: 1em;
+
   .header {
     padding-bottom: 1em;
   }
@@ -73,9 +76,10 @@ export default {
   .row {
     display: grid;
     grid-template-columns:
-      350px
-      repeat(3, 150px)
-      repeat(2, 210px)
+      minmax(200px, 320px)
+      repeat(3, minmax(120px, 1fr))
+      minmax(150px, 1fr)
+      repeat(2, minmax(120px, 1fr))
       60px;
   }
 
@@ -86,7 +90,7 @@ export default {
       padding-left: 0;
     }
 
-    font-size: @fz-large;
+    font-size: @fz-normal;
     font-weight: @fw-normal;
     line-height: 135%;
 
@@ -102,6 +106,14 @@ export default {
 
     &.grey {
       color: @grey-darkset;
+    }
+  }
+}
+
+@media all and (max-width: 1450px) {
+  .app-status-table {
+    .item {
+      font-size: @fz-small;
     }
   }
 }

@@ -174,21 +174,16 @@ export default {
   flex-direction: column;
 }
 
+.header {
+  gap: .5em;
+}
+
 .status {
   padding-top: 3em;
 
   display: flex;
   flex-direction: column;
   gap: 2em;
-
-  &-topbar,
-  &-table {
-    width: 1300px;
-  }
-}
-
-.header {
-  gap: .5em;
 }
 
 .loading-spinner {
