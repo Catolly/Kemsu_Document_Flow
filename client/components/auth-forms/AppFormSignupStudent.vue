@@ -141,7 +141,7 @@ export default {
     group: '',
     email: '',
     password: '',
-    divider: ' - ', // Разделяет fullname и group
+    divider: ' — ', // Разделяет fullname и group
 
     minPasswordLength: minPasswordLength,
 
@@ -187,32 +187,14 @@ export default {
     fullnameAndGroup() {
       this.fetchUnregisteredStudentsError = ''
 
-      const reversedFullnameAndGroup = this.reverseString(this.fullnameAndGroup)
-      console.log(reversedFullnameAndGroup)
-      if (reversedFullnameAndGroup.split(this.divider).length > 1) {
-        this.fullname = this.reverseString(
-          reversedFullnameAndGroup.split(this.divider)[1]
-        )
-        this.group = this.reverseString(
-          reversedFullnameAndGroup.split(this.divider)[0]
-        )
-      }
-      else {
-        this.fullname = this.fullnameAndGroup
-      }
+      this.fullname = this.fullnameAndGroup.split(this.divider)[0]
+      this.group = this.fullnameAndGroup.split(this.divider)[1]
 
       this.fetchUnregisteredStudents()
     },
   },
 
   methods: {
-    reverseString(string) {
-      return string
-        .split('')
-        .reverse()
-        .join('')
-    },
-
     reset($v) {
       if (!$v.required) return
 
