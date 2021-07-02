@@ -98,8 +98,10 @@ export default {
 
   computed: {
     sheet() {
-      return this.user
-        .bypassSheets
+      if (this.user.bypassSheet) return this.user.bypassSheet
+        .find(sheet => sheet.title === this.schemaTitle)
+
+      return this.user.bypassSheets
         .find(sheet => sheet.title === this.schemaTitle)
     },
 
