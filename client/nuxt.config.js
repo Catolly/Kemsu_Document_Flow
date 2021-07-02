@@ -63,7 +63,7 @@ module.exports = {
   },
 
   // Target configuration
-  // target: 'static',
   debug: true,
+  target: 'static',
 }
 
