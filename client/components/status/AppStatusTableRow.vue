@@ -25,13 +25,22 @@
     </div>
 
     <div class="item">
-      <app-button
-        blue
-        plain
-        class="print-btn"
+      <nuxt-link
+        :to="{
+          path: `/print/${user.id}`,
+          query: { name: schemaTitle }
+        }"
+        target="_blank"
+        class="clear"
       >
-        Распечатать
-      </app-button>
+        <app-button
+          blue
+          plain
+          class="print-btn"
+        >
+          Распечатать
+        </app-button>
+      </nuxt-link>
     </div>
 
     <div class="item">
