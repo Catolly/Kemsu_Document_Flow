@@ -1,7 +1,7 @@
 <template>
 	<div v-if="isAuthenticated" class="container">
-		<app-sidebar class="app-sidebar"/>
-		<div class="content-wrapper">
+		<app-sidebar v-if="!isPrintPage" class="app-sidebar"/>
+		<div class="content-wrapper" :class="{'no-margin': isPrintPage}">
 			<Nuxt class="content" />
 		</div>
 	</div>
@@ -30,6 +30,10 @@ export default {
 
   computed: {
     ...mapGetters(['isAuthenticated']),
+
+    isPrintPage() {
+      return this.$route.name === 'print-id'
+    },
   },
 
   beforeMount() {
@@ -49,6 +53,9 @@ export default {
 }
 
 .content-wrapper {
+  &.no-margin {
+    margin-left: 0;
+  }
 	margin-left: @app-sidebar-width;
 
 	height: fit-content;

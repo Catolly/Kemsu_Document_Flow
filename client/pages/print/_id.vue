@@ -41,7 +41,7 @@ import roleAdminStaff from '~/components/roles/roleAdminStaff'
 export default {
   name: 'print',
 
-  layout: 'printLayout',
+  // layout: 'printLayout',
 
   components: {
     roleAdminStaff,
@@ -92,6 +92,10 @@ export default {
   },
 
   methods: {
+    print() {
+      setTimeout(window.print, 600)
+    },
+
     getUser() {
       return UsersService.getById(this.userId)
     },
@@ -102,10 +106,7 @@ export default {
     this.user = data
     this.sheet = this.user.bypassSheets
       .find(sheet => sheet.title === this.sheetName)
-  },
-
-  mounted() {
-    setTimeout(window.print, 500)
+    this.print()
   },
 }
 </script>
