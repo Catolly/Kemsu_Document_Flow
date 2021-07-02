@@ -190,10 +190,10 @@ export default {
       const reversedFullnameAndGroup = this.reverseString(this.fullnameAndGroup)
 
       this.fullname = this.reverseString(
-        reversedFullnameAndGroup.split(this.divider)[0]
+        reversedFullnameAndGroup.split(this.divider)[1]
       )
       this.group = this.reverseString(
-        reversedFullnameAndGroup.split(this.divider)[1]
+        reversedFullnameAndGroup.split(this.divider)[0]
       )
 
       this.fetchUnregisteredStudents()
