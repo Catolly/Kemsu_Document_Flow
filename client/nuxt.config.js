@@ -63,6 +63,6 @@ module.exports = {
   },
 
   // Target configuration
-  target: 'static',
+  // target: 'static',
 }
 
