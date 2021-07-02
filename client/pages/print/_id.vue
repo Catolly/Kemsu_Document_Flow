@@ -41,7 +41,7 @@ import roleAdminStaff from '~/components/roles/roleAdminStaff'
 export default {
   name: 'print',
 
-  layout: 'print',
+  layout: 'printLayout',
 
   components: {
     roleAdminStaff,

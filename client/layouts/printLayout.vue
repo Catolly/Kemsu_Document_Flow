@@ -1,6 +1,6 @@
 <template>
   <div>
-    <NuxtChild />
+    <Nuxt />
   </div>
 </template>
 
@@ -9,7 +9,7 @@ import { mapGetters } from "vuex"
 import { CHECK_AUTH } from '~/store/actions.type'
 
 export default {
-  name: 'print',
+  name: 'printLayout',
 
   computed: {
     ...mapGetters(['isAuthenticated']),
