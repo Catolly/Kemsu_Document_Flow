@@ -188,13 +188,18 @@ export default {
       this.fetchUnregisteredStudentsError = ''
 
       const reversedFullnameAndGroup = this.reverseString(this.fullnameAndGroup)
-
-      this.fullname = this.reverseString(
-        reversedFullnameAndGroup.split(this.divider)[1]
-      )
-      this.group = this.reverseString(
-        reversedFullnameAndGroup.split(this.divider)[0]
-      )
+      console.log(reversedFullnameAndGroup)
+      if (reversedFullnameAndGroup.split(this.divider).length > 1) {
+        this.fullname = this.reverseString(
+          reversedFullnameAndGroup.split(this.divider)[1]
+        )
+        this.group = this.reverseString(
+          reversedFullnameAndGroup.split(this.divider)[0]
+        )
+      }
+      else {
+        this.fullname = this.fullnameAndGroup
+      }
 
       this.fetchUnregisteredStudents()
     },
