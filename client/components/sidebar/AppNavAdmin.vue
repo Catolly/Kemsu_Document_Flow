@@ -12,6 +12,9 @@
     <nuxt-link
     to="/contacts"
     class="nav-link">Контакты</nuxt-link>
+    <nuxt-link
+    to="/status"
+    class="nav-link">Статус</nuxt-link>
   </nav>
 </template>
 

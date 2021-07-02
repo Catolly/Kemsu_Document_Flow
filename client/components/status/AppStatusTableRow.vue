@@ -25,6 +25,25 @@
     </div>
 
     <div class="item">
+      <nuxt-link
+        :to="{
+          path: `/print/${user.id}`,
+          query: { name: schemaTitle }
+        }"
+        target="_blank"
+        class="clear"
+      >
+        <app-button
+          blue
+          plain
+          class="print-btn"
+        >
+          Распечатать
+        </app-button>
+      </nuxt-link>
+    </div>
+
+    <div class="item">
       <app-button
         plain
         class="toggle-details-btn"
@@ -182,7 +201,7 @@ export default {
   }
 
   .toggle-details-btn {
-    width: 60px;
+    width: 40px;
     height: 60px;
 
     .plus {
@@ -197,6 +216,15 @@ export default {
   .details {
     grid-column: 1/-1;
     margin: .5em 0;
+  }
+}
+
+@media all and (max-width: 900px) {
+  .app-status-table-row {
+    .item,
+    .print-btn /deep/ * {
+      font-size: @fz-small;
+    }
   }
 }
 </style>

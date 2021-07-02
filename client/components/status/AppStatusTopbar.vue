@@ -91,6 +91,7 @@ export default {
 .row {
   display: flex;
   justify-content: space-between;
+  gap: 2em;
 }
 
 .search,
@@ -102,5 +103,9 @@ export default {
 .date-input {
   min-width: 200px;
   width: 300px;
+}
+
+.pagination {
+  flex-shrink: 0;
 }
 </style>

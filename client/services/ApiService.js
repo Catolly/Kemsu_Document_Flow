@@ -156,6 +156,11 @@ export const UsersService = {
     )
   },
 
+  getById(id) {
+    ApiService.setHeader()
+    return ApiService.get('users', id)
+  },
+
   getUnregistered(params) {
     const paramsURL = URLfromParams(params)
     return ApiService.query(
