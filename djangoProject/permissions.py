@@ -115,3 +115,21 @@ class BypassSheetTemplateViewPermission(permissions.BasePermission):
         else:
             if request.user.is_authenticated:
                 return bool(request.user and request.user.status == "Администратор")
+
+class UploadStudentsPermission(permissions.BasePermission):
+
+    def has_permission(self, request, view):
+        if request.user.is_authenticated:
+            return bool(request.user and request.user.is_superuser == True)
+
+class UpdateBypassSheetSchemaDeadline(permissions.BasePermission):
+
+    def has_permission(self, request, view):
+        if request.user.is_authenticated:
+            return bool(request.user and request.user.status == 'Работник')
+
+class GetBypassSheetsSchemaDeadline(permissions.BasePermission):
+
+    def has_permission(self, request, view):
+        if request.user.is_authenticated:
+            return bool(request.user and request.user.status == 'Работник')

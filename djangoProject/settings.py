@@ -26,7 +26,7 @@ SECRET_KEY = 'ei2^^94pc5@)y9@b&-()um8s3oyp*u-71k7lmi$$z*x!2#$5jg'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -89,17 +89,20 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 
+
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
+
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'PASSWORD': 'password',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'NAME': '',
+        'USER': '',
+        'PASSWORD': '',
+        'HOST': '',
+        'PORT': '',
     }
 }
 
@@ -141,6 +144,13 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+#STATICFILES_DIRS = (
+#    os.path.join(BASE_DIR, 'static'),
+#    )
+#STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+STATIC_ROOT = '/back_end/Kemsu_Document_Flow/static/admin' #to STATIC_ROOT = '/static/'
+
 AUTH_USER_MODEL = 'Kemsu_Document.User'
 
 AUTHENTICATION_BACKENDS = ('Kemsu_Document.backends.UsernameOrEmailBackend',)
@@ -153,13 +163,12 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+
 }
 CORS_ORIGIN_ALLOW_ALL = True
 
 CORS_ORIGIN_WHITELIST = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    "http://25.75.123.152:3000",
+    "http://82.179.12.177:3000",
 ]
 
 SIMPLE_JWT = {

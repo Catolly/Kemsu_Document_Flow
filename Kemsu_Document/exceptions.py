@@ -15,3 +15,6 @@ class UserWithThisFullNameDoesNotExistException(Exception):
 
 class UserWithThisEmailDoesNotExistException(Exception):
     pass
+
+class BypassSheetTemplateExistException(Exception):
+    pass

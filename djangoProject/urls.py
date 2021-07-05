@@ -25,7 +25,8 @@ from .views import (
     LogoutView, RefreshTokenView,
     LoginView, BypassSheetView, DepartmentsView, CheckAccessApiView,
     GroupApiView, BypassSheetsTemplateApiView, BypassSheetTemplateApiView, UnregisteredStudentListApiView,
-    UsersListView, BanApiView, UnbanApiView, BypassSheetTemplateTitle
+    UsersListView, BanApiView, UnbanApiView, BypassSheetTemplateTitle, UploadStudents,
+    BypassSheetSchemaDeadline, UpdateBypassSheetSchemaDeadline, DeleteExcessPointView
 )
 from rest_framework_simplejwt.views import TokenRefreshView
 
@@ -48,5 +49,9 @@ urlpatterns = [
     path('api/checkAccess', CheckAccessApiView.as_view(), name='check-access'),
     path('api/ban/<int:pk>/', BanApiView.as_view(), name='ban'),
     path('api/unban/<int:pk>', UnbanApiView.as_view(), name='unban'),
-    path('api/bypass_sheets_schema/titles', BypassSheetTemplateTitle.as_view(), name='bypass-sheet-template-title')
+    path('api/bypass_sheets_schema/titles', BypassSheetTemplateTitle.as_view(), name='bypass-sheet-template-title'),
+    path('api/upload_students', UploadStudents.as_view(), name='upload-students'),
+    path('api/bypass_sheets_schema/deadlines/', BypassSheetSchemaDeadline.as_view(), name='bypass_sheets_schema_deadline'),
+    path('api/bypass_sheets_schema/deadlines/<int:pk>/', UpdateBypassSheetSchemaDeadline.as_view(), name='bypass_sheets_schema_deadline_id'),
+    path('api/delete_points', DeleteExcessPointView.as_view(), name='delete-points')
 ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

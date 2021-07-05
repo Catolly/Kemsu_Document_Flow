@@ -1,4 +1,6 @@
-from datetime import time, datetime
+import openpyxl
+import time
+
 from django.db.models import QuerySet
 from rest_framework import status, permissions, viewsets
 from rest_framework.generics import GenericAPIView, ListCreateAPIView, UpdateAPIView
@@ -15,7 +17,7 @@ from Kemsu_Document.exceptions import GroupNotFoundError, ThisUserIsAlreadyExist
 from Kemsu_Document.models import (
     User, BypassSheet,
     Point, Student, Department, Institute, Group, BypassSheetTemplate, Staff, Statement, RequiredDocuments,
-    StatementsTemplate, PointTemplate, RequiredDocumentsTemplate, UploadDocumentsFormat
+    StatementsTemplate, PointTemplate, RequiredDocumentsTemplate, UploadDocumentsFormat, UploadedDocuments
 )
 
 from Kemsu_Document.serializers import (
@@ -26,13 +28,14 @@ from Kemsu_Document.serializers import (
     GroupSerializer, PostBypassSheetTemplateSerializer, BypassSheetTemplateSerializer, UnregisteredStudentSerializer,
     CheckAccessSerializer, UserBypassSheetSerializer, UserBypassSheetPointSerializer,
     StaffSerializer, UploadDocumentsSerializer, SigningPointSerializer, UpdateBypassSheetTemplateSerializer,
-    BypassSheetTemplateTitleSerializer
+    BypassSheetTemplateTitleSerializer, StudentTestSerializer, GetBypassSheetsSchemaDeadlinesSerializer,
+    PatchBypassSheetsSchemaDeadlinesSerializer
 )
 
 from .permissions import (
     BypassSheetsViewPermission, UsersViewPermission, BypassSheetViewPermission,
     UserViewPermission, BanUnbanPermission, UploadDocumentsPermission, DepartmentViewPermission, GroupViewPermission,
-    BypassSheetTemplateViewPermission, )
+    BypassSheetTemplateViewPermission, UploadStudentsPermission, UpdateBypassSheetSchemaDeadline, GetBypassSheetsSchemaDeadline )
 from .service import Pagination
 
 
@@ -316,235 +319,24 @@ class UnregisteredStudentListApiView(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         search = self.request.GET.get('search', '')
-        institute_title = self.request.GET.get('institute', '')
-        course = self.request.GET.get('course', '')
-        group_title = self.request.GET.get('group', '')
 
-        if institute_title != "" and course == "" and group_title == "":
+        if search != "":
 
-            students = Student.objects.filter(user=None)
-
-            institute = Institute.objects.get(title=institute_title)
-
-            groups = Group.objects.filter(institute=institute)
-
-            for group in groups:
-                students |= Student.objects.filter(group=group)
+            students = Student.objects.all().select_related('user')
 
             new_student_query = Student.objects.filter(user=None)
 
             users = User.objects.filter(id=None)
 
-            if search != "":
-                for student in students:
-                    if search.upper() in student.user.fullname.upper():
-                        new_student_query |= Student.objects.filter(user=student.user)
-
-                for student in new_student_query:
-                    if student.user.is_active == False:
-                        users |= User.objects.filter(id=student.user.id)
-                return users
-
             for student in students:
-                if student.user.is_active == False:
+                if ((search.upper() in student.user.fullname.upper()) and (student.user.is_active == False)):
+                    new_student_query |= Student.objects.filter(user=student.user)
+
+            for student in new_student_query:
                     users |= User.objects.filter(id=student.user.id)
-            return users
-
-        elif institute_title == "" and course != "" and group_title == "":
-
-            students = Student.objects.filter(user=None)
-
-            all_groups = Group.objects.all()
-            required_groups = Group.objects.filter(id=None)
-
-            for group in all_groups:
-                recruitment_data = group.recruitment_date
-
-                course_number = int(((datetime.now().date() - recruitment_data).days) // 365.2425) + 1
-
-                if course_number == int(course):
-                    required_groups |= Group.objects.filter(id=group.id)
-
-            for group in required_groups:
-                students |= Student.objects.filter(group=group)
-
-            new_student_query = Student.objects.filter(user=None)
-
-            users = User.objects.filter(id=None)
-
-            if search != "":
-                for student in students:
-                    if search.upper() in student.user.fullname.upper():
-                        new_student_query |= Student.objects.filter(user=student.user)
-
-                for student in new_student_query:
-                    if student.user.is_active == False:
-                        users |= User.objects.filter(id=student.user.id)
-                return users
-
-            for student in students:
-                if student.user.is_active == False:
-                    users |= User.objects.filter(id=student.user.id)
-            return users
-
-        elif institute_title == "" and course == "" and group_title != "":
-
-            students = Student.objects.filter(user=None)
-
-            groups = Group.objects.filter(name=group_title)
-
-            for group in groups:
-                students |= Student.objects.filter(group=group)
-
-            new_student_query = Student.objects.filter(user=None)
-
-            users = User.objects.filter(id=None)
-
-            if search != "":
-                for student in students:
-                    if search.upper() in student.user.fullname.upper():
-                        new_student_query |= Student.objects.filter(user=student.user)
-
-                for student in new_student_query:
-                    if student.user.is_active == False:
-                        users |= User.objects.filter(id=student.user.id)
-                return users
-
-            for student in students:
-                if student.user.is_active == False:
-                    users |= User.objects.filter(id=student.user.id)
-            return users
-
-        elif institute_title != "" and course != "" and group_title == "":
-
-            students = Student.objects.filter(user=None)
-
-            institute = Institute.objects.get(title=institute_title)
-
-            all_groups = Group.objects.filter(institute=institute)
-
-            required_groups = Group.objects.filter(id=None)
-
-            for group in all_groups:
-                recruitment_data = group.recruitment_date
-
-                course_number = int(((datetime.now().date() - recruitment_data).days) // 365.2425) + 1
-
-                if course_number == int(course):
-                    required_groups |= Group.objects.filter(id=group.id)
-
-            for group in required_groups:
-                students |= Student.objects.filter(group=group)
-
-            new_student_query = Student.objects.filter(user=None)
-
-            users = User.objects.filter(id=None)
-
-            if search != "":
-                for student in students:
-                    if search.upper() in student.user.fullname.upper():
-                        new_student_query |= Student.objects.filter(user=student.user)
-
-                for student in new_student_query:
-                    if student.user.is_active == False:
-                        users |= User.objects.filter(id=student.user.id)
-                return users
-
-            for student in students:
-                if student.user.is_active == False:
-                    users |= User.objects.filter(id=student.user.id)
-            return users
-
-        elif ((institute_title != "" and course == "" and group_title != "")
-              or (institute_title != "" and course != "" and group_title != "")):
-
-            institute = Institute.objects.get(title=institute_title)
-
-            group = Group.objects.get(institute=institute, name=group_title)
-
-            students = Student.objects.filter(group=group)
-
-            new_student_query = Student.objects.filter(user=None)
-
-            users = User.objects.filter(id=None)
-
-            if search != "":
-                for student in students:
-                    if search.upper() in student.user.fullname.upper():
-                        new_student_query |= Student.objects.filter(user=student.user)
-
-                for student in new_student_query:
-                    if student.user.is_active == False:
-                        users |= User.objects.filter(id=student.user.id)
-                return users
-
-            for student in students:
-                if student.user.is_active == False:
-                    users |= User.objects.filter(id=student.user.id)
-            return users
-
-        elif institute_title == "" and course != "" and group_title != "":
-
-            students = Student.objects.filter(user=None)
-
-            all_groups = Group.objects.filter(name=group_title)
-
-            required_groups = Group.objects.filter(id=None)
-
-            for group in all_groups:
-                recruitment_data = group.recruitment_date
-
-                course_number = int(((datetime.now().date() - recruitment_data).days) // 365.2425) + 1
-
-                if course_number == int(course):
-                    required_groups |= Group.objects.filter(id=group.id)
-
-            for group in required_groups:
-                students |= Student.objects.filter(group=group)
-
-            new_student_query = Student.objects.filter(user=None)
-
-            users = User.objects.filter(id=None)
-
-            if search != "":
-                for student in students:
-                    if search.upper() in student.user.fullname.upper():
-                        new_student_query |= Student.objects.filter(user=student.user)
-
-                for student in new_student_query:
-                    if student.user.is_active == False:
-                        users |= User.objects.filter(id=student.user.id)
-                return users
-
-            for student in students:
-                if student.user.is_active == False:
-                    users |= User.objects.filter(id=student.user.id)
-            return users
-
-        elif institute_title == "" and course == "" and group_title == "" and search != "":
-            students = Student.objects.all()
-
-            new_student_query = Student.objects.filter(user=None)
-
-            users = User.objects.filter(id=None)
-
-            if search != "":
-                for student in students:
-                    if search.upper() in student.user.fullname.upper():
-                        new_student_query |= Student.objects.filter(user=student.user)
-
-                for student in new_student_query:
-                    if student.user.is_active == False:
-                        users |= User.objects.filter(id=student.user.id)
-                return users
-
-            for student in students:
-                if student.user.is_active == False:
-                    users |= User.objects.filter(id=student.user.id)
-            return users
-
+            return users.order_by('fullname')
         else:
-            return User.objects.filter(status='Студент', is_active=False)
+            return User.objects.filter(status='Студент', is_active=False).select_related('student').order_by('fullname')
 
     def get_serializer_class(self):
 
@@ -552,17 +344,24 @@ class UnregisteredStudentListApiView(viewsets.ReadOnlyModelViewSet):
             return UnregisteredStudentSerializer
 
     def list(self, request, *args, **kwargs):
+
         if request.GET.get('limit', '') != '':
 
-            page = self.paginate_queryset(self.get_queryset())
+            student_query = self.get_queryset()
+
+            page = self.paginate_queryset(student_query)
+
             serializer = self.get_serializer(page, many=True)
 
+
             return self.get_paginated_response(
-                {'studentsAmount': len(self.get_queryset()), 'students': serializer.data})
+                {'studentsAmount': len(student_query), 'students': serializer.data})
 
         serializer = self.get_serializer(self.get_queryset(), many=True)
 
-        return Response({'studentsAmount': len(serializer.data), 'students': serializer.data}, status.HTTP_200_OK)
+        serializer_data = serializer.data
+
+        return Response({'studentsAmount': len(serializer_data), 'students': serializer_data}, status.HTTP_200_OK)
 
 class CheckAccessApiView(GenericAPIView):
     permission_classes = [AllowAny]
@@ -577,8 +376,7 @@ class CheckAccessApiView(GenericAPIView):
         return Response(serializer.validated_data, status=status.HTTP_200_OK)
 
 class UsersListView(viewsets.ReadOnlyModelViewSet):
-    # permission_classes = [UsersViewPermission]
-    permission_classes = [AllowAny]
+    permission_classes = [UsersViewPermission]
     pagination_class = Pagination
 
     def get_serializer_context(self):
@@ -599,6 +397,9 @@ class UsersListView(viewsets.ReadOnlyModelViewSet):
         self.bypassSheets = BypassSheet.objects.filter(title=None)
 
         for point in self.points:
+            if len(UploadedDocuments.objects.filter(point=point)) != len(RequiredDocuments.objects.filter(point=point)):
+                continue
+
             self.bypassSheets |= BypassSheet.objects.filter(id=point.bypass_sheet.id)
 
     def __getUserBypassSheetQuery(self):
@@ -607,18 +408,18 @@ class UsersListView(viewsets.ReadOnlyModelViewSet):
 
         for bypassSheet in self.bypassSheets:
             userQuery |= Student.objects.filter(user=bypassSheet.student_id.user)
-        return userQuery
+
+        return userQuery.order_by('user__fullname')
 
     def __getUserPointQuery(self):
-
         userQuery = Student.objects.filter(user=None)
 
         self.__getBypassSheetQuery()
 
         for bypassSheet in self.bypassSheets:
             userQuery |= Student.objects.filter(user=bypassSheet.student_id.user)
-
-        return userQuery
+        print(time.time() - self.start_time)
+        return userQuery.order_by('user__fullname')
 
     def get_queryset(self):
         self.bypassSheetsName = self.request.GET.get('title', '')
@@ -641,7 +442,7 @@ class UsersListView(viewsets.ReadOnlyModelViewSet):
 
             for group in groups:
 
-                students |= Student.objects.filter(group=group)
+                students |= Student.objects.filter(group=group).select_related('user')
 
             new_student_query = Student.objects.filter(user=None)
 
@@ -650,9 +451,9 @@ class UsersListView(viewsets.ReadOnlyModelViewSet):
                     if search.upper() in student.user.fullname.upper():
                         new_student_query |= Student.objects.filter(user=student.user)
 
-                return new_student_query
+                return new_student_query.order_by('user__fullname')
 
-            return students
+            return students.order_by('user__fullname')
 
         elif institute_title == "" and course != "" and group_title == "":
 
@@ -662,15 +463,14 @@ class UsersListView(viewsets.ReadOnlyModelViewSet):
             required_groups = Group.objects.filter(id=None)
 
             for group in all_groups:
-                recruitment_data = group.recruitment_date
 
-                course_number = int(((datetime.now().date() - recruitment_data).days) // 365.2425) + 1
+                course_number = group.course
 
                 if course_number == int(course):
                     required_groups |= Group.objects.filter(id=group.id)
 
             for group in required_groups:
-                students |= Student.objects.filter(group=group)
+                students |= Student.objects.filter(group=group).select_related('user')
 
             new_student_query = Student.objects.filter(user=None)
 
@@ -679,9 +479,9 @@ class UsersListView(viewsets.ReadOnlyModelViewSet):
                     if search.upper() in student.user.fullname.upper():
                         new_student_query |= Student.objects.filter(user=student.user)
 
-                return new_student_query
+                return new_student_query.order_by('user__fullname')
 
-            return students
+            return students.order_by('user__fullname')
 
         elif institute_title == "" and course == "" and group_title != "":
 
@@ -690,7 +490,7 @@ class UsersListView(viewsets.ReadOnlyModelViewSet):
             groups = Group.objects.filter(name=group_title)
 
             for group in groups:
-                students |= Student.objects.filter(group=group)
+                students |= Student.objects.filter(group=group).select_related('user')
 
             new_student_query = Student.objects.filter(user=None)
 
@@ -699,9 +499,9 @@ class UsersListView(viewsets.ReadOnlyModelViewSet):
                     if search.upper() in student.user.fullname.upper():
                         new_student_query |= Student.objects.filter(user=student.user)
 
-                return new_student_query
+                return new_student_query.order_by('user__fullname')
 
-            return students
+            return students.order_by('user__fullname')
 
         elif institute_title != "" and course != "" and group_title == "":
 
@@ -714,15 +514,14 @@ class UsersListView(viewsets.ReadOnlyModelViewSet):
             required_groups = Group.objects.filter(id=None)
 
             for group in all_groups:
-                recruitment_data = group.recruitment_date
 
-                course_number = int(((datetime.now().date() - recruitment_data).days) // 365.2425) + 1
+                course_number = group.course
 
                 if course_number == int(course):
                     required_groups |= Group.objects.filter(id=group.id)
 
             for group in required_groups:
-                students |= Student.objects.filter(group=group)
+                students |= Student.objects.filter(group=group).select_related('user')
 
             new_student_query = Student.objects.filter(user=None)
 
@@ -731,9 +530,9 @@ class UsersListView(viewsets.ReadOnlyModelViewSet):
                     if search.upper() in student.user.fullname.upper():
                         new_student_query |= Student.objects.filter(user=student.user)
 
-                return new_student_query
+                return new_student_query.order_by('user__fullname')
 
-            return students
+            return students.order_by('user__fullname')
 
         elif((institute_title != "" and course == "" and group_title != "")
              or (institute_title != "" and course != "" and group_title != "")):
@@ -742,7 +541,7 @@ class UsersListView(viewsets.ReadOnlyModelViewSet):
 
             group = Group.objects.get(institute=institute, name=group_title)
 
-            students = Student.objects.filter(group=group)
+            students = Student.objects.filter(group=group).select_related('user')
 
             new_student_query = Student.objects.filter(user=None)
 
@@ -751,9 +550,9 @@ class UsersListView(viewsets.ReadOnlyModelViewSet):
                     if search.upper() in student.user.fullname.upper():
                         new_student_query |= Student.objects.filter(user=student.user)
 
-                return new_student_query
+                return new_student_query.order_by('user__fullname')
 
-            return students
+            return students.order_by('user__fullname')
 
         elif institute_title == "" and course != "" and group_title != "":
 
@@ -764,15 +563,13 @@ class UsersListView(viewsets.ReadOnlyModelViewSet):
             required_groups = Group.objects.filter(id=None)
 
             for group in all_groups:
-                recruitment_data = group.recruitment_date
-
-                course_number = int(((datetime.now().date() - recruitment_data).days) // 365.2425) + 1
+                course_number = group.course
 
                 if course_number == int(course):
                     required_groups |= Group.objects.filter(id=group.id)
 
             for group in required_groups:
-                students |= Student.objects.filter(group=group)
+                students |= Student.objects.filter(group=group).select_related('user')
 
             new_student_query = Student.objects.filter(user=None)
 
@@ -781,12 +578,12 @@ class UsersListView(viewsets.ReadOnlyModelViewSet):
                     if search.upper() in student.user.fullname.upper():
                         new_student_query |= Student.objects.filter(user=student.user)
 
-                return new_student_query
+                return new_student_query.order_by('user__fullname')
 
-            return students
+            return students.order_by('user__fullname')
 
         elif institute_title == "" and course == "" and group_title == "" and search != "":
-            students = Student.objects.all()
+            students = Student.objects.all().select_related('user')
 
             new_student_query = Student.objects.filter(user=None)
 
@@ -795,12 +592,12 @@ class UsersListView(viewsets.ReadOnlyModelViewSet):
                     if search.upper() in student.user.fullname.upper():
                         new_student_query |= Student.objects.filter(user=student.user)
 
-                return new_student_query
+                return new_student_query.order_by('user__fullname')
 
-            return students
+            return students.order_by('user__fullname')
 
         if self.bypassSheetsName == "":
-            return Student.objects.all()
+            return Student.objects.order_by('user__fullname')
 
         if self.pointName == "":
             return self.__getUserBypassSheetQuery()
@@ -819,15 +616,34 @@ class UsersListView(viewsets.ReadOnlyModelViewSet):
                 return UserBypassSheetPointSerializer
 
     def list(self, request, *args, **kwargs):
+
+        self.start_time = time.time()
+
         if request.GET.get('limit', '') != '':
-            page = self.paginate_queryset(self.get_queryset())
+
+            # print(time.time() - self.start_time)
+
+            queryset = self.get_queryset()
+
+            page = self.paginate_queryset(self.get_serializer().setup_eager_loading(queryset))
+
             serializer = self.get_serializer(page, context=self.get_serializer_context(), many=True)
 
-            return self.get_paginated_response({'studentsAmount':len(self.get_queryset()), 'students':serializer.data})
+            serializer_data = serializer.data
 
-        serializer = self.get_serializer(self.get_queryset(), context=self.get_serializer_context(), many=True)
+            return self.get_paginated_response({'studentsAmount':len(queryset), 'students':serializer_data})
 
-        return Response({'studentsAmount':len(serializer.data), 'students':serializer.data}, status.HTTP_200_OK)
+        sel_query = self.get_serializer().setup_eager_loading(self.get_queryset())
+
+        serializer = self.get_serializer(sel_query, context=self.get_serializer_context(), many=True)
+
+        serializer_data = serializer.data
+
+        # print(time.time() - self.start_time)
+
+        data_len = len(serializer_data)
+
+        return Response({'studentsAmount':data_len, 'students':serializer_data}, status.HTTP_200_OK)
 
 class BanApiView(APIView):
     permission_classes = [BanUnbanPermission]
@@ -859,12 +675,134 @@ class BypassSheetTemplateTitle(APIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self, education_form):
+        if education_form == '':
+            return BypassSheetTemplate.objects.all()
         return BypassSheetTemplate.objects.filter(educationForm=education_form)
 
     def get(self, request):
 
-        education_form = request.GET.get('educationForm')
+        education_form = request.GET.get('educationForm', '')
 
         serializer = BypassSheetTemplateTitleSerializer(self.get_queryset(education_form), many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
+class UploadStudents(APIView):
+
+    permission_classes = [UploadStudentsPermission]
+    #permission_classes = [AllowAny]
+    def addInstitute(self, title):
+
+        return Institute.objects.create(title=title)
+
+    def addGroup(self, title, institute, course):
+
+        return Group.objects.create(name=title, institute=institute, course=course)
+
+    def addStudent(self, data):
+
+        User.objects.filter(status="Студент").delete()
+
+        for dictionary in data:
+            institute = Institute.objects.filter(title=dictionary['Institute']).first()
+
+            print(institute)
+
+            if institute is None:
+                institute = self.addInstitute(dictionary['Institute'])
+
+            group = Group.objects.filter(name=dictionary['Group'], institute=institute).first()
+
+            if group is None:
+                group = self.addGroup(dictionary['Group'], institute, dictionary['Cours'])
+
+            user = User.objects.create(fullname=dictionary['Fullname'], password=111, is_active=False,
+                                       status='Студент',
+                                       gender=dictionary['Gender'])
+
+            student = Student.objects.create(user=user, group=group,
+                                             educationForm=dictionary['Form of education'],
+                                             recruitmentForm=dictionary['Competition'], status=dictionary['Status'],
+                                             degree_of_study=dictionary['Lvl'],
+                                             year_of_admission=dictionary['Year of admission'])
+
+    def post(self, request):
+        book = openpyxl.open("/back_end/Kemsu_Document_Flow/Kemsu_Document/data.xlsx",
+                             read_only=True)  # change path or replace file in root dict
+        sheet = book.active
+        list_with_info = []
+        dictionary = {}
+
+        for row in range (2,sheet.max_row+1):
+            dictionary.update(
+                {"Fullname": sheet[row][0].value, "Gender": sheet[row][1].value, "Group": sheet[row][2].value,
+                 "Institute": sheet[row][3].value, "Cours": sheet[row][4].value,
+                 "Year of admission": sheet[row][5].value, "Specialty code": sheet[row][6].value,
+                 "Specialty": sheet[row][7].value, "Lvl": sheet[row][8].value,
+                 "Form of education": sheet[row][9].value, "Training period": sheet[row][10].value,
+                 "Competition": sheet[row][11].value, "Academic year": sheet[row][12].value,
+                 "Status": sheet[row][13].value})
+
+            list_with_info.append(dictionary)
+            print(str(row) + '/' + str(sheet.max_row))
+            dictionary = {}
+
+        self.addStudent(list_with_info)
+
+        return Response({
+            "message" : "Upload is success"
+        }, status=status.HTTP_201_CREATED)
+
+class BypassSheetSchemaDeadline(APIView):
+
+    permission_classes = [GetBypassSheetsSchemaDeadline]
+    # permission_classes = [AllowAny]
+
+    def get(self, request):
+        bypass_sheet_schemas = BypassSheetTemplate.objects.all()
+
+        serializer = GetBypassSheetsSchemaDeadlinesSerializer(bypass_sheet_schemas, many=True, read_only=True, context={'user' : request.user})
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class UpdateBypassSheetSchemaDeadline(GenericAPIView):
+    # permission_classes = [AllowAny]
+    permission_classes = [UpdateBypassSheetSchemaDeadline]
+    serializer_class = PatchBypassSheetsSchemaDeadlinesSerializer
+
+    def patch(self, request, pk):
+
+        serializer = self.serializer_class(data=request.data, context={'id':pk})
+
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+
+        data = serializer.validated_data
+
+        return Response(status=status.HTTP_200_OK)
+
+class DeleteExcessPointView(APIView):
+
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+
+        students = Student.objects.all().prefetch_related('group__institute')
+
+        for student in students:
+            bypass_sheets = BypassSheet.objects.filter(student_id=student)
+
+            points = Point.objects.filter(id=None)
+
+            for bypass_sheet in bypass_sheets:
+                points |= Point.objects.filter(bypass_sheet=bypass_sheet)
+
+            points = points.prefetch_related('department__institute')
+
+            for point in points:
+
+                institute = point.department.institute
+
+                if institute != student.group.institute and institute is not None:
+                    point.delete()
+
+        return Response(status=status.HTTP_200_OK)
